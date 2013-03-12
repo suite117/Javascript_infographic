@@ -13,7 +13,6 @@ function concatena(arguments) {
 
 	var outText = "";
 	for (var i = 0; i < arguments.length; i++) {
-		
 		outText += arguments[i] + " ";
 	}
 
