@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="style.css" />
+<script src="../lib/jquery-1.9.1.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="init.js"></script>
+<script type="text/javascript">
+	if (typeof jQuery == 'undefined')
+		alert("jQuery Non Found!.");
+
+	$(document).ready(function() { 
+		
+		$.getJSON('data.json', function(data) {
+			GraphTree(data, "#tree1");
+			
+		});
+		$.getJSON('data2.json', function(data) {
+			GraphTree(data, "#tree1");
+			
+		});
+		
+		$("#out").click(function() {
+			alert("Handler for .click() called.");
+			});
+		
+	});
+</script>
+</head>
+<body>
+<div>
+	<div id="tree1"></div>
+	<p id="tree2"></p>
+</div>
+</body>
+</html>

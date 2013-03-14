@@ -1,0 +1,252 @@
+<!doctyle html>
+<html>
+<head>
+
+<link href='http://fonts.googleapis.com/css?family=IM+Fell+English+SC' rel='stylesheet'
+	type='text/css'>
+
+<title>A pure CSS 3D animated coverflow for Chrome 13+, Firefox 5+ and Safari 5+</title>
+<meta name="description"
+	content="A pure no javascript coverflow effect created entirely with CSS transformation and transition compatible with Chrome 13+, Firefox 5+ and Safari 5+" />
+<meta name="keywords" content="CSS3, coverflow, transition, transform" />
+
+<meta property="og:title"
+	content="A pure no javascript CSS 3D animated coverflow for Chrome 13+, Firefox 5+ and Safari 5+" />
+<meta property="og:type" content="website" />
+<meta property="og:url"
+	content="http://sandropaganotti.com/wp-content/goodies/demos/cards/index.html#aela" />
+<meta property="og:image"
+	content="http://sandropaganotti.com/wp-content/goodies/demos/cards/imgs/cards.png" />
+<meta property="og:site_name" content="A coverflow using only CSS" />
+<meta property="fb:admins" content="501615863" />
+
+<style>
+body {
+	margin: 0px;
+}
+
+html {
+	background-image: -webkit-linear-gradient(#FFF 60%, #444);
+	background-image: -moz-linear-gradient(#FFF 60%, #444);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(60%, #FFF),
+		color-stop(100%, #444) );
+	overflow-x: hidden;
+}
+
+.card {
+	width: 28%;
+	margin: 0% -10.8%;
+	float: left;
+	background-image: -webkit-linear-gradient(#DDD 60%, rgba(55, 55, 55, 0)
+		93% );
+	background-image: -moz-linear-gradient(#DDD 60%, rgba(55, 55, 55, 0) 93%
+		);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(60%, #DDD),
+		color-stop(93%, rgba(55, 55, 55, 0) ) );
+	display: block;
+	border-radius: 10px;
+	-webkit-transform: rotateY(120deg);
+	-moz-transform: skew(0deg, -35deg) scale(0.70);
+	-webkit-transition: all 1s ease-out;
+	-moz-transition: all 1s ease-out;
+	text-align: center;
+	text-decoration: none;
+}
+
+.card img {
+	margin: auto;
+	width: 100%;
+	border-radius: 10px;
+	opacity: 0.2;
+	-webkit-transition: all 1s ease-out;
+	-moz-transition: all 1s ease-out;
+	image-rendering: -moz-crisp-edges;
+}
+
+.card:target {
+	-webkit-transform: rotateY(0deg);
+	-moz-transform: skew(0deg, 0deg) scale(1);
+	margin: 0 5%;
+	z-index: 90;
+}
+
+.card span {
+	display: none;
+	color: #eee;
+	line-height: 2;
+	font-size: 1.4em;
+	font-family: 'IM Fell English SC', serif;
+	text-shadow: rgba(0, 0, 0, 0.5) -1px 0, rgba(0, 0, 0, 0.3) 0 -1px,
+		rgba(255, 255, 255, 0.5) 0 1px, rgba(0, 0, 0, 0.3) -1px -1px;
+}
+
+.card:active {
+	overflow: hidden;
+}
+
+.card:target img {
+	opacity: 1;
+	image-rendering: optimizeQuality;
+}
+
+.card:target span {
+	opacity: 1;
+	display: inline;
+}
+
+.card:target   ~ .card {
+	-moz-transform: skew(0deg, 20deg) scale(0.70);
+}
+
+.card:target+.card {
+	z-index: 10;
+}
+
+.card:target+.card+.card {
+	z-index: 9;
+}
+
+.card:target+.card+.card+.card {
+	z-index: 8;
+}
+
+.card:target+.card+.card+.card+.card {
+	z-index: 7;
+}
+
+.card:target+.card+.card+.card+.card+.card {
+	z-index: 6;
+}
+
+.card:target+.card+.card+.card+.card+.card+.card {
+	z-index: 5;
+}
+
+.card:target+.card+.card+.card+.card+.card+.card+.card {
+	z-index: 4;
+}
+
+.card:target+.card+.card+.card+.card+.card+.card+.card+.card {
+	z-index: 3;
+}
+
+.card:target+.card+.card+.card+.card+.card+.card+.card+.card+.card {
+	z-index: 2;
+}
+
+.card:target+.card+.card+.card+.card+.card+.card+.card+.card+.card+.card
+	{
+	z-index: 1;
+}
+
+.button {
+	height: 16px;
+	width: 16px;
+	border-radius: 8px;
+	margin: 10px 3px;
+	float: left;
+	display: block;
+	background: white;
+	-webkit-box-shadow: inset 2px 2px 2px #999, inset -1px -1px 1px #999;;
+	box-shadow: inset 2px 2px 2px #999, inset -1px -1px 1px #999;
+}
+
+.button:hover {
+	background: #DDD;
+}
+
+.margin {
+	height: 5%;
+	width: 100%;
+}
+
+#container {
+	margin: 0 auto;
+	width: 100%;
+	height: 90%;
+	max-width: 1024px;
+	-webkit-transform-style: preserve-3d;
+	-webkit-perspective: 900;
+	/* For compatibility with iPhone 3.0, we leave off the units here */
+	-webkit-perspective-origin: 100% 30%;
+}
+
+#buttons {
+	width: 220px;
+	position: absolute;
+	z-index: 999;
+	bottom: 3px;
+	left: 50%;
+	margin-left: -110px;
+}
+
+#ack {
+	position: absolute;
+	bottom: 15px;
+	left: 10px;
+}
+
+#ack,#ack * {
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	color: #fff;
+}
+
+#social {
+	position: absolute;
+	bottom: 5px;
+	right: 10px;
+}
+</style>
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-157610-17' ]);
+	_gaq.push([ '_setDomainName', '.sandropaganotti.com' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body>
+	<div class="margin"></div>
+
+	<div id="container">
+		<!--  <a name="aela" class="card"> <img src="imgs/aela.jpg"> <span>Aela</span> -->
+		<a name="aa" class="card"><p>ciao</p></a> 
+		</a> <a name="auredia" class="card"> <img
+				src="imgs/auredia.jpg"> <span>Auredia</span>
+		</a> <a name="elyon" class="card"> <img src="imgs/elyon.jpg"> <span>Elyon</span>
+		</a> <a name="jakob" class="card"> <img src="imgs/guardiani.jpg"> <span>Jakob</span>
+		</a> <a name="gwen" class="card"> <img src="imgs/gwen.jpg"> <span>Gwen</span>
+		</a> <a name="kyoshi" class="card"> <img src="imgs/kyoshi.jpg"> <span>Kyoshi</span>
+		</a> <a name="raguel" class="card"> <img src="imgs/raguel.jpg"> <span>Raguel</span>
+		</a> <a name="isabelle" class="card"> <img src="imgs/versailles.jpg"> <span>Isabelle
+				&amp; Jeanne</span>
+		</a> <a name="xiao-mei" class="card"> <img src="imgs/xiaomei.jpg"> <span>Xiao Mei</span>
+		</a> <a name="astrael" class="card"> <img src="imgs/astrael.jpg"> <span>Astrael</span>
+		</a>
+	</div>
+
+	<div class="margin"></div>
+
+	<div id="buttons">
+		<a href="#aa" class="button"></a> <a href="#auredia" class="button"></a> <a href="#elyon"
+			class="button"></a> <a href="#jakob" class="button"></a> <a href="#gwen" class="button"></a> <a
+			href="#kyoshi" class="button"></a> <a href="#raguel" class="button"></a> <a href="#isabelle"
+			class="button"></a> <a href="#xiao-mei" class="button"></a> <a href="#astrael" class="button"></a>
+	</div>
+
+
+</body>
+</html>

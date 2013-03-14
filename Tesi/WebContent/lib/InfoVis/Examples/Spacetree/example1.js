@@ -865,6 +865,9 @@ function init(){
             }
         }
     });
+    
+    
+    
     //load json data
     st.loadJSON(json);
     //compute node positions and layout
@@ -880,12 +883,13 @@ function init(){
         bottom = $jit.id('r-bottom'), 
         right = $jit.id('r-right'),
         normal = $jit.id('s-normal');
-        
+    
+    
     
     function changeHandler() {
         if(this.checked) {
             top.disabled = bottom.disabled = right.disabled = left.disabled = true;
-            st.switchPosition(this.value, "animate", {
+            st.switchPosition("top", "animate", {
                 onComplete: function(){
                     top.disabled = bottom.disabled = right.disabled = left.disabled = false;
                 }
@@ -893,7 +897,9 @@ function init(){
         }
     };
     
+    
     top.onchange = left.onchange = bottom.onchange = right.onchange = changeHandler;
     //end
-
+    
+    
 }

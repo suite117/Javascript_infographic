@@ -5,6 +5,7 @@ function init() {
 	G2.add_nodes_from([ 1, 2, 3, 4, 5, [ 9, {
 		color : '#008A00'
 	} ] ]);
+	G2.add_nodes_from([10, [20,{'color':'blue'}]]);
 
 	// aggiunge un ciclo tra questi nodi
 	G2.add_cycle([ 1, 2, 3, 4, 5 ]);
