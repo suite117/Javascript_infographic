@@ -110,7 +110,7 @@ function GraphTree(root, div_destination) {
 					return "translate(" + d.y + "," + d.x + ")";
 				});
 
-		nodeUpdate.select("circle").attr("r", 4.5).style("fill", function(d) {
+		nodeUpdate.select("circle").attr("class", "node123").attr("r", 4.5).style("fill", function(d) {
 			return d._children ? "lightsteelblue" : "#fff";
 		});
 
