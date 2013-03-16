@@ -5,6 +5,14 @@
 	stroke-width: 1.5px;
 }
 
+#tree2 .node circle {
+	cursor: pointer;
+	fill: #fff;
+	stroke: orange;
+	stroke-width: 1.5px;
+}
+
+
 .node text {
 	font-size: 11px;
 }

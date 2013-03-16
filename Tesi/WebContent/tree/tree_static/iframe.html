@@ -2,6 +2,7 @@
 <head>
 <meta charset="utf-8">
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="../../lib/jquery/jquery.min.js"></script>
 <style>
 .node circle {
 	fill: #fff;
@@ -10,9 +11,7 @@
 }
 
 .node circle.active {
-	fill: #fff;
 	stroke: orange;
-	stroke-width: 1.5px;
 }
 
 .node {
@@ -53,23 +52,22 @@
 					.attr("class", "node").attr("transform", function(d) {
 						return "translate(" + d.y + "," + d.x + ")";
 					});
-			
+
 			var circle = node.append("circle").attr("r", 4.5);
-			
+
 			node.on("click", function(d) {
-				
+
 				if (d.active == null || d.active == false)
 					d.active = true;
 				else
 					d.active = false;
-				
-				//d.attr("class", active == true ? "active" : "");
-				circle.attr("class", d.active == true ? "active" : "");
-				
-				//alert(d.name);
+
+				//In this context, 'this' is the element that got clicked
+				$(this).children(":first").attr("class",
+						d.active == true ? "active" : "");
+				//this.firstChild.setAttribute("class",  d.active == true ? "active" : "");
+			
 			});
-			
-			
 
 			node.append("text").attr("dx", function(d) {
 				return d.children ? -8 : 8;

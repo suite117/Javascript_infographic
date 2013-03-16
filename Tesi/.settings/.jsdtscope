@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="lib/|lib/JSNetworkX/jsnetworkx.js|lib/d3.min.js|lib/d3/d3.v3.js|lib/d3/d3.v3.min.js|lib/jit-yc.js|lib/prettify.js" kind="src" path="WebContent"/>
+	<classpathentry excluding="lib/InfoVis/jit-yc.js|lib/JSNetworkX/jsnetworkx.js|lib/d3.min.js|lib/d3/d3.v3.js|lib/d3/d3.v3.min.js|lib/jit-yc.js|lib/prettify.js" kind="src" path="WebContent"/>
 	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.WebProject">
 		<attributes>
