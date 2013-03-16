@@ -80,4 +80,5 @@ g.usa path.chart {
 g.context rect.background{
 	fill: rgb(200,200,255);
 	visibility: visible !important;
-}​
+}
+
