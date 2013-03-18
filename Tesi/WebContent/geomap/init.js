@@ -2,10 +2,7 @@ var map;
 function initmap() {
 
 	var layers = new Array();
-
-	var latitute = 38.129155;
-	var longitude = 13.360634;
-	var center = [53.775, -0.356];
+	var center = [53.73, -0.30];
 
 	map = new L.map('map');
 	//var center = new L.LatLng(latitute, longitude);
@@ -33,61 +30,90 @@ function initmap() {
 		label : 'Ada'
 	}];
 
+	function calculateRadius() {
+
+		//alert(map.getMinZoom());
+		if (map.getZoom() != null)
+			return map.getZoom() * 30;
+		else
+			return map.getMinZoom() * 30;
+	}
+
 	// Pie chart
-	L.pie(center, list, {
+	var pie = L.pie(center, list, {
+		radius : 200
+	}, {
 		pathOptions : {
 			opacity : 0.9,
 			fillOpacity : 0.9
 		}
-	}).addTo(map);
+	});
+	
+	//map.addLayer(pie);
+	var zoomStart = 13;
 
-	//map.on('click', onMarkerClick);
+	map.on('zoomend', function(e) {
+		//alert(e.target.getZoom());
+		//alert(pie.options.radius);
+		
+			e.target.removeLayer(pie);
+			pie.options.radius = pie.options.radius / (e.target.getZoom()/zoomStart);
+			e.target.addLayer(pie);
+
+		
+
+	});
 
 	askForMarkers();
-	map.setView(center, 13);
+	map.setView(center, zoomStart);
 }
 
-function onMarkerClick2(e) {
-	popup.setLatLng(e.latlng).setContent("You clicked the map at " + e.latlng.toString()).openOn(map);
-}
+//this sets up an icon to be replaced when redraw.
+var LeafIcon = L.Icon.extend({
+	options : {
+		iconUrl : 'images/marker-icon.png',
+		shadowUrl : 'images/marker-shadow.png'
+	}
+});
+
+var LeafIconActive = L.Icon.extend({
+	options : {
+		iconUrl : 'images/marker-icon-active.png',
+		shadowUrl : 'images/marker-shadow.png'
+	}
+});
 
 function onMarkerClick(e) {
+
+	var icon;
+	if (e.target.active) {
+		icon = new LeafIcon();
+		e.target.active = false;
+	} else {
+		icon = new LeafIconActive();
+		e.target.active = true;
+	}
+	e.target.setIcon(icon);
+
 	var popup = L.popup();
-
-	// popup coordinates adjust
-	popup.setLatLng(new L.LatLng(parseFloat(e.target.data.lat) + 0.003, e.target.data.lon)).openOn(map);
-	
-	var content = e.target.data.name + " " + e.target.data.artist
-	popup.setContent(content);
-	//toadname.innerHTML = e.target.data.name;
-	//artist.innerHTML = e.target.data.artist;
-}
-
-function markerClick(e) {
-	// if a marker is clicked, display the details from it
-	var toadname = document.getElementById('toadname');
-	var artist = document.getElementById('artist');
-	var sponsor = document.getElementById('sponsor');
-	var designer = document.getElementById('designer');
-	var toadpic = document.getElementById('toadpic');
-	var toadpiclink = document.getElementById('toadpiclink');
-	toadname.innerHTML = e.target.data.name;
-	artist.innerHTML = e.target.data.artist;
-	sponsor.innerHTML = e.target.data.sponsor;
-	designer.innerHTML = e.target.data.designer;
-	toadpic.src = 'toadpics/thumbs/' + e.target.data.pic;
-	toadpiclink.href = 'toadpics/' + e.target.data.pic;
+	var content = "<p>" + e.target.data.name + "</p>" + e.target.data.artist;
+	e.target.bindPopup(content).openPopup();
 }
 
 function askForMarkers() {
+
 	$.getJSON('data.json', function(data) {
 
 		for ( i = 0; i < data.length; i++) {
 			var marker = new L.Marker(new L.LatLng(data[i].lat, data[i].lon, true));
 			marker.data = data[i];
 			marker.on('click', onMarkerClick);
+
+			marker.data.active = false;
+			var icon = new LeafIcon();
+			marker.setIcon(icon);
+
 			map.addLayer(marker);
-			//layers.push(marker);
 		}
 	});
 }
