@@ -10,13 +10,19 @@
 		<!--[if lte IE 8]>
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
 		<![endif]-->
+		<script src="../lib/jquery/jquery.min.js"></script>
 		<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
 		<script src="piechart/Semicircle.js"></script>
 		<script src="piechart/Pie.js"></script>
 		<script type="text/javascript" src="init.js"></script>
+		<script type="text/javascript">
+			if ( typeof jQuery == 'undefined')
+				alert("jQuery Non Found!.");
+		</script>
 	</head>
 	<body onload="initmap();">
-		<div id="map" style="width: 600px; height: 400px"></div>
-
+		<div id="map" style="width: 600px; height: 400px">
+			&nbsp;
+		</div>
 	</body>
 </html>
