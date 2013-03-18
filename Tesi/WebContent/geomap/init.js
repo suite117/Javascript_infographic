@@ -49,28 +49,24 @@ function initmap() {
 		}
 	});
 
-	//map.addLayer(pie);
-	var lastZoom = 13;
-	var distance = 0.015;
+	var startZoom = 11;
+	var distance = 0.2 / startZoom;
 
 	map.on('zoomend', function(e) {
-		//alert(e.target.getZoom());
-		//alert(pie.options.radius);
+		
 		var bounds = e.target.getBounds();
 		var minll = bounds.getSouthWest();
 		var maxll = bounds.getNorthEast();
-		
+
 		e.target.removeLayer(pie);
 		pie.options.radius = (pie.options.radius / distance) * (maxll.lat - minll.lat);
 		distance = maxll.lat - minll.lat;
-		
-		lastZoom = e.target.getZoom();
-		e.target.addLayer(pie);
 
+		e.target.addLayer(pie);
 	});
 
 	askForMarkers();
-	map.setView(center, lastZoom);
+	map.setView(center, startZoom);
 }
 
 //this sets up an icon to be replaced when redraw.

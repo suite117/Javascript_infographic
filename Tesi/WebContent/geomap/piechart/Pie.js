@@ -226,7 +226,7 @@ L.PieLabel = L.Circle.extend({
 		buffer: 2,
 		length: 20,
 		fill: false,
-		weight: 1,
+		//weight: 1,
 		color: '#000'
 	},
 
@@ -273,7 +273,7 @@ L.PieLabel = L.Circle.extend({
 		this._t.setAttribute('dx', 2);
 		this._t.setAttribute('dy', 5);
 		this._t.setAttribute('text-anchor', this._textAnchor());
-		this._t.setAttribute('style', 'font: 10px "Arial"');
+		//this._t.setAttribute('style', 'font: 10px "Arial"');
 		this._t.textContent = this._text;
 
 		this._container.appendChild(this._t);
