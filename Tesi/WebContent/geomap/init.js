@@ -20,7 +20,7 @@ function initmap() {
 	L.marker(center).addTo(map).bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 
 	var list = [{
-		num : 45,
+		num : 75,
 		label : 'Bob'
 	}, {
 		num : 60,
