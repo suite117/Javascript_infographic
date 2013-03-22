@@ -2,7 +2,7 @@ svg {
 	border: 2px solid red;
 }
 
-.cloud-path {
+g.cloud path {
 	opacity: 1;
 	fill: #ffffff;
 	fill-opacity: 1;
@@ -16,10 +16,12 @@ svg {
 	stroke-opacity: 1;
 }
 
-.cloud-path:hover {
-
-}
-
-g.active .cloud-path {
+g.cloud path.near {
 	stroke: steelblue;
 }
+
+.cloud path:hover {
+
+}
+
+
