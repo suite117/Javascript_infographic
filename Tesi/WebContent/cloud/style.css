@@ -1,0 +1,25 @@
+svg {
+	border: 2px solid red;
+}
+
+.cloud-path {
+	opacity: 1;
+	fill: #ffffff;
+	fill-opacity: 1;
+	stroke: #000000;
+	stroke-width: 14.79046059;
+	stroke-linecap: butt;
+	stroke-linejoin: round;
+	stroke-miterlimit: 4;
+	stroke-dasharray: none;
+	stroke-dashoffset: 0;
+	stroke-opacity: 1;
+}
+
+.cloud-path:hover {
+
+}
+
+g.active .cloud-path {
+	stroke: steelblue;
+}

@@ -10,8 +10,10 @@
 		<script type="text/javascript">
 			d3.xml("tuto3.svg", "image/svg+xml", function(xml) {
 				var importedNode = document.importNode(xml.documentElement, true);
+				
 				d3.select("#viz").node().appendChild(importedNode);
 
+				console.log(d3.select("#viz").node());
 				var dataMax = 100;
 				function generateData(num) {
 					var randomArray = [];
