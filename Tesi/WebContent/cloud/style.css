@@ -2,12 +2,37 @@ svg {
 	border: 2px solid red;
 }
 
+#popup {
+	position: absolute;
+	z-index: 10;
+	visibility: hidden;
+}
+
+g.button rect {
+	fill: steelblue;
+	stroke: black;
+}
+
+g text {
+	font-size: 36px;
+	font-family: Sans;
+	font-style: normal;
+	font-weight: normal;
+	letter-spacing: 0;
+}
+
+g.button text {
+	fill: #fff;
+	fill-opacity: 1;
+	stroke: none;
+}
+
 g.cloud path {
 	opacity: 1;
 	fill: #ffffff;
 	fill-opacity: 1;
 	stroke: #000000;
-	stroke-width: 14.79046059;
+	stroke-width: 10;
 	stroke-linecap: butt;
 	stroke-linejoin: round;
 	stroke-miterlimit: 4;
@@ -16,12 +41,19 @@ g.cloud path {
 	stroke-opacity: 1;
 }
 
-g.cloud path.near {
+g.near path {
 	stroke: steelblue;
 }
 
-.cloud path:hover {
-
+g.active path {
+	stroke: orange;
 }
 
+g.button {
+	visibility: hidden;
+}
+
+g.near g.button {
+		
+}
 
