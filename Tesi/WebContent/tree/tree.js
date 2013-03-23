@@ -192,6 +192,7 @@ function GraphTree(root, div_destination) {
 		// var o = {x: d.x0, y: d.y0};
 		// return diagonal({source: o, target: o});
 		// });
+		
 	}
 
 	function clickWhite() {
