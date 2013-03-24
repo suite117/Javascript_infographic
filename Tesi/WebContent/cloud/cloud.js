@@ -1,10 +1,7 @@
-Array.prototype.append = function(array) {
-	this.push.apply(this, array)
-};
-
 var svg;
 var scale = 1;
 var divSVG;
+var g;
 function initClouds(idDOM) {
 
 	divSVG = d3.select(idDOM);
@@ -25,7 +22,6 @@ function initClouds(idDOM) {
 			elements : [i, i * 2, i * 3]
 		};
 
-	var g;
 	function draw() {
 
 		var zoomBehavior = d3.behavior.zoom().on("zoom", zoom);
@@ -51,6 +47,7 @@ function initClouds(idDOM) {
 		var x = 150;
 		var y = 80;
 
+		// add union button
 		var button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
 		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 150).attr("height", 50);
 		button.append("text").attr("x", x).attr("y", y).text(function(d) {
@@ -61,20 +58,20 @@ function initClouds(idDOM) {
 			// select the cloud under the selected cloud
 			var set = svg.selectAll("g.near");
 			var b = set.data()[0];
+
+			// add elements of overlying set to active set
 			d.elements.append(b.elements);
 
+			// remove overlying set from data
 			clouds.splice(b.id, 1);
+
+			// remove svg and redraw
 			divSVG.select("svg").remove();
-
-			var cloud = d3.select("#cloud" + d.id);
-			cloud.select("text.list").remove();
-
-			cloud.append("text").attr("class", "list").attr("x", 100).attr("y", 50).attr("transform", "translate(204,245)").text(getList);
-			cloud.selectAll(".button").style("visibility", "hidden");
 			draw();
 
 		});
 
+		// add intersection button
 		y += 50;
 		button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
 		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 150).attr("height", 50);
@@ -90,36 +87,36 @@ function initClouds(idDOM) {
 
 	draw();
 
-	function drag(d, index) {
-		d.x += d3.event.dx;
-		d.y += d3.event.dy;
-		d3.select(this).attr("transform", transform);
+}
 
-		// fix z-index of selected element
-		this.parentNode.appendChild(this);
-		// test se sono vicini
+function drag(d, index) {
+	d.x += d3.event.dx;
+	d.y += d3.event.dy;
+	d3.select(this).attr("transform", transform);
 
-		var showMenu = false;
-		for (var i = 0; i < g.data().length; i++) {
-			var dis = distance(d, g.data()[i]);
-			var node = svg.select("#cloud" + i);
-			// se non è l'attuale nodo selezionato
-			if (d.id != g.data()[i].id) {
+	// fix z-index of selected element
+	this.parentNode.appendChild(this);
+	// test se sono vicini
 
-				if (dis < 50 * scale) {
-					node.attr("class", "cloud near");
-					showMenu = true;
-				} else
-					node.attr("class", "cloud");
+	var showMenu = false;
+	for (var i = 0; i < g.data().length; i++) {
+		var dis = distance(d, g.data()[i]);
+		var node = svg.select("#cloud" + i);
+		// se non è l'attuale nodo selezionato
+		if (d.id != g.data()[i].id) {
+
+			if (dis < 50 * scale) {
+				node.attr("class", "cloud near");
+				showMenu = true;
 			} else
-				node.attr("class", "cloud active");
-		}
-		if (showMenu)
-			d3.select(this).selectAll("g.button").style("visibility", "visible");
-		else
-			d3.select(this).selectAll("g.button").style("visibility", "hidden");
+				node.attr("class", "cloud");
+		} else
+			node.attr("class", "cloud active");
 	}
-
+	if (showMenu)
+		d3.select(this).selectAll("g.button").style("visibility", "visible");
+	else
+		d3.select(this).selectAll("g.button").style("visibility", "hidden");
 }
 
 function zoom() {

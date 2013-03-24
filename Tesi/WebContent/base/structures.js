@@ -91,3 +91,7 @@ Array.prototype.distance = function(testArr) {
 		return 1;
 
 };
+
+Array.prototype.append = function(array) {
+	this.push.apply(this, array)
+};
