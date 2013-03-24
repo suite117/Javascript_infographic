@@ -4,18 +4,13 @@ Array.prototype.append = function(array) {
 
 var svg;
 var scale = 1;
-
+var divSVG;
 function initClouds(idDOM) {
 
-	var divSVG = d3.select(idDOM);
+	divSVG = d3.select(idDOM);
 
 	var width = "100%";
 	var height = 600;
-
-	var popup = d3.select("#popup");
-
-	var zoomBehavior = d3.behavior.zoom().on("zoom", zoom);
-	svg = divSVG.append("svg").attr("width", width).attr("height", height).call(zoomBehavior).append("g");
 
 	$("#debug").text("a");
 	$("#debug").append("");
@@ -30,72 +25,70 @@ function initClouds(idDOM) {
 			elements : [i, i * 2, i * 3]
 		};
 
-	// prepara la variabile g per l'aggiunta a cascata di attributi
-	var g = svg.selectAll("g g").data(clouds).enter().append("g");
+	var g;
+	function draw() {
 
-	g.attr("class", "cloud").attr("id", function(d) {
-		return "cloud" + d.id;
-	}).attr("transform", transform)
+		var zoomBehavior = d3.behavior.zoom().on("zoom", zoom);
+		svg = divSVG.append("svg").attr("width", width).attr("height", height).call(zoomBehavior).append("g");
 
-	
+		// prepara la variabile g per l'aggiunta a cascata di attributi
+		g = svg.selectAll("g").data(clouds).enter().append("g");
 
-	var path = g.append("path");
-	path.attr("d", "M 410.67959,194.3815 C 392.37515,189.47681 373.85117,195.08975 361.06312,207.28351 C 354.38189,199.25271 345.33513,193.05458 334.48394,190.1472 C 306.55725,182.66441 277.78779,199.27435 270.3048,227.20111 C 269.75493,229.25318 269.61017,231.31674 269.31528,233.36915 C 244.16592,230.75487 220.10196,246.49902 213.35064,271.69554 C 206.66103,296.6615 219.28468,322.19 241.97368,332.68633 C 240.74035,335.36078 239.59041,338.11603 238.80258,341.05587 C 231.31972,368.98263 247.94629,397.69032 275.87305,405.17311 C 289.55164,408.83877 303.37499,406.6863 314.85002,400.29682 C 321.17421,413.82629 332.96537,424.71545 348.50905,428.8801 C 370.68656,434.82265 393.19111,425.40916 405.34082,407.36649 C 410.26235,410.85061 415.73285,413.73264 421.89508,415.3841 C 449.82177,422.86689 478.52936,406.24005 486.01235,378.31329 C 489.77522,364.2703 487.44688,350.05895 480.65432,338.41184 C 487.37673,332.00174 492.63872,323.88203 495.21692,314.25995 C 502.69988,286.33286 486.07327,257.62517 458.14659,250.14238 C 455.20678,249.35502 452.26201,248.91147 449.32995,248.64237 C 451.06775,224.11827 435.30606,200.98024 410.67959,194.3815 z");
-	
-	g.append("text").attr("class", "list").attr("x", 100).attr("y", 50).attr("transform","translate(204,245)").text(getList);
-	
-	function getList(d) {
-		return JSON.stringify(d.elements);
+		g.attr("class", "cloud").attr("id", function(d) {
+			return "cloud" + d.id;
+		}).attr("transform", transform)
+
+		var path = g.append("path");
+		path.attr("d", "M 410.67959,194.3815 C 392.37515,189.47681 373.85117,195.08975 361.06312,207.28351 C 354.38189,199.25271 345.33513,193.05458 334.48394,190.1472 C 306.55725,182.66441 277.78779,199.27435 270.3048,227.20111 C 269.75493,229.25318 269.61017,231.31674 269.31528,233.36915 C 244.16592,230.75487 220.10196,246.49902 213.35064,271.69554 C 206.66103,296.6615 219.28468,322.19 241.97368,332.68633 C 240.74035,335.36078 239.59041,338.11603 238.80258,341.05587 C 231.31972,368.98263 247.94629,397.69032 275.87305,405.17311 C 289.55164,408.83877 303.37499,406.6863 314.85002,400.29682 C 321.17421,413.82629 332.96537,424.71545 348.50905,428.8801 C 370.68656,434.82265 393.19111,425.40916 405.34082,407.36649 C 410.26235,410.85061 415.73285,413.73264 421.89508,415.3841 C 449.82177,422.86689 478.52936,406.24005 486.01235,378.31329 C 489.77522,364.2703 487.44688,350.05895 480.65432,338.41184 C 487.37673,332.00174 492.63872,323.88203 495.21692,314.25995 C 502.69988,286.33286 486.07327,257.62517 458.14659,250.14238 C 455.20678,249.35502 452.26201,248.91147 449.32995,248.64237 C 451.06775,224.11827 435.30606,200.98024 410.67959,194.3815 z");
+
+		g.append("text").attr("class", "list").attr("x", 100).attr("y", 50).attr("transform", "translate(204,245)").text(getList);
+
+		function getList(d) {
+			return JSON.stringify(d.elements);
+		}
+
+		// rect's button container coordinates
+		var x = 150;
+		var y = 80;
+
+		var button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
+		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 150).attr("height", 50);
+		button.append("text").attr("x", x).attr("y", y).text(function(d) {
+			return "unione";
+		});
+		button.on("click", function(d, i) {
+
+			// select the cloud under the selected cloud
+			var set = svg.selectAll("g.near");
+			var b = set.data()[0];
+			d.elements.append(b.elements);
+
+			clouds.splice(b.id, 1);
+			divSVG.select("svg").remove();
+
+			var cloud = d3.select("#cloud" + d.id);
+			cloud.select("text.list").remove();
+
+			cloud.append("text").attr("class", "list").attr("x", 100).attr("y", 50).attr("transform", "translate(204,245)").text(getList);
+			cloud.selectAll(".button").style("visibility", "hidden");
+			draw();
+
+		});
+
+		y += 50;
+		button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
+		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 150).attr("height", 50);
+		button.append("text").attr("x", x).attr("y", y).text(function(d) {
+			return "intersezione" + d.id;
+		});
+
+		// add event listener on drag event
+		var dragBehavior = d3.behavior.drag().on("drag", drag);
+		g.call(dragBehavior);
+
 	}
 
-	var x = 150;
-	var y = 80;
-
-	var button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
-	button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 150).attr("height", 50);
-	button.append("text").attr("x", x).attr("y", y).text(function(d) {
-		return "unione";
-	});
-	button.on("click", function(d, i) {
-		//console.log(JSON.stringify(d.elements));
-
-		var set = svg.selectAll("g.near");
-		var b = set.data()[0];
-
-		d.elements.append(b.elements);
-		//console.log(JSON.stringify(d.elements));
-		//b.elements = [];
-		set.remove();
-		var cloud = d3.select("#cloud" + d.id);
-		cloud.select("text.list").remove();
-		cloud.append("text").attr("class", "list").attr("x", 100).attr("y", 50).attr("transform","translate(204,245)").text(getList);
-		//console.log(text[0]);
-		//text.text(getList(d));
-		
-	});
-
-	y += 50;
-	button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
-	button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 150).attr("height", 50);
-	button.append("text").attr("x", x).attr("y", y).text(function(d) {
-		return "intersezione" + d.id;
-	});
-
-	// add event listener on drag event
-	var dragBehavior = d3.behavior.drag().on("drag", drag);
-	//.on("dragend", dragend);
-
-	function dragend2() {
-		console.log(d3.event.sourceEvent.clientX);
-		popup.style("visibility", "visible").style("top", (d3.event.sourceEvent.clientY - 10) + "px").style("left", (d3.event.sourceEvent.clientX + 10) + "px");
-	}
-
-
-	g.call(dragBehavior);
-
-	function dragend(d, index) {
-		d3.select("#cloud" + d.id + " .button").style("visibility", "visible");
-	}
+	draw();
 
 	function drag(d, index) {
 		d.x += d3.event.dx;
@@ -106,6 +99,7 @@ function initClouds(idDOM) {
 		this.parentNode.appendChild(this);
 		// test se sono vicini
 
+		var showMenu = false;
 		for (var i = 0; i < g.data().length; i++) {
 			var dis = distance(d, g.data()[i]);
 			var node = svg.select("#cloud" + i);
@@ -114,16 +108,16 @@ function initClouds(idDOM) {
 
 				if (dis < 50 * scale) {
 					node.attr("class", "cloud near");
-					d3.select(this).selectAll("g.button").style("visibility", "visible");
-				} else {
+					showMenu = true;
+				} else
 					node.attr("class", "cloud");
-					d3.select(this).selectAll("g.button").style("visibility", "hidden");
-				}
-			} else {
+			} else
 				node.attr("class", "cloud active");
-				//node.selectAll("g.button").style("visibility","hidden");
-			}
 		}
+		if (showMenu)
+			d3.select(this).selectAll("g.button").style("visibility", "visible");
+		else
+			d3.select(this).selectAll("g.button").style("visibility", "hidden");
 	}
 
 }
