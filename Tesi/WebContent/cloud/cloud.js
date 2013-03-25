@@ -127,13 +127,8 @@ function initClouds(idDOM) {
 			d.elements.difference(b.elements);
 			console.log(d.elements);
 			// remove overlying set from data
-			//clouds.remove(d.id);
 			clouds.remove(b.id);
 			
-			//var d2 = clone(d);
-			//d2.elements = intersect;
-			//clouds.push(d2);
-
 			// remove svg and redraw
 			divSVG.select("svg").remove();
 			draw();
