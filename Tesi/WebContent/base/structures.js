@@ -130,7 +130,7 @@ Array.prototype.union = function(array, distructive) {
 
 Array.prototype.intersect = function(array) {
 
-	var out = new Array();
+	var out = [];
 	for (var i = 0; i < array.length; i++)
 		if (this.contains(array[i]))
 			out.push(array[i]);

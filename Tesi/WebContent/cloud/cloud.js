@@ -61,16 +61,15 @@ function initClouds(idDOM) {
 		button.on("click", function(d, i) {
 
 			// select the cloud under the selected cloud
-			var sets = svg.select("g." + STATE.UNDER);
-			for (var i = 0; i < sets.length; i++) {
-				var b = sets.data()[i];
+			var set = svg.select("g." + STATE.UNDER);
 
-				// add elements of overlying set to active set
-				d.elements.union(b.elements);
+			var b = set.data()[0];
 
-				// remove overlying set from data
-				clouds.remove(b.id);
-			}
+			// add elements of overlying set to active set
+			d.elements.union(b.elements);
+
+			// remove overlying set from data
+			clouds.remove(b.id);
 
 			// remove svg and redraw
 			divSVG.select("svg").remove();
@@ -84,6 +83,29 @@ function initClouds(idDOM) {
 		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 150).attr("height", 50);
 		button.append("text").attr("x", x).attr("y", y).text(function(d) {
 			return "intersezione" + d.id;
+		});
+		button.on("click", function(d, i) {
+
+			// select the cloud under the selected cloud
+			var set = svg.select("g." + STATE.UNDER);
+
+			var b = set.data()[0];
+
+			// add elements of overlying set to active set
+			var intersect = d.elements.intersect(b.elements);
+			console.log(intersect);
+			// remove overlying set from data
+			clouds.remove(d.id);
+			clouds.remove(b.id);
+			
+			var d2 = clone(d);
+			d2.elements = intersect;
+			clouds.push(d2);
+
+			// remove svg and redraw
+			divSVG.select("svg").remove();
+			draw();
+
 		});
 
 		// add event listener on drag event
@@ -126,8 +148,6 @@ function initClouds(idDOM) {
 			}
 
 		}
-
-		//d3.select(this).attr("class", "cloud " + d.state);
 
 		if (showMenu)
 			d3.select(this).selectAll("g.button").style("visibility", "visible");
