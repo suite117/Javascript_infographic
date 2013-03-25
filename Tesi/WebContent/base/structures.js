@@ -119,8 +119,8 @@ Array.prototype.union = function(array, distructive) {
 	var out;
 	if (distructive)
 		out = this;
-		else
-			out = [];
+	else
+		out = [];
 
 	for (var i = 0; i < array.length; i++)
 		if (!(this.contains(array[i])))
@@ -138,6 +138,13 @@ Array.prototype.intersect = function(array) {
 	return out;
 };
 
-function toString(array) {
-	return JSON.stringify(array);
+Array.prototype.remove = function(id) {
+	for (var i in this) {
+		if (this[i].id == id)
+			this.splice(i, 1);
+	}
+}
+
+Array.prototype.toString = function() {
+	return JSON.stringify(this);
 };
