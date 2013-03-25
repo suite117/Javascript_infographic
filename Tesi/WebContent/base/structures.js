@@ -58,7 +58,7 @@ Array.prototype.map = function(mapping) {
 	return outArr;
 };
 
-// verifica se sono uguali
+// verifica se due array sono uguali
 Array.prototype.compareTo = function(testArr) {
 	if (this.length != testArr.length)
 		return false;
@@ -89,10 +89,12 @@ Array.prototype.distance = function(testArr) {
 
 };
 
+//concatena due array
 Array.prototype.append = function(array) {
 	this.push.apply(this, array)
 };
 
+//Metodo che permette di verificare se un oggetto è contenuto in un array
 Array.prototype.contains = function(obj) {
 	var i = this.length;
 	while (i--) {
@@ -103,6 +105,7 @@ Array.prototype.contains = function(obj) {
 	return false;
 };
 
+//Permette di clonare gli oggetti
 function clone(obj) {
 	if (null == obj || "object" != typeof obj)
 		return obj;
@@ -114,8 +117,8 @@ function clone(obj) {
 	return copy;
 };
 
+//Unione tra due array
 Array.prototype.union = function(array, distructive) {
-
 	var out;
 	if (distructive)
 		out = this;
@@ -128,6 +131,7 @@ Array.prototype.union = function(array, distructive) {
 
 };
 
+//metodo che implementa l' intersezione tra due insiemi(array) di elementi
 Array.prototype.intersect = function(array) {
 
 	var out = [];
@@ -138,6 +142,7 @@ Array.prototype.intersect = function(array) {
 	return out;
 };
 
+//metodo che implementa la differenza tra insiemi
 Array.prototype.difference = function(array) {
 	for (var i = 0; i < array.length; i++) {
 		if (this.contains(array[i])){
@@ -147,6 +152,7 @@ Array.prototype.difference = function(array) {
 	};
 }
 
+//Rimuove un oggetto da un array di oggetti che hanno il campo id
 Array.prototype.remove = function(id) {
 	for (var i in this) {
 		if (this[i].id == id)
