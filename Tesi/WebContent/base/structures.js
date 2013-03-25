@@ -138,6 +138,15 @@ Array.prototype.intersect = function(array) {
 	return out;
 };
 
+Array.prototype.difference = function(array) {
+	for (var i = 0; i < array.length; i++) {
+		if (this.contains(array[i])){
+				this.splice(this.indexOf(array[i]), 1);
+		}
+			
+	};
+}
+
 Array.prototype.remove = function(id) {
 	for (var i in this) {
 		if (this[i].id == id)

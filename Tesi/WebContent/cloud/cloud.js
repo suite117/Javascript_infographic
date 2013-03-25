@@ -54,7 +54,7 @@ function initClouds(idDOM) {
 
 		// add union button
 		var button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
-		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 150).attr("height", 50);
+		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 200).attr("height", 50);
 		button.append("text").attr("x", x).attr("y", y).text(function(d) {
 			return "unione";
 		});
@@ -80,7 +80,7 @@ function initClouds(idDOM) {
 		// add intersection button
 		y += 50;
 		button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
-		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 150).attr("height", 50);
+		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 200).attr("height", 50);
 		button.append("text").attr("x", x).attr("y", y).text(function(d) {
 			return "intersezione" + d.id;
 		});
@@ -101,6 +101,38 @@ function initClouds(idDOM) {
 			var d2 = clone(d);
 			d2.elements = intersect;
 			clouds.push(d2);
+
+			// remove svg and redraw
+			divSVG.select("svg").remove();
+			draw();
+
+		});
+		
+		
+		// add difference button
+		y += 50;
+		button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
+		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 200).attr("height", 50);
+		button.append("text").attr("x", x).attr("y", y).text(function(d) {
+			return "differenza" + d.id;
+		});
+		button.on("click", function(d, i) {
+
+			// select the cloud under the selected cloud
+			var set = svg.select("g." + STATE.UNDER);
+
+			var b = set.data()[0];
+
+			// add elements of overlying set to active set
+			d.elements.difference(b.elements);
+			console.log(d.elements);
+			// remove overlying set from data
+			//clouds.remove(d.id);
+			clouds.remove(b.id);
+			
+			//var d2 = clone(d);
+			//d2.elements = intersect;
+			//clouds.push(d2);
 
 			// remove svg and redraw
 			divSVG.select("svg").remove();
