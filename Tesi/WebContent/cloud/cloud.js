@@ -22,12 +22,15 @@ function initClouds(idDOM) {
 	for (var i = 0; i < 3; i++)
 		clouds[i] = {
 			id : i,
-			x : 200 * i,
-			y : 0,
-			scale : 0.5,
 			elements : [i + 1, i * 2 + 2, i * 3 + 3],
-			state : STATE.NONE
 		};
+
+	for (var i = 0; i < 3; i++) {
+		clouds[i].x = 200 * i;
+		clouds[i].y = 0;
+		clouds[i].scale = 0.5;
+		clouds[i].state = STATE.NONE;
+	}
 
 	function draw() {
 
@@ -82,7 +85,7 @@ function initClouds(idDOM) {
 		button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
 		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 200).attr("height", 50);
 		button.append("text").attr("x", x).attr("y", y).text(function(d) {
-			return "intersezione" + d.id;
+			return "intersezione";
 		});
 		button.on("click", function(d, i) {
 
@@ -97,7 +100,7 @@ function initClouds(idDOM) {
 			// remove overlying set from data
 			clouds.remove(d.id);
 			clouds.remove(b.id);
-			
+
 			var d2 = clone(d);
 			d2.elements = intersect;
 			clouds.push(d2);
@@ -107,14 +110,13 @@ function initClouds(idDOM) {
 			draw();
 
 		});
-		
-		
+
 		// add difference button
 		y += 50;
 		button = g.append("g").attr("class", "button").attr("transform", "translate(0,180)");
 		button.append("rect").attr("x", x - 10).attr("y", y - 37).attr("width", 200).attr("height", 50);
 		button.append("text").attr("x", x).attr("y", y).text(function(d) {
-			return "differenza" + d.id;
+			return "differenza";
 		});
 		button.on("click", function(d, i) {
 
@@ -128,7 +130,7 @@ function initClouds(idDOM) {
 			console.log(d.elements);
 			// remove overlying set from data
 			clouds.remove(b.id);
-			
+
 			// remove svg and redraw
 			divSVG.select("svg").remove();
 			draw();
@@ -185,10 +187,11 @@ function initClouds(idDOM) {
 
 }
 
-function zoom() {
+function zoom(d) {
+	console.log("zoom d " + d);
 	scale = d3.event.scale;
-	svg.selectAll("g path").style("stroke-width", 10 / scale);
-	svg.attr("transform", "translate(" + d3.event.translate + ")" + "scale(" + d3.event.scale + ")").style("stroke-width", 1 / d3.event.scale);
+	var xy = d3.event.translate;
+	svg.attr("transform", "translate(" + xy[0] + "," + xy[1] + ")" + ", scale(" + d3.event.scale + ")").style("stroke-width", 1 / d3.event.scale);
 }
 
 function transform(d) {
