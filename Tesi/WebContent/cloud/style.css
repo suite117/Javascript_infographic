@@ -1,5 +1,23 @@
+.view-container {
+	width: 400px;
+	
+}
+.view-container .view-header {
+	height: 100px;
+	border: 2px solid red;
+}
+.view-container .view-body {
+	height: 800px;
+	border: 2px solid red;
+}
+
 div.drop {
 	display: inline;
+}
+
+div.drop svg {
+    height: 100px;
+    width: 120px;
 }
 
 svg {

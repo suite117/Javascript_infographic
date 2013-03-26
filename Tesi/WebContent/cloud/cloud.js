@@ -162,8 +162,9 @@ function initClouds(idDOM) {
 			d3.select(this).call(d3.behavior.drag().on("drag", null));
 			console.log(this);
 			//confirm('Drag this cloud?');
-			d.x = -20;
-			d.y = -76;
+
+			d.x = -51;
+			d.y = -45;
 			d3.select(this).attr("transform", transform);
 
 			var svgCloud = d3.select("#drop div#drop" + d.id);
@@ -172,7 +173,7 @@ function initClouds(idDOM) {
 				svgCloud = d3.select("#drop").append("div").attr("class", "drop").attr("id", "drop" + d.id).append("svg");
 			}
 
-			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(-20,-70), scale(0.5)");
+			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(" + d.x + "," + d.y + "), scale(0.3)");
 			var list = [];
 			list.push(d);
 
@@ -187,6 +188,9 @@ function initClouds(idDOM) {
 
 			clouds.remove(d.id);
 			d3.select(this).remove();
+
+			createDroppableCloud();
+
 			return;
 		}
 
@@ -269,4 +273,25 @@ function zoom2(d) {
 	svg.transition().duration(1000).attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + scale + ")translate(" + -x + "," + -y + ")");
 	svg.style("stroke-width", 1.5 / scale + "px");
 	//svg.attr("transform", "translate(" + r * Math.cos(theta) + "," + r * Math.sin(theta) + ")" + ", scale(" + scale + ")").style("stroke-width", 1 / scale);
+}
+
+function createDroppableCloud() {
+	$(".drop").draggable({
+		// non ritorna al proprio posto
+		revert : false
+	});
+	$(".view-container .view-header").droppable({
+		tolerance : 'touch',
+		over : function() {
+			$(this).removeClass('out').addClass('over');
+		},
+		out : function() {
+			$(this).removeClass('over').addClass('out');
+		},
+		drop : function() {
+			var answer = confirm('Permantly delete this item?');
+			// this = header sottostante
+			$(this).removeClass('over').addClass('out');
+		}
+	});
 }
