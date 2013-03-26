@@ -167,10 +167,10 @@ function initClouds(idDOM) {
 			d.y = -45;
 			d3.select(this).attr("transform", transform);
 
-			var svgCloud = d3.select("#drop div#drop" + d.id);
+			var svgCloud = d3.select("#drop-container div#drop" + d.id);
 			//console.log(svgCloud[0][0]);
 			if (svgCloud[0][0] == null) {
-				svgCloud = d3.select("#drop").append("div").attr("class", "drop").attr("id", "drop" + d.id).append("svg");
+				svgCloud = d3.select("#drop-container").append("div").attr("class", "drop").attr("id", "drop" + d.id).append("svg");
 			}
 
 			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(" + d.x + "," + d.y + "), scale(0.3)");
@@ -278,7 +278,8 @@ function zoom2(d) {
 function createDroppableCloud() {
 	$(".drop").draggable({
 		// non ritorna al proprio posto
-		revert : false
+		revert : false,
+		cursor : "move"
 	});
 	$(".view-container .view-header").droppable({
 		tolerance : 'touch',

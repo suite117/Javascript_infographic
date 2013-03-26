@@ -11,7 +11,7 @@
 	border: 2px solid red;
 }
 
-div.drop {
+drop-container {
 	display: inline;
 }
 
