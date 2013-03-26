@@ -9,7 +9,7 @@ var STATE = {
 	NONE : "",
 	ACTIVE : "active",
 	UNDER : "under",
-	DROP : "drop"
+	draggable : "draggable"
 };
 
 //initialize the clouds, idDOM is the target DOM element
@@ -157,8 +157,8 @@ function initClouds(idDOM) {
 
 		//$("#debug").text(d.x + " " + d.y);
 
-		if (d.state != STATE.DROP && (d.y > 130)) {
-			d.state = STATE.DROP;
+		if (d.state != STATE.draggable && (d.y > 130)) {
+			d.state = STATE.draggable;
 			d3.select(this).call(d3.behavior.drag().on("drag", null));
 			console.log(this);
 			//confirm('Drag this cloud?');
@@ -167,10 +167,10 @@ function initClouds(idDOM) {
 			d.y = -45;
 			d3.select(this).attr("transform", transform);
 
-			var svgCloud = d3.select("#drop-container div#drop" + d.id);
+			var svgCloud = d3.select("#draggable-container div#draggable" + d.id);
 			//console.log(svgCloud[0][0]);
 			if (svgCloud[0][0] == null) {
-				svgCloud = d3.select("#drop-container").append("div").attr("class", "drop").attr("id", "drop" + d.id).append("svg");
+				svgCloud = d3.select("#draggable-container").append("div").attr("class", "draggable").attr("id", "draggable" + d.id).append("svg");
 			}
 
 			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(" + d.x + "," + d.y + "), scale(0.3)");
@@ -189,7 +189,7 @@ function initClouds(idDOM) {
 			clouds.remove(d.id);
 			d3.select(this).remove();
 
-			createDroppableCloud();
+			createDraggableCloud();
 
 			return;
 		}
@@ -275,8 +275,10 @@ function zoom2(d) {
 	//svg.attr("transform", "translate(" + r * Math.cos(theta) + "," + r * Math.sin(theta) + ")" + ", scale(" + scale + ")").style("stroke-width", 1 / scale);
 }
 
-function createDroppableCloud() {
-	$(".drop").draggable({
+function createDraggableCloud() {
+	
+	
+	$(".draggable").draggable({
 		// non ritorna al proprio posto
 		revert : false,
 		cursor : "move"
@@ -292,6 +294,8 @@ function createDroppableCloud() {
 		drop : function() {
 			var answer = confirm('Permantly delete this item?');
 			// this = header sottostante
+			console.log(this);
+			console.log($(this));
 			$(this).removeClass('over').addClass('out');
 		}
 	});

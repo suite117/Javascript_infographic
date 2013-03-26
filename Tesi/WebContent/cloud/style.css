@@ -6,16 +6,20 @@
 	height: 100px;
 	border: 2px solid red;
 }
+div.view-container div.over {
+	background-color: orange;
+}
+
 .view-container .view-body {
 	height: 800px;
 	border: 2px solid red;
 }
 
-drop-container {
+draggable-container {
 	display: inline;
 }
 
-div.drop svg {
+div.draggable svg {
     height: 100px;
     width: 120px;
 }
