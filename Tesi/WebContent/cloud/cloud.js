@@ -8,6 +8,8 @@ var STATE = {
 	ACTIVE : "active",
 	UNDER : "under"
 };
+
+//initialize the clouds, idDOM is the target DOM element
 function initClouds(idDOM) {
 
 	divSVG = d3.select(idDOM);
@@ -177,6 +179,7 @@ function initClouds(idDOM) {
 			}
 
 		}
+		
 
 		if (showMenu)
 			d3.select(this).selectAll("g.button").style("visibility", "visible");
@@ -198,6 +201,7 @@ function transform(d) {
 	return "translate(" + d.x + "," + d.y + "), scale(" + d.scale + ")";
 }
 
+//returns the distance between two clouds
 function distance(d1, d2) {
 	return Math.sqrt((d1.x - d2.x) * (d1.x - d2.x) + (d1.y - d2.y) * (d1.y - d2.y));
 }
