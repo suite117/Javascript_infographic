@@ -1,7 +1,19 @@
+function getCentroid(selection) {
+	// get the DOM element from a D3 selection
+	// you could also use "this" inside .each()
+	var element = selection.node(),
+	// use the native SVG interface to get the bounding box
+	bbox = element.getBBox();
+	// return the center of the bounding box
+	console.log("bbox: " + bbox);
+	return [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
+}
+
 var svg;
 var scale = 1;
 var divSVG;
 var g;
+var width = 960, height = 500;
 
 var STATE = {
 	NONE : "",
@@ -11,9 +23,6 @@ var STATE = {
 function initClouds(idDOM) {
 
 	divSVG = d3.select(idDOM);
-
-	var width = "100%";
-	var height = 600;
 
 	$("#debug").text("a");
 	$("#debug").append("");
@@ -25,7 +34,7 @@ function initClouds(idDOM) {
 			elements : [i + 1, i * 2 + 2, i * 3 + 3],
 		};
 
-	for (var i = 0; i < 3; i++) {
+	for (var i = 0; i < clouds.length; i++) {
 		clouds[i].x = 200 * i;
 		clouds[i].y = 0;
 		clouds[i].scale = 0.5;
@@ -34,9 +43,12 @@ function initClouds(idDOM) {
 
 	function draw() {
 
-		var zoomBehavior = d3.behavior.zoom().on("zoom", zoom);
-		svg = divSVG.append("svg").attr("width", width).attr("height", height).call(zoomBehavior).append("g");
+		svg = divSVG.append("svg").attr("width", width).attr("height", height).append("g");
 
+		//svg.on("click", zoom);
+		var zoomBehavior = d3.behavior.zoom().on("zoom", zoom);
+		svg.call(zoomBehavior);
+		
 		// prepara la variabile g per l'aggiunta a cascata di attributi
 		g = svg.selectAll("g").data(clouds).enter().append("g");
 
@@ -187,11 +199,32 @@ function initClouds(idDOM) {
 
 }
 
+function getCentroid(selection) {
+	// get the DOM element from a D3 selection
+	// you could also use "this" inside .each()
+	var element = selection.node(),
+	// use the native SVG interface to get the bounding box
+	bbox = element.getBBox();
+	// return the center of the bounding box
+	console.log("bbox: " + bbox);
+	return [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
+}
+
+
 function zoom(d) {
-	console.log("zoom d " + d);
-	scale = d3.event.scale;
-	var xy = d3.event.translate;
-	svg.attr("transform", "translate(" + xy[0] + "," + xy[1] + ")" + ", scale(" + d3.event.scale + ")").style("stroke-width", 1 / d3.event.scale);
+
+	var centroid = getCentroid(d3.select(this));
+
+	x = centroid[0];
+	y = centroid[1];
+	scale = 3.5;
+
+	console.log(centroid);
+	console.log(scale);
+
+	svg.transition().duration(1000).attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + scale + ")translate(" + -x + "," + -y + ")");
+	svg.style("stroke-width", 1.5 / scale + "px");
+	//svg.attr("transform", "translate(" + r * Math.cos(theta) + "," + r * Math.sin(theta) + ")" + ", scale(" + scale + ")").style("stroke-width", 1 / scale);
 }
 
 function transform(d) {
