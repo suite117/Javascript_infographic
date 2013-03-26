@@ -1,33 +1,26 @@
-function getCentroid(selection) {
-	// get the DOM element from a D3 selection
-	// you could also use "this" inside .each()
-	var element = selection.node(),
-	// use the native SVG interface to get the bounding box
-	bbox = element.getBBox();
-	// return the center of the bounding box
-	console.log("bbox: " + bbox);
-	return [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
-}
-
 var svg;
 var scale = 1;
 var divSVG;
+var wrapper;
 var g;
-var width = 960, height = 500;
+var idDOM;
 
 var STATE = {
 	NONE : "",
 	ACTIVE : "active",
-	UNDER : "under"
+	UNDER : "under",
+	DROP : "drop"
 };
 
 //initialize the clouds, idDOM is the target DOM element
 function initClouds(idDOM) {
 
 	divSVG = d3.select(idDOM);
+	idDOM = idDOM;
+	var width = "100%";
+	var height = 300;
 
 	$("#debug").text("a");
-	$("#debug").append("");
 
 	var clouds = new Array();
 	for (var i = 0; i < 3; i++)
@@ -36,7 +29,7 @@ function initClouds(idDOM) {
 			elements : [i + 1, i * 2 + 2, i * 3 + 3],
 		};
 
-	for (var i = 0; i < clouds.length; i++) {
+	for (var i = 0; i < 3; i++) {
 		clouds[i].x = 200 * i;
 		clouds[i].y = 0;
 		clouds[i].scale = 0.5;
@@ -45,14 +38,13 @@ function initClouds(idDOM) {
 
 	function draw() {
 
-		svg = divSVG.append("svg").attr("width", width).attr("height", height).append("g");
-
-		//svg.on("click", zoom);
 		var zoomBehavior = d3.behavior.zoom().on("zoom", zoom);
-		svg.call(zoomBehavior);
-		
+		svg = divSVG.append("svg").attr("width", width).attr("height", height).call(zoomBehavior);
+
+		wrapper = svg.append("g");
+
 		// prepara la variabile g per l'aggiunta a cascata di attributi
-		g = svg.selectAll("g").data(clouds).enter().append("g");
+		g = wrapper.selectAll("g").data(clouds).enter().append("g");
 
 		g.attr("class", "cloud").attr("id", function(d) {
 			return "cloud" + d.id;
@@ -110,7 +102,7 @@ function initClouds(idDOM) {
 
 			// add elements of overlying set to active set
 			var intersect = d.elements.intersect(b.elements);
-			console.log(intersect);
+
 			// remove overlying set from data
 			clouds.remove(d.id);
 			clouds.remove(b.id);
@@ -141,12 +133,12 @@ function initClouds(idDOM) {
 
 			// add elements of overlying set to active set
 			d.elements.difference(b.elements);
-			console.log(d.elements);
+
 			// remove overlying set from data
 			clouds.remove(b.id);
 
 			// remove svg and redraw
-			divSVG.select("svg").remove();
+			svg.remove();
 			draw();
 
 		});
@@ -162,6 +154,43 @@ function initClouds(idDOM) {
 	function drag(d, index) {
 		d.x += d3.event.dx;
 		d.y += d3.event.dy;
+
+		//$("#debug").text(d.x + " " + d.y);
+
+		if (d.state != STATE.DROP && (d.y > 130)) {
+			d.state = STATE.DROP;
+			d3.select(this).call(d3.behavior.drag().on("drag", null));
+			console.log(this);
+			//confirm('Drag this cloud?');
+			d.x = -20;
+			d.y = -76;
+			d3.select(this).attr("transform", transform);
+
+			var svgCloud = d3.select("#drop").select("svg#drop" + d.id);
+			//console.log(svgCloud[0][0]);
+			if (svgCloud[0][0] == null) {
+				svgCloud = d3.select("#drop").append("svg").attr("id", "drop" + d.id);
+				console.log(svgCloud[0][0]);
+			}
+
+			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(-20,-70), scale(0.5)");
+			var list = [];
+			list.push(d);
+
+			var n = g.selectAll("path").data(list).enter();
+
+			var pathContent = d3.select(this).select("path")[0][0].getAttribute("d");
+			n.append("path").attr("d", pathContent);
+
+			var textContent = d3.select(this).select("text")[0][0].textContent;
+			console.log(textContent);
+			n.append("text").attr("x", 100).attr("y", 50).attr("transform", "translate(193,255)").text(textContent);
+
+			clouds.remove(d.id);
+			d3.select(this).remove();
+			return;
+		}
+
 		d3.select(this).attr("transform", transform);
 
 		// fix z-index of selected element
@@ -191,7 +220,6 @@ function initClouds(idDOM) {
 			}
 
 		}
-		
 
 		if (showMenu)
 			d3.select(this).selectAll("g.button").style("visibility", "visible");
@@ -200,6 +228,21 @@ function initClouds(idDOM) {
 
 	}
 
+}
+
+function zoom() {
+	scale = d3.event.scale;
+	var xy = d3.event.translate;
+	wrapper.attr("transform", "translate(" + xy[0] + "," + xy[1] + ")" + ", scale(" + d3.event.scale + ")").style("stroke-width", 1 / d3.event.scale);
+}
+
+function transform(d) {
+	return "translate(" + d.x + "," + d.y + "), scale(" + d.scale + ")";
+}
+
+//returns the distance between two clouds
+function distance(d1, d2) {
+	return Math.sqrt((d1.x - d2.x) * (d1.x - d2.x) + (d1.y - d2.y) * (d1.y - d2.y));
 }
 
 function getCentroid(selection) {
@@ -213,8 +256,7 @@ function getCentroid(selection) {
 	return [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
 }
 
-
-function zoom(d) {
+function zoom2(d) {
 
 	var centroid = getCentroid(d3.select(this));
 
@@ -229,13 +271,3 @@ function zoom(d) {
 	svg.style("stroke-width", 1.5 / scale + "px");
 	//svg.attr("transform", "translate(" + r * Math.cos(theta) + "," + r * Math.sin(theta) + ")" + ", scale(" + scale + ")").style("stroke-width", 1 / scale);
 }
-
-function transform(d) {
-	return "translate(" + d.x + "," + d.y + "), scale(" + d.scale + ")";
-}
-
-//returns the distance between two clouds
-function distance(d1, d2) {
-	return Math.sqrt((d1.x - d2.x) * (d1.x - d2.x) + (d1.y - d2.y) * (d1.y - d2.y));
-}
-

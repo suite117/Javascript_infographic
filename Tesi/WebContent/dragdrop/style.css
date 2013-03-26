@@ -1,0 +1,40 @@
+body {
+        font: bold 12px arial;
+}
+
+span {
+        float: left;
+        margin-top: 17px;
+        text-align: center;
+        width: 100%;
+}
+
+#trash, #items, .item {
+        height: 50px;
+        width: 50px;
+}
+
+#trash {
+        color: #354e62;
+}
+
+#items {
+       margin-top: 10px;
+       width: 100%;
+}
+
+.item {
+        background: #cdcdcd;
+        color: #3b3b3b;
+        float: left;
+        margin-right: 10px;
+}
+
+.over {
+    background-color: #cedae3;
+}
+
+.out {
+    background-color: #a6bcce;
+    
+}
