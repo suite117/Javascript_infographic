@@ -15,7 +15,7 @@ div.view-container div.over {
 	border: 2px solid red;
 }
 
-draggable-container {
+.draggable-container {
 	display: inline;
 }
 

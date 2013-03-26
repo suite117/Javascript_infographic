@@ -23,7 +23,6 @@ function initClouds(idDOM) {
 
 	$("#debug").text("a");
 
-	
 	for (var i = 0; i < 3; i++)
 		clouds[i] = {
 			id : i,
@@ -79,7 +78,7 @@ function initClouds(idDOM) {
 			d.elements.union(b.elements);
 
 			// remove overlying set from data
-			clouds.remove(b.id);
+			//clouds.remove(b.id);
 
 			// remove svg and redraw
 			divSVG.select("svg").remove();
@@ -161,21 +160,21 @@ function initClouds(idDOM) {
 		if (d.state != STATE.DRAGGABLE && (d.y > 130)) {
 			d.state = STATE.DRAGGABLE;
 			d3.select(this).call(d3.behavior.drag().on("drag", null));
-			console.log(this);
+			//console.log(this);
 			//confirm('Drag this cloud?');
 
 			d.x = -51;
 			d.y = -45;
 			d3.select(this).attr("transform", transform);
 
-			var svgCloud = d3.select("#draggable-container div#draggable" + d.id);
+			var svgCloud = d3.select("#draggable-container div#draggable-" + d.id);
 			//console.log(svgCloud[0][0]);
 			if (svgCloud[0][0] == null) {
-				svgCloud = d3.select("#draggable-container").append("div").attr("class", "draggable").attr("id", "draggable" + d.id).append("svg");
+				svgCloud = d3.select("#draggable-container").append("div").attr("class", "draggable").attr("id", "draggable-" + d.id).append("svg");
 			}
 
 			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(" + d.x + "," + d.y + "), scale(0.3)");
-			
+
 			// create the new cloud
 			var list = [];
 			list.push(d);
@@ -185,7 +184,7 @@ function initClouds(idDOM) {
 			n.append("path").attr("d", pathContent);
 
 			var textContent = d3.select(this).select("text")[0][0].textContent;
-			console.log(textContent);
+			//console.log(textContent);
 			n.append("text").attr("x", 100).attr("y", 50).attr("transform", "translate(193,255)").text(textContent);
 
 			clouds.remove(d.id);
@@ -287,12 +286,12 @@ function createDraggableCloud() {
 		appendTo : ".view-container .view-header",
 		stop : function(event, ui) {
 			// drag stop
-			
+
 			dragId = this;
 			//console.log(dragId);
 		}
 	});
-	
+
 	// select the view
 	$(".view-container .view-header").droppable({
 		tolerance : 'touch',
@@ -305,10 +304,15 @@ function createDraggableCloud() {
 		drop : function() {
 			//var answer = confirm('Permantly delete this item?');
 			// this = header sottostante
-			
-			
-			$(this).append(dragId);
-			
+
+			if ($(dragId) && !jQuery.isEmptyObject(dragId)) {
+				//$(this).append(dragId);
+				console.log($(dragId));
+				var id = $(dragId).attr("id").split("-")[1];
+				
+				console.log(clouds);
+				$(this).text(clouds.find(id));
+			}
 			$(this).removeClass('over').addClass('out');
 		}
 	});

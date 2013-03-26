@@ -105,6 +105,27 @@ Array.prototype.contains = function(obj) {
 	return false;
 };
 
+
+Array.prototype.contains = function(obj) {
+	var i = this.length;
+	while (i--) {
+		if (this[i] == obj) {
+			return true;
+		}
+	}
+	return false;
+};
+
+Array.prototype.find = function(obj) {
+	var i = this.length;
+	while (i--) {
+		if (this[i].id == obj.id) {
+			return this[i];
+		}
+	}
+	return null;
+};
+
 //Permette di clonare gli oggetti
 function clone(obj) {
     // Handle the 3 simple types, and null or undefined
@@ -170,6 +191,13 @@ Array.prototype.difference = function(array) {
 		}
 			
 	};
+}
+
+
+Array.prototype.add = function(object) {
+	if (!this.contains(object))
+		this.push(object);
+		
 }
 
 //Rimuove un oggetto da un array di oggetti che hanno il campo id
