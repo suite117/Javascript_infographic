@@ -166,11 +166,10 @@ function initClouds(idDOM) {
 			d.y = -76;
 			d3.select(this).attr("transform", transform);
 
-			var svgCloud = d3.select("#drop").select("svg#drop" + d.id);
+			var svgCloud = d3.select("#drop div#drop" + d.id);
 			//console.log(svgCloud[0][0]);
 			if (svgCloud[0][0] == null) {
-				svgCloud = d3.select("#drop").append("svg").attr("id", "drop" + d.id);
-				console.log(svgCloud[0][0]);
+				svgCloud = d3.select("#drop").append("div").attr("class", "drop").attr("id", "drop" + d.id).append("svg");
 			}
 
 			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(-20,-70), scale(0.5)");

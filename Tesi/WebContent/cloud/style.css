@@ -1,3 +1,7 @@
+div.drop {
+	display: inline;
+}
+
 svg {
 	border: 2px solid red;
 }
