@@ -4,12 +4,13 @@ var divSVG;
 var wrapper;
 var g;
 var idDOM;
+var clouds = new Array();
 
 var STATE = {
 	NONE : "",
 	ACTIVE : "active",
 	UNDER : "under",
-	draggable : "draggable"
+	DRAGGABLE : "draggable"
 };
 
 //initialize the clouds, idDOM is the target DOM element
@@ -22,7 +23,7 @@ function initClouds(idDOM) {
 
 	$("#debug").text("a");
 
-	var clouds = new Array();
+	
 	for (var i = 0; i < 3; i++)
 		clouds[i] = {
 			id : i,
@@ -157,8 +158,8 @@ function initClouds(idDOM) {
 
 		//$("#debug").text(d.x + " " + d.y);
 
-		if (d.state != STATE.draggable && (d.y > 130)) {
-			d.state = STATE.draggable;
+		if (d.state != STATE.DRAGGABLE && (d.y > 130)) {
+			d.state = STATE.DRAGGABLE;
 			d3.select(this).call(d3.behavior.drag().on("drag", null));
 			console.log(this);
 			//confirm('Drag this cloud?');
@@ -174,9 +175,10 @@ function initClouds(idDOM) {
 			}
 
 			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(" + d.x + "," + d.y + "), scale(0.3)");
+			
+			// create the new cloud
 			var list = [];
 			list.push(d);
-
 			var n = g.selectAll("path").data(list).enter();
 
 			var pathContent = d3.select(this).select("path")[0][0].getAttribute("d");
@@ -189,7 +191,7 @@ function initClouds(idDOM) {
 			clouds.remove(d.id);
 			d3.select(this).remove();
 
-			createDraggableCloud();
+			createDraggableCloud(d);
 
 			return;
 		}
@@ -276,13 +278,22 @@ function zoom2(d) {
 }
 
 function createDraggableCloud() {
-	
-	
+
+	var dragId;
 	$(".draggable").draggable({
 		// non ritorna al proprio posto
 		revert : false,
-		cursor : "move"
+		cursor : "move",
+		appendTo : ".view-container .view-header",
+		stop : function(event, ui) {
+			// drag stop
+			
+			dragId = this;
+			//console.log(dragId);
+		}
 	});
+	
+	// select the view
 	$(".view-container .view-header").droppable({
 		tolerance : 'touch',
 		over : function() {
@@ -292,10 +303,12 @@ function createDraggableCloud() {
 			$(this).removeClass('over').addClass('out');
 		},
 		drop : function() {
-			var answer = confirm('Permantly delete this item?');
+			//var answer = confirm('Permantly delete this item?');
 			// this = header sottostante
-			console.log(this);
-			console.log($(this));
+			
+			
+			$(this).append(dragId);
+			
 			$(this).removeClass('over').addClass('out');
 		}
 	});
