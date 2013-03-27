@@ -163,34 +163,29 @@ function initClouds(idDOM) {
 			//console.log(this);
 			//confirm('Drag this cloud?');
 
-			d.x = -51;
-			d.y = -45;
 			d3.select(this).attr("transform", transform);
 
-			var svgCloud = d3.select("#draggable-container div#draggable-" + d.id);
-			//console.log(svgCloud[0][0]);
+			var svgCloud = d3.select("#draggable-container draggable-" + d.id + " svg");
 			if (svgCloud[0][0] == null) {
-				svgCloud = d3.select("#draggable-container").append("div").attr("class", "draggable").attr("id", "draggable-" + d.id).append("svg");
+
+				$("div#draggable-container").append('<div id="draggable-' + d.id + '" class="draggable"></div>');
+				var divCloud = $("div#draggable-" + d.id);
+				divCloud.data("d", d);
+				var svgCloud = d3.select(divCloud[0]).append("svg");
+				console.log();
 			}
 
-			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(" + d.x + "," + d.y + "), scale(0.3)");
-
-			// create the new cloud
-			var list = [];
-			list.push(d);
-			var n = g.selectAll("path").data(list).enter();
+			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(-51,-45), scale(0.3)");
 
 			var pathContent = d3.select(this).select("path")[0][0].getAttribute("d");
-			n.append("path").attr("d", pathContent);
+			g.append("path").attr("d", pathContent);
 
 			var textContent = d3.select(this).select("text")[0][0].textContent;
-			//console.log(textContent);
-			n.append("text").attr("x", 100).attr("y", 50).attr("transform", "translate(193,255)").text(textContent);
+			g.append("text").attr("x", 100).attr("y", 50).attr("transform", "translate(193,255)").text(textContent);
 
-			clouds.remove(d.id);
 			d3.select(this).remove();
 
-			createDraggableCloud(d);
+			createDraggableCloud(divCloud);
 
 			return;
 		}
@@ -208,7 +203,7 @@ function initClouds(idDOM) {
 		for (var i = 0; i < g.data().length; i++) {
 			var d2 = g.data()[i];
 			var otherNode = svg.select("#cloud" + d2.id);
-			var dis = distance(d, d2);
+			var dis = distance([d.x, d.y], [d2.x, d2.y]);
 
 			otherNode.attr("class", "cloud " + d2.state);
 			// se non è l'attuale nodo selezionato
@@ -246,7 +241,7 @@ function transform(d) {
 
 //returns the distance between two clouds
 function distance(d1, d2) {
-	return Math.sqrt((d1.x - d2.x) * (d1.x - d2.x) + (d1.y - d2.y) * (d1.y - d2.y));
+	return Math.sqrt((d1[0] - d2[0]) * (d1[0] - d2[0]) + (d1[1] - d2[1]) * (d1[1] - d2[1]));
 }
 
 function getCentroid(selection) {
@@ -276,21 +271,43 @@ function zoom2(d) {
 	//svg.attr("transform", "translate(" + r * Math.cos(theta) + "," + r * Math.sin(theta) + ")" + ", scale(" + scale + ")").style("stroke-width", 1 / scale);
 }
 
-function createDraggableCloud() {
+var draggers = new Array();
+function createDraggableCloud(divCloud) {
 
-	var dragId;
-	$(".draggable").draggable({
+	console.log("divCloud" + divCloud.data("d").elements);
+
+	draggers.push(divCloud);
+
+	//console.log("draggers " + draggers);
+
+	//	if ($(dragger) && !jQuery.isEmptyObject(dragger)) {
+
+	divCloud.draggable({
 		// non ritorna al proprio posto
 		revert : false,
 		cursor : "move",
-		appendTo : ".view-container .view-header",
+		//appendTo : ".view-container .view-header",
 		stop : function(event, ui) {
-			// drag stop
 
-			dragId = this;
-			//console.log(dragId);
+		},
+		drag : function() {
+			// drag stop
+			//console.log($(this).data("d", d));
+			var offset = $(this).offset();
+			var x = offset.left;
+			var y = offset.top;
+			$('#debug').text('x: ' + x);
+			$('#debug').append(' y: ' + y);
+			$(divCloud).data("d").x = x;
+			$(divCloud).data("d").y = y;
 		}
 	});
+
+	createContainer();
+	//	}
+}
+
+function createContainer() {
 
 	// select the view
 	$(".view-container .view-header").droppable({
@@ -304,16 +321,34 @@ function createDraggableCloud() {
 		drop : function() {
 			//var answer = confirm('Permantly delete this item?');
 			// this = header sottostante
+			var offset = $(this).offset();
+			var x = offset.left;
+			var y = offset.top;
 
-			if ($(dragId) && !jQuery.isEmptyObject(dragId)) {
-				//$(this).append(dragId);
-				console.log($(dragId));
-				var id = $(dragId).attr("id").split("-")[1];
-				
-				console.log(clouds);
-				$(this).text(clouds.find(id));
+			//$(this).text("");
+
+			console.log($(draggers).data().d);
+			$("#debug").text($(draggers).data().d);
+			for (var k = 0; k < draggers.length; k++) {
+				var drag = $(".draggable");
+				console.log("drag" + drag)
+
+				var d = $(draggers[k]).data().d;
+
+				var x1 = d.x;
+				var y1 = d.y;
+
+				var dis = distance([x, y], [x1, y1]);
+				console.log([x, y] + " " + [x1, y1] + " " + dis);
+				console.log("el ", d.elements);
+
+				if (dis < 100) {
+					$(this).text(d.id + " " + d.elements);
+					break;
+				}
 			}
 			$(this).removeClass('over').addClass('out');
 		}
 	});
 }
+

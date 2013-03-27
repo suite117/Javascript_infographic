@@ -89,10 +89,10 @@ Array.prototype.distance = function(testArr) {
 
 };
 
-//concatena due array
+/*concatena due array
 Array.prototype.append = function(array) {
 	this.push.apply(this, array)
-};
+};*/
 
 //Metodo che permette di verificare se un oggetto è contenuto in un array
 Array.prototype.contains = function(obj) {
@@ -106,20 +106,10 @@ Array.prototype.contains = function(obj) {
 };
 
 
-Array.prototype.contains = function(obj) {
+Array.prototype.find = function(id) {
 	var i = this.length;
 	while (i--) {
-		if (this[i] == obj) {
-			return true;
-		}
-	}
-	return false;
-};
-
-Array.prototype.find = function(obj) {
-	var i = this.length;
-	while (i--) {
-		if (this[i].id == obj.id) {
+		if (this[i].id == id) {
 			return this[i];
 		}
 	}

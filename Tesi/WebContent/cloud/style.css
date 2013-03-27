@@ -1,10 +1,10 @@
 .view-container {
 	width: 400px;
-	
 }
 .view-container .view-header {
-	height: 100px;
 	border: 2px solid red;
+	height: 100px;
+	width: 125px;
 }
 div.view-container div.over {
 	background-color: orange;
@@ -16,12 +16,17 @@ div.view-container div.over {
 }
 
 .draggable-container {
-	display: inline;
+	height: 50px;
+	
 }
 
+div.draggable {
+	float: left;
+	display: inline;
+}
 div.draggable svg {
-    height: 100px;
-    width: 120px;
+	height: 100px;
+	width: 120px;
 }
 
 svg {
@@ -74,6 +79,6 @@ g.button {
 }
 
 g.near g.button {
-		
+
 }
 
