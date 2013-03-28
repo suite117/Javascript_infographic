@@ -104,8 +104,8 @@ function initClouds(idDOM) {
 			var intersect = d.elements.intersect(b.elements);
 
 			// remove overlying set from data
-			clouds.remove(d.id);
-			clouds.remove(b.id);
+			//clouds.remove(d.id);
+			//clouds.remove(b.id);
 
 			var d2 = clone(d);
 			d2.elements = intersect;
@@ -172,7 +172,6 @@ function initClouds(idDOM) {
 				var divCloud = $("div#draggable-" + d.id);
 				divCloud.data("d", d);
 				var svgCloud = d3.select(divCloud[0]).append("svg");
-				console.log();
 			}
 
 			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(-51,-45), scale(0.3)");
@@ -274,11 +273,7 @@ function zoom2(d) {
 var draggers = new Array();
 function createDraggableCloud(divCloud) {
 
-	console.log("divCloud" + divCloud.data("d").elements);
-
 	draggers.push(divCloud);
-
-	//console.log("draggers " + draggers);
 
 	//	if ($(dragger) && !jQuery.isEmptyObject(dragger)) {
 
@@ -319,19 +314,13 @@ function createContainer() {
 			$(this).removeClass('over').addClass('out');
 		},
 		drop : function() {
-			//var answer = confirm('Permantly delete this item?');
+			//confirm('Permantly delete this item?');
 			// this = header sottostante
 			var offset = $(this).offset();
 			var x = offset.left;
 			var y = offset.top;
 
-			//$(this).text("");
-
-			console.log($(draggers).data().d);
-			$("#debug").text($(draggers).data().d);
 			for (var k = 0; k < draggers.length; k++) {
-				var drag = $(".draggable");
-				console.log("drag" + drag)
 
 				var d = $(draggers[k]).data().d;
 
@@ -339,8 +328,8 @@ function createContainer() {
 				var y1 = d.y;
 
 				var dis = distance([x, y], [x1, y1]);
-				console.log([x, y] + " " + [x1, y1] + " " + dis);
-				console.log("el ", d.elements);
+				//console.log([x, y] + " " + [x1, y1] + " " + dis);
+				//console.log("el ", d.elements);
 
 				if (dis < 100) {
 					$(this).text(d.id + " " + d.elements);
