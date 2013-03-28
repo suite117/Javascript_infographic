@@ -14,22 +14,22 @@ var STATE = {
 };
 
 //initialize the clouds, idDOM is the target DOM element
-function initClouds(idDOM) {
+function initClouds(idDOM, clouds) {
 
 	divSVG = d3.select(idDOM);
 	idDOM = idDOM;
 	var width = "100%";
 	var height = 300;
 
-	$("#debug").text("a");
 
-	for (var i = 0; i < 3; i++)
+	/*for (var i = 0; i < 3; i++)
 		clouds[i] = {
 			id : i,
 			elements : [i + 1, i * 2 + 2, i * 3 + 3],
 		};
-
-	for (var i = 0; i < 3; i++) {
+*/
+	for (var i = 0; i < clouds.length; i++) {
+		clouds[i].id = i;
 		clouds[i].x = 200 * i;
 		clouds[i].y = 0;
 		clouds[i].scale = 0.5;
@@ -165,11 +165,13 @@ function initClouds(idDOM) {
 
 			d3.select(this).attr("transform", transform);
 
+			// verifica se esiste il container
+			var divCloud;
 			var svgCloud = d3.select("#draggable-container draggable-" + d.id + " svg");
 			if (svgCloud[0][0] == null) {
 
 				$("div#draggable-container").append('<div id="draggable-' + d.id + '" class="draggable"></div>');
-				var divCloud = $("div#draggable-" + d.id);
+				divCloud = $("div#draggable-" + d.id);
 				divCloud.data("d", d);
 				var svgCloud = d3.select(divCloud[0]).append("svg");
 			}
@@ -243,32 +245,6 @@ function distance(d1, d2) {
 	return Math.sqrt((d1[0] - d2[0]) * (d1[0] - d2[0]) + (d1[1] - d2[1]) * (d1[1] - d2[1]));
 }
 
-function getCentroid(selection) {
-	// get the DOM element from a D3 selection
-	// you could also use "this" inside .each()
-	var element = selection.node(),
-	// use the native SVG interface to get the bounding box
-	bbox = element.getBBox();
-	// return the center of the bounding box
-	console.log("bbox: " + bbox);
-	return [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
-}
-
-function zoom2(d) {
-
-	var centroid = getCentroid(d3.select(this));
-
-	x = centroid[0];
-	y = centroid[1];
-	scale = 3.5;
-
-	console.log(centroid);
-	console.log(scale);
-
-	svg.transition().duration(1000).attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + scale + ")translate(" + -x + "," + -y + ")");
-	svg.style("stroke-width", 1.5 / scale + "px");
-	//svg.attr("transform", "translate(" + r * Math.cos(theta) + "," + r * Math.sin(theta) + ")" + ", scale(" + scale + ")").style("stroke-width", 1 / scale);
-}
 
 var draggers = new Array();
 function createDraggableCloud(divCloud) {
@@ -298,46 +274,6 @@ function createDraggableCloud(divCloud) {
 		}
 	});
 
-	createContainer();
-	//	}
-}
-
-function createContainer() {
-
-	// select the view
-	$(".view-container .view-header").droppable({
-		tolerance : 'touch',
-		over : function() {
-			$(this).removeClass('out').addClass('over');
-		},
-		out : function() {
-			$(this).removeClass('over').addClass('out');
-		},
-		drop : function() {
-			//confirm('Permantly delete this item?');
-			// this = header sottostante
-			var offset = $(this).offset();
-			var x = offset.left;
-			var y = offset.top;
-
-			for (var k = 0; k < draggers.length; k++) {
-
-				var d = $(draggers[k]).data().d;
-
-				var x1 = d.x;
-				var y1 = d.y;
-
-				var dis = distance([x, y], [x1, y1]);
-				//console.log([x, y] + " " + [x1, y1] + " " + dis);
-				//console.log("el ", d.elements);
-
-				if (dis < 100) {
-					$(this).text(d.id + " " + d.elements);
-					break;
-				}
-			}
-			$(this).removeClass('over').addClass('out');
-		}
-	});
+	
 }
 

@@ -1,10 +1,28 @@
+#views-container {
+    width:100%;
+}
+#views-container:after {
+    /* Prevent wrapper from shrinking height, 
+    see http://www.positioniseverything.net/easyclearing.html */
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
 .view-container {
-	width: 400px;
+	 float: left;
+    width:33%;
 }
 .view-container .view-header {
 	border: 2px solid red;
+	border-radius: 15px 15px 0 0;
 	height: 100px;
-	width: 125px;
+	left: 38%;
+	position: relative;
+	top: 1px;
+	width: 130px;
 }
 div.view-container div.over {
 	background-color: orange;
@@ -16,13 +34,13 @@ div.view-container div.over {
 }
 
 .draggable-container {
-	height: 50px;
-	
+	height: 100px;
 }
 
 div.draggable {
 	float: left;
 	display: inline;
+	z-index: 10;
 }
 div.draggable svg {
 	height: 100px;
