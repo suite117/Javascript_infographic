@@ -3,11 +3,11 @@ function createContainer() {
 
 	var id = containerId++;
 
-	$("#views-container").append('<div id="view-container-' + id + '" class="view-container">' + '<div class="view-header">&nbsp;</div><div class="view-body">&nbsp;</div></div>');
+	$("#views-container").append('<div id="view-container-' + id + '" class="view-container">' + '<div class="view-header"><div class="droppable">&nbsp;</div></div><div class="view-body"><div class="content">&nbsp;</div></div></div>');
 
 	$(document).ready(function() {
 		// select the view
-		$("#view-container-" + id + " .view-header").droppable({
+		$("#view-container-" + id + " .droppable").droppable({
 			tolerance : 'touch',
 			over : function() {
 				$(this).removeClass('out').addClass('over');
@@ -34,11 +34,12 @@ function createContainer() {
 					//console.log("el ", d.elements);
 
 					if (dis < 100) {
-						$("#view-container-" + id + " .view-body").text(d.id + " " + d.elements);
+						//$("#view-container-" + id + " .view-body .content").text(
+						Table("#view-container-" + id + " .view-body .content", "table-" + id, d.elements);
 						break;
 					}
 				}
-				$(this).removeClass('over').addClass('out');
+				$(this).removeClass('over').addClass('drop');
 			}
 		});
 

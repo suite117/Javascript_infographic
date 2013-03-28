@@ -1,21 +1,23 @@
+/* container */
 #views-container {
-    width:100%;
+	width: 100%;
 }
 #views-container:after {
-    /* Prevent wrapper from shrinking height, 
-    see http://www.positioniseverything.net/easyclearing.html */
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
+	/* Prevent wrapper from shrinking height,
+	 see http://www.positioniseverything.net/easyclearing.html */
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
 }
 
 .view-container {
-	 float: left;
-    width:33%;
+	float: left;
+	width: 33%;
+	height: 500px;
 }
-.view-container .view-header {
+.view-container .droppable {
 	border: 2px solid red;
 	border-radius: 15px 15px 0 0;
 	height: 100px;
@@ -24,17 +26,25 @@
 	top: 1px;
 	width: 130px;
 }
-div.view-container div.over {
+.view-container .over {
 	background-color: orange;
 }
 
 .view-container .view-body {
-	height: 800px;
+	height: 100%;
 	border: 2px solid red;
 }
 
+.view-container .view-body .content {
+	height: 100%;
+	overflow: scroll;
+}
+
+/* clouds */
 .draggable-container {
-	height: 100px;
+	clear: both;
+	height: 125px;
+	width: 100%;
 }
 
 div.draggable {

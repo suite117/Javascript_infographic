@@ -267,8 +267,8 @@ function createDraggableCloud(divCloud) {
 			var offset = $(this).offset();
 			var x = offset.left;
 			var y = offset.top;
-			$('#debug').text('x: ' + x);
-			$('#debug').append(' y: ' + y);
+			//$('#debug').text('x: ' + x);
+			//$('#debug').append(' y: ' + y);
 			$(divCloud).data("d").x = x;
 			$(divCloud).data("d").y = y;
 		}

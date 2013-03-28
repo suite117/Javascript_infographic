@@ -1,5 +1,31 @@
 // Estensione della classe array
-Array.prototype.printTable = function() {
+Array.prototype.toList = function() {
+
+	var headers = new Array();
+	var rows = new Array();
+
+	for (var key in this[0]) {
+		if (!isFunction(this[0][key])) {
+			headers.push(key);
+		}
+	}
+
+	for (var i = 0; i < this.length; i++) {
+		if (!isFunction(this[i])) {
+			rows[i] = new Array();
+			for (var key in this[i]) {
+				if (!isFunction(this[i][key])) {
+					rows[i].push(this[i][key]);
+				}
+			}
+		}
+	}
+
+	return [headers, rows];
+
+}
+
+Array.prototype.printTable = function(idTable) {
 	var outText = "";
 	var tHead = new Array();
 	var tagTBody = new Array();
@@ -20,7 +46,7 @@ Array.prototype.printTable = function() {
 		}
 	}
 
-	outText += '<table class="sortable"><thead><tr>' + tHead.join("") + '</tr></thead><tbody>';
+	outText += '<table id="' + idTable + '"><thead><tr>' + tHead.join("") + '</tr></thead><tbody>';
 
 	for (index in tagTBody) {
 		if (!isFunction(tagTBody[index]))
@@ -91,7 +117,7 @@ Array.prototype.distance = function(testArr) {
 
 /*concatena due array
 Array.prototype.append = function(array) {
-	this.push.apply(this, array)
+this.push.apply(this, array)
 };*/
 
 //Metodo che permette di verificare se un oggetto è contenuto in un array
@@ -105,7 +131,6 @@ Array.prototype.contains = function(obj) {
 	return false;
 };
 
-
 Array.prototype.find = function(id) {
 	var i = this.length;
 	while (i--) {
@@ -118,35 +143,37 @@ Array.prototype.find = function(id) {
 
 //Permette di clonare gli oggetti
 function clone(obj) {
-    // Handle the 3 simple types, and null or undefined
-    if (null == obj || "object" != typeof obj) return obj;
+	// Handle the 3 simple types, and null or undefined
+	if (null == obj || "object" != typeof obj)
+		return obj;
 
-    // Handle Date
-    if (obj instanceof Date) {
-        var copy = new Date();
-        copy.setTime(obj.getTime());
-        return copy;
-    }
+	// Handle Date
+	if ( obj instanceof Date) {
+		var copy = new Date();
+		copy.setTime(obj.getTime());
+		return copy;
+	}
 
-    // Handle Array
-    if (obj instanceof Array) {
-        var copy = [];
-        for (var i = 0, len = obj.length; i < len; i++) {
-            copy[i] = clone(obj[i]);
-        }
-        return copy;
-    }
+	// Handle Array
+	if ( obj instanceof Array) {
+		var copy = [];
+		for (var i = 0, len = obj.length; i < len; i++) {
+			copy[i] = clone(obj[i]);
+		}
+		return copy;
+	}
 
-    // Handle Object
-    if (obj instanceof Object) {
-        var copy = {};
-        for (var attr in obj) {
-            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
-        }
-        return copy;
-    }
+	// Handle Object
+	if ( obj instanceof Object) {
+		var copy = {};
+		for (var attr in obj) {
+			if (obj.hasOwnProperty(attr))
+				copy[attr] = clone(obj[attr]);
+		}
+		return copy;
+	}
 
-    throw new Error("Unable to copy obj! Its type isn't supported.");
+	throw new Error("Unable to copy obj! Its type isn't supported.");
 };
 //Unione tra due array
 Array.prototype.union = function(array, distructive) {
@@ -176,20 +203,18 @@ Array.prototype.intersect = function(array) {
 //metodo che implementa la differenza tra insiemi
 Array.prototype.difference = function(array) {
 	for (var i = 0; i < array.length; i++) {
-		if (this.contains(array[i])){
-				this.splice(this.indexOf(array[i]), 1);
+		if (this.contains(array[i])) {
+			this.splice(this.indexOf(array[i]), 1);
 		}
-			
+
 	};
 }
-
 
 Array.prototype.add = function(object) {
 	if (!this.contains(object))
 		this.push(object);
-		
-}
 
+}
 //Rimuove un oggetto da un array di oggetti che hanno il campo id
 Array.prototype.remove = function(id) {
 	for (var i in this) {
