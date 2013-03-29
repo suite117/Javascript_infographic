@@ -3,7 +3,19 @@ function createContainer() {
 
 	var id = containerId++;
 
-	$("#views-container").append('<div id="view-container-' + id + '" class="view-container">' + '<div class="view-header"><div class="droppable">&nbsp;</div></div><div class="view-body"><div class="content">&nbsp;</div></div></div>');
+	$("#views-container").append('<div id="view-container-' + id + '" class="view-container">' + '<div class="view-header"><div class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div class="view-body"><div class="content">&nbsp;</div></div></div>');
+
+	var buttons = $("#view-container-" + id + " form");
+
+	var option = ["tutti", "ciascuno"];
+
+	for (var i = 0; i < option.length; i++) {
+		buttons.append('<input type="radio" id="' + option[i] + '-' + id + '" />');
+		buttons.append('<label for="' + option[i] + '-' + id + '">' + option[i] + '</label>');
+	
+	}
+
+	buttons.buttonset();
 
 	$(document).ready(function() {
 		// select the view

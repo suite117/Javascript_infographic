@@ -1,4 +1,7 @@
-
+$(document).ready(function() {
+	
+	
+});
 
 function Table(destinationDiv, idDiv, set) {
 	var listSet = set.toList();
