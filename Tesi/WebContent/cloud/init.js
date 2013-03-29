@@ -20,9 +20,9 @@ $(document).ready(function() {
 		return json;
 	})();
 
-	dominio.push({
+	dominio["persone"] = {
 		elements : persone
-	});
+	};
 
 	var armi = (function() {
 		var json = null;
@@ -38,9 +38,9 @@ $(document).ready(function() {
 		return json;
 	})();
 
-	dominio.push({
+	dominio["armi"] = {
 		elements : armi
-	});
+	};
 	initClouds('#viz', dominio);
 
-}); 
+});
