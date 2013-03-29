@@ -2,7 +2,8 @@ function init(destinationDiv, idMap, data) {
 
 	var layers = new Array();
 	var center = [53.73, -0.30];
-	$(destinationDiv).append('<div id="' + idMap + '" style="width: 600px; height: 400px"></div>"');
+
+	$("#" + destinationDiv).append('<div id="' + idMap + '" style="width: 600px; height: 400px"></div>"');
 	var map = new L.map(idMap);
 	//var center = new L.LatLng(latitute, longitude);
 	// set up the map
