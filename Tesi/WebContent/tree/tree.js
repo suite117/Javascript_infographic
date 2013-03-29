@@ -1,8 +1,12 @@
-function GraphTree(root, div_destination) {
+function Tree() {
+}
 
+Tree.init = function(destinationDiv, idMap, data) {
+
+	var root = jsonToTreeJson(data);
 	var width = 800;
 	var height = 600;
-	var m = [ 20, 20, 20, 20 ];
+	var m = [20, 20, 20, 20];
 	var w = width - m[1] - m[3];
 	var h = height - m[0] - m[2];
 
@@ -11,14 +15,14 @@ function GraphTree(root, div_destination) {
 
 	var i = 0;
 
-	var tree = d3.layout.tree().size([ h, w ]);
+	var tree = d3.layout.tree().size([h, w]);
 
 	var diagonal = d3.svg.diagonal().projection(function(d) {
-		return [ d.y, d.x ];
+		return [d.y, d.x];
 	});
 
-	var x = d3.scale.linear().domain([ 0, w ]).range([ 0, w ]);
-	var y = d3.scale.linear().domain([ 0, h ]).range([ 0, h ]);
+	var x = d3.scale.linear().domain([0, w]).range([0, w]);
+	var y = d3.scale.linear().domain([0, h]).range([0, h]);
 
 	// parametro viewBox
 	// minx—the beginning x coordinate
@@ -29,20 +33,15 @@ function GraphTree(root, div_destination) {
 	var minx = 0;
 	var miny = 0;
 
-	var vis = d3.select(div_destination).append("svg:svg").attr("width",
-			w + m[1] + m[3]).attr("height", h + m[0] + m[2]).attr("viewBox",
-			minx + " " + miny + " " + (width - 200) + " " + height);
-	vis.append("svg:g").attr("transform",
-			"translate(" + m[3] + "," + m[0] + ")");
+	var vis = d3.select("#" + destinationDiv).append("svg:svg").attr("id", idMap).attr("width", w + m[1] + m[3]).attr("height", h + m[0] + m[2]).attr("viewBox", minx + " " + miny + " " + (width - 200) + " " + height);
+	vis.append("svg:g").attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 	// .attr("pointer-events", // "all")
 	// .call(d3.behavior.zoom().scaleExtent([1,8]).on("zoom",zoom));
-	vis.call(d3.behavior.zoom().x(x).y(y).scaleExtent([ 1, 8 ])
-			.on("zoom", zoom));
+	vis.call(d3.behavior.zoom().x(x).y(y).scaleExtent([1, 8]).on("zoom", zoom));
 
 	// vis.on("mouseup", function() { alert("dragging: "); });
 
-	vis.append("rect").attr("class", "overlay").attr("width", w + m[1] + m[3])
-			.attr("height", h + m[0] + m[2]).attr("opacity", 0);
+	vis.append("rect").attr("class", "overlay").attr("width", w + m[1] + m[3]).attr("height", h + m[0] + m[2]).attr("opacity", 0);
 
 	function toggleAll(d) {
 		if (d.children) {
@@ -50,6 +49,7 @@ function GraphTree(root, div_destination) {
 			toggle(d);
 		}
 	}
+
 	;
 
 	// initialize the display to show a few nodes.
@@ -76,21 +76,19 @@ function GraphTree(root, div_destination) {
 		});
 
 		// Enter any new nodes at the parent's previous position.
-		var nodeEnter = node.enter().append("svg:g").attr("class", "node")
-				.attr("transform", function(d) {
-					return "translate(" + source.y0 + "," + source.x0 + ")";
-				}).on("click", function(d) {
-					toggle(d);
-					update(d);
-					if (d['info']) {
-						playvid(d['info']);
-					}
-				});
+		var nodeEnter = node.enter().append("svg:g").attr("class", "node").attr("transform", function(d) {
+			return "translate(" + source.y0 + "," + source.x0 + ")";
+		}).on("click", function(d) {
+			toggle(d);
+			update(d);
+			if (d['info']) {
+				playvid(d['info']);
+			}
+		});
 
-		nodeEnter.append("svg:circle").attr("r", 1e-6).style("fill",
-				function(d) {
-					return d._children ? "lightsteelblue" : "#fff";
-				});
+		nodeEnter.append("svg:circle").attr("r", 1e-6).style("fill", function(d) {
+			return d._children ? "lightsteelblue" : "#fff";
+		});
 
 		nodeEnter.append("svg:text")
 		// .attr("y", function(d) { return d.children || d._children ? -10 : 10;
@@ -105,10 +103,9 @@ function GraphTree(root, div_destination) {
 		}).style("fill-opacity", 1e-6);
 
 		// Transition nodes to their new position.
-		var nodeUpdate = node.transition().duration(duration).attr("transform",
-				function(d) {
-					return "translate(" + d.y + "," + d.x + ")";
-				});
+		var nodeUpdate = node.transition().duration(duration).attr("transform", function(d) {
+			return "translate(" + d.y + "," + d.x + ")";
+		});
 
 		nodeUpdate.select("circle").attr("class", "node123").attr("r", 4.5).style("fill", function(d) {
 			return d._children ? "lightsteelblue" : "#fff";
@@ -117,32 +114,29 @@ function GraphTree(root, div_destination) {
 		nodeUpdate.select("text").style("fill-opacity", 1);
 
 		// Transition exiting ndoes to the parent's new position.
-		var nodeExit = node.exit().transition().duration(duration).attr(
-				"transform", function(d) {
-					return "translate(" + source.y + "," + source.x + ")";
-				}).remove();
+		var nodeExit = node.exit().transition().duration(duration).attr("transform", function(d) {
+			return "translate(" + source.y + "," + source.x + ")";
+		}).remove();
 
 		nodeExit.select("circle").attr("r", 1e-6);
 		nodeExit.select("text").style("fill-opacity", 1e-6);
 
 		// Update the links...
-		var link = vis.selectAll("path.link").data(tree.links(nodes),
-				function(d) {
-					return d.target.id;
-				});
+		var link = vis.selectAll("path.link").data(tree.links(nodes), function(d) {
+			return d.target.id;
+		});
 
 		// Enter any new links at hte parent's previous position
-		link.enter().insert("svg:path", "g").attr("class", "link").attr("d",
-				function(d) {
-					var o = {
-						x : source.x0,
-						y : source.y0
-					};
-					return diagonal({
-						source : o,
-						target : o
-					});
-				}).transition().duration(duration).attr("d", diagonal);
+		link.enter().insert("svg:path", "g").attr("class", "link").attr("d", function(d) {
+			var o = {
+				x : source.x0,
+				y : source.y0
+			};
+			return diagonal({
+				source : o,
+				target : o
+			});
+		}).transition().duration(duration).attr("d", diagonal);
 
 		// Transition links to their new position.
 		link.transition().duration(duration).attr("d", diagonal);
@@ -165,6 +159,7 @@ function GraphTree(root, div_destination) {
 			d.y0 = d.y;
 		});
 	}
+
 	// Toggle children
 	function toggle(d) {
 		if (d.children) {
@@ -192,7 +187,7 @@ function GraphTree(root, div_destination) {
 		// var o = {x: d.x0, y: d.y0};
 		// return diagonal({source: o, target: o});
 		// });
-		
+
 	}
 
 	function clickWhite() {
@@ -214,12 +209,34 @@ function GraphTree(root, div_destination) {
 		var targetX = x(d.target.y);
 		var targetY = (sourceX + targetX) / 2;
 		var linkTargetY = y(d.target.x0);
-		var result = "M" + sourceX + "," + sourceY + " C" + targetX + ","
-				+ sourceY + " " + targetY + "," + y(d.target.x0) + " "
-				+ targetX + "," + linkTargetY + "";
+		var result = "M" + sourceX + "," + sourceY + " C" + targetX + "," + sourceY + " " + targetY + "," + y(d.target.x0) + " " + targetX + "," + linkTargetY + "";
 		// console.log(result);
 
 		return result;
 	}
 
 }
+//wrapper che rende il json estratto dal database compatibile con le funzioni di visualizzazione dell' albero
+function jsonToTreeJson(oldTree) {
+	var root = new Object();
+	root.id = 1;
+	root.name = oldTree[0].name;
+	findChildren(root, oldTree);
+	return root;
+}
+
+function findChildren(node, list) {
+	node.children = new Array();
+	//i = 1 in quanto deve essere escluso il nodo root che non ha parentId
+	for (var i = 1; i < list.length; i++) {
+		if (list[i].parentId == node.id - 1) {
+			var child = new Object();
+			child.id = list[i].id + 1;
+			child.name = list[i].name;
+			node.children.push(child);
+			findChildren(child, list);
+
+		}
+	}
+}
+
