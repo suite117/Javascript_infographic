@@ -14,26 +14,39 @@ var STATE = {
 };
 
 //initialize the clouds, idDOM is the target DOM element
-function initClouds(idDOM, clouds) {
+function initClouds(idDOM, dominio) {
 
 	divSVG = d3.select(idDOM);
 	idDOM = idDOM;
 	var width = "100%";
 	var height = 300;
 
-
 	/*for (var i = 0; i < 3; i++)
-		clouds[i] = {
-			id : i,
-			elements : [i + 1, i * 2 + 2, i * 3 + 3],
-		};
-*/
-	for (var i = 0; i < clouds.length; i++) {
-		clouds[i].id = i;
-		clouds[i].x = 200 * i;
-		clouds[i].y = 0;
-		clouds[i].scale = 0.5;
-		clouds[i].state = STATE.NONE;
+	 clouds[i] = {
+	 id : i,
+	 elements : [i + 1, i * 2 + 2, i * 3 + 3],
+	 };
+	 */
+
+	function generateId(prefix, list) {
+		for (var i = 0; i < list.length; i++)
+			if (!isFunction(list[i]))
+				list[i].id = prefix + "-" + list[i].id;
+	}
+
+	var i = 0;
+	var clouds = new Array();
+	for (var key in dominio) {
+		if (!isFunction(dominio[key])) {
+			generateId(key,dominio[key].elements);
+			clouds[i] = dominio[key];
+			clouds[i].id = key + "-set-" + i;
+			clouds[i].x = 200 * i;
+			clouds[i].y = 0;
+			clouds[i].scale = 0.5;
+			clouds[i].state = STATE.NONE;
+			i++;
+		}
 	}
 
 	function draw() {
@@ -75,7 +88,13 @@ function initClouds(idDOM, clouds) {
 			var b = set.data()[0];
 
 			// add elements of overlying set to active set
-			d.elements.union(b.elements);
+			var union = d.elements.union(b.elements);
+			var d2 = clone(d);
+			d2.id = clouds.length;
+			d2.x += 50;
+			d2.y += 50;
+			d2.elements = union;
+			clouds.push(d2);
 
 			// remove overlying set from data
 			//clouds.remove(b.id);
@@ -108,6 +127,9 @@ function initClouds(idDOM, clouds) {
 			//clouds.remove(b.id);
 
 			var d2 = clone(d);
+			d2.id = clouds.length;
+			d2.x += 50;
+			d2.y += 50;
 			d2.elements = intersect;
 			clouds.push(d2);
 
@@ -245,7 +267,6 @@ function distance(d1, d2) {
 	return Math.sqrt((d1[0] - d2[0]) * (d1[0] - d2[0]) + (d1[1] - d2[1]) * (d1[1] - d2[1]));
 }
 
-
 var draggers = new Array();
 function createDraggableCloud(divCloud) {
 
@@ -274,6 +295,5 @@ function createDraggableCloud(divCloud) {
 		}
 	});
 
-	
 }
 
