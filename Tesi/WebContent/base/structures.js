@@ -176,17 +176,14 @@ function clone(obj) {
 	throw new Error("Unable to copy obj! Its type isn't supported.");
 };
 //Unione tra due array
-Array.prototype.union = function(array, distructive) {
-	var out;
-	if (distructive)
-		out = this;
-	else
-		out = [];
+Array.prototype.union = function(array) {
 
+	var out = clone(this);
 	for (var i = 0; i < array.length; i++)
 		if (!(this.contains(array[i])))
-			this.push(array[i]);
+			out.push(array[i]);
 
+	return out;
 };
 
 //metodo che implementa l' intersezione tra due insiemi(array) di elementi
