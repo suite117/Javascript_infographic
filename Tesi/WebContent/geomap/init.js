@@ -1,4 +1,8 @@
-function init(destinationDiv, idMap, data) {
+function GeoMap() {
+
+}
+
+GeoMap.init = function(destinationDiv, idMap, data) {
 
 	var layers = new Array();
 	var center = [53.73, -0.30];
@@ -103,7 +107,7 @@ function init(destinationDiv, idMap, data) {
 		//	$.getJSON('data.json', function(data) {
 
 		for ( i = 0; i < data.length; i++) {
-			var marker = new L.Marker(new L.LatLng(data[i].lat, data[i].lon, true));
+			var marker = new L.Marker(data[i].coordinates);//new L.Marker(new L.LatLng(data[i].lat, data[i].lon, true));
 			marker.data = data[i];
 			marker.on('click', onMarkerClick);
 
@@ -116,7 +120,6 @@ function init(destinationDiv, idMap, data) {
 		//	});
 	}
 
-	
 	askForMarkers();
 	map.setView(center, startZoom);
 }

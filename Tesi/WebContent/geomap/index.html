@@ -6,16 +6,24 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
-		<link rel="stylesheet" href="style.css" />
+		
 		<!--[if lte IE 8]>
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
 		<![endif]-->
-		<script src="../lib/jquery/jquery.min.js"></script>
+		<script type="text/javascript" src="../base/functions.js"></script>
+		<script type="text/javascript" src="../base/operators.js"></script>
+		<script type="text/javascript" src="../base/structures.js"></script>
+		<script src="../lib/jquery/jquery.min.js" type="text/javascript"></script>
+		
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
 		<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+		
 		<script src="piechart/Semicircle.js"></script>
 		<script src="piechart/Pie.js"></script>
+		
 		<script type="text/javascript" src="init.js"></script>
+		<link rel="stylesheet" href="style.css" />
+		
 		<script type="text/javascript">
 			if ( typeof jQuery == 'undefined')
 				alert("jQuery Non Found!.");
@@ -34,13 +42,32 @@
 					});
 					return json;
 				})();
-				init('container', 'map', data);
+
+				var geojsonFeature = {
+					"type" : "Feature",
+					"properties" : {
+						"name" : "Coors Field",
+						"amenity" : "Baseball Stadium",
+						"popupContent" : "This is where the Rockies play!"
+					},
+					"geometry" : {
+						"type" : "Point",
+						"coordinates" : [-104.99404, 39.75621]
+					}
+				};
+
+				var mapping = {
+					"coordinates" : [toList, "lat", "lon"]
+				}
+				console.log(data.map(mapping));
+
+				GeoMap.init('container', 'map', data.map(mapping));
 			});
 		</script>
 	</head>
 	<body>
 		<div id="container">
-		
+
 		</div>
 	</body>
 </html>

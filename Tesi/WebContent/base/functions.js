@@ -18,3 +18,7 @@ function concatena(arguments) {
 
 	return outText;
 }
+
+function toList(arguments) {
+	return arguments;
+}

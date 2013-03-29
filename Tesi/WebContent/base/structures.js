@@ -164,7 +164,7 @@ Array.prototype.distance = function(testArr) {
  };*/
 
 function equals(x, y) {
-	return x.id != null && y.id != null && x.id == y.id; 
+	return x.id != null && y.id != null && x.id == y.id;
 
 };
 
@@ -172,7 +172,7 @@ function equals(x, y) {
 Array.prototype.contains = function(obj) {
 	var i = this.length;
 	while (i--) {
-		if (equals(this[i],obj)) {
+		if (equals(this[i], obj)) {
 			return true;
 		}
 	}
