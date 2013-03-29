@@ -5,7 +5,6 @@ var TYPE = {
 	
 }
 
-
 $(document).ready(function() {
 
 	var dominio = [];

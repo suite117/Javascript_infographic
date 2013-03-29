@@ -1,7 +1,9 @@
+
 /* container */
 #views-container {
 	width: 100%;
 }
+
 #views-container:after {
 	/* Prevent wrapper from shrinking height,
 	 see http://www.positioniseverything.net/easyclearing.html */

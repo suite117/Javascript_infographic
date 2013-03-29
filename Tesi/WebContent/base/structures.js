@@ -253,13 +253,13 @@ Array.prototype.difference = function(array) {
 		}
 
 	};
-}
+};
 
 Array.prototype.add = function(object) {
 	if (!this.contains(object))
 		this.push(object);
 
-}
+};
 //Rimuove un oggetto da un array di oggetti che hanno il campo id
 Array.prototype.remove = function(id) {
 	for (var i in this) {
