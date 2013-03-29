@@ -4,80 +4,53 @@
 		"name": "Squatwit",
 		"lon": "-0.3338763",
 		"lat": "53.7381844",
-		"artist": "Ruth Pickard",
-		"designer": "",
-		"sponsor": "Kingswood Parks Development Live and play in Kingswood Parks",
-		"pic": "Squatwit.JPG"
+		"image": "Squatwit.JPG"
 	}, {
 		"id": 2,
 		"name": "Typographical Toad",
 		"lon": "-0.3317974",
 		"lat": "53.7397322",
-		"artist": "Saul Logan \u0026 Alec Tear",
-		"designer": "",
-		"sponsor": "ispace and cpd plc",
-		"pic": "Typographical.JPG"
+		"image": "Typographical.JPG"
 	}, {
 		"name": "Reflective Colours",
 		"lon": "-0.3343908",
 		"lat": "53.7404014",
-		"artist": "Sue Kershaw",
-		"designer": "Victoria Merrett",
-		"sponsor": "Arc The Architecture Centre for Hull and the Humber Region",
-		"pic": "Reflective Colours.JPG"
+		"image": "Reflective Colours.JPG"
 	}, {
 		"id": 3,
 		"name": "Tigger the Toad",
 		"lon": "-0.33751",
 		"lat": "53.7407652",
-		"artist": "Jayne Tunnicliffe",
-		"designer": "",
-		"sponsor": "Construction Works Ltd",
-		"pic": "Tigger the Toad.JPG"
+		"image": "Tigger the Toad.JPG"
 	}, {
 		"id": 4,
 		"name": "Weather Rain or Shine",
 		"lon": "-0.3373671",
 		"lat": "53.7447153",
-		"artist": "Richard Pennington",
-		"designer": "Paul Hudson",
-		"sponsor": "Yorkshire Water",
-		"pic": "Weather Rain or Shine.JPG"
+		"image": "Weather Rain or Shine.JPG"
 	}, {
 		"id": 5,
 		"name": "Fish \u0026 Chips Toad",
 		"lon": "-0.3360635",
 		"lat": "53.7386604",
-		"artist": "Emily Fisher",
-		"designer": "",
-		"sponsor": "Adopt Me",
-		"pic": "Fish and Chips.JPG"
+		"image": "Fish and Chips.JPG"
 	}, {
 		"id": 6,
 		"name": "Archi-toad",
 		"lon": "-0.3391777",
 		"lat": "53.7399622",
-		"artist": "Hannah Cooper",
-		"designer": "",
-		"sponsor": "Manor Property Group building success in Hull",
-		"pic": "Archi-toad.JPG"
+		"image": "Archi-toad.JPG"
 	}, {
 		"id": 7,
 		"name": "Harlequin Mischievous Man of Mystery",
 		"lon": "-0.3373184",
 		"lat": "53.7446808",
-		"artist": "Jayne Tunnicliffe",
-		"designer": "Peter Levy",
-		"sponsor": "Manor Property Group building success in Hull",
-		"pic": "Harlequin.JPG"
+		"image": "Harlequin.JPG"
 	}, {
 		"id": 8,
 		"name": "Lobelia Toad",
 		"lon": "-0.3338008",
 		"lat": "53.745785",
-		"artist": "Kerry Watson",
-		"designer": "",
-		"sponsor": "Chevin Housing Group Building a better future for people and communities",
-		"pic": "Lobelia.JPG"
+		"image": "Lobelia.JPG"
 	}
 ]

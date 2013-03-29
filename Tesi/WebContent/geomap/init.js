@@ -1,10 +1,10 @@
-var map;
-function initmap() {
+function init(destinationDiv, idMap, data) {
 
 	var layers = new Array();
 	var center = [53.73, -0.30];
 
-	map = new L.map('map');
+	$(destinationDiv).append('<div id="' + idMap + '" style="width: 600px; height: 400px"></div>"');
+	var map = new L.map(idMap);
 	//var center = new L.LatLng(latitute, longitude);
 	// set up the map
 
@@ -53,7 +53,7 @@ function initmap() {
 	var distance = 0.2 / startZoom;
 
 	map.on('zoomend', function(e) {
-		
+
 		var bounds = e.target.getBounds();
 		var minll = bounds.getSouthWest();
 		var maxll = bounds.getNorthEast();
@@ -65,45 +65,42 @@ function initmap() {
 		e.target.addLayer(pie);
 	});
 
-	askForMarkers();
-	map.setView(center, startZoom);
-}
+	//this sets up an icon to be replaced when redraw.
+	var LeafIcon = L.Icon.extend({
+		options : {
+			iconUrl : 'images/marker-icon.png',
+			shadowUrl : 'images/marker-shadow.png'
+		}
+	});
 
-//this sets up an icon to be replaced when redraw.
-var LeafIcon = L.Icon.extend({
-	options : {
-		iconUrl : 'images/marker-icon.png',
-		shadowUrl : 'images/marker-shadow.png'
+	var LeafIconActive = L.Icon.extend({
+		options : {
+			iconUrl : 'images/marker-icon-active.png',
+			shadowUrl : 'images/marker-shadow.png'
+		}
+	});
+
+	function onMarkerClick(e) {
+
+		var icon;
+		if (e.target.active) {
+			icon = new LeafIcon();
+			e.target.active = false;
+		} else {
+			icon = new LeafIconActive();
+			e.target.active = true;
+		}
+		e.target.setIcon(icon);
+
+		var popup = L.popup();
+		var content = "<p>" + e.target.data.name + "</p>";
+		// + e.target.data.artist;
+		e.target.bindPopup(content).openPopup();
 	}
-});
 
-var LeafIconActive = L.Icon.extend({
-	options : {
-		iconUrl : 'images/marker-icon-active.png',
-		shadowUrl : 'images/marker-shadow.png'
-	}
-});
+	function askForMarkers() {
 
-function onMarkerClick(e) {
-
-	var icon;
-	if (e.target.active) {
-		icon = new LeafIcon();
-		e.target.active = false;
-	} else {
-		icon = new LeafIconActive();
-		e.target.active = true;
-	}
-	e.target.setIcon(icon);
-
-	var popup = L.popup();
-	var content = "<p>" + e.target.data.name + "</p>" + e.target.data.artist;
-	e.target.bindPopup(content).openPopup();
-}
-
-function askForMarkers() {
-
-	$.getJSON('data.json', function(data) {
+		//	$.getJSON('data.json', function(data) {
 
 		for ( i = 0; i < data.length; i++) {
 			var marker = new L.Marker(new L.LatLng(data[i].lat, data[i].lon, true));
@@ -116,5 +113,11 @@ function askForMarkers() {
 
 			map.addLayer(marker);
 		}
-	});
+		//	});
+	}
+
+	
+	askForMarkers();
+	map.setView(center, startZoom);
 }
+

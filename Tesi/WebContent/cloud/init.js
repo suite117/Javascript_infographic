@@ -1,3 +1,11 @@
+var TYPE = {
+	SET : "set",
+	TREE : "tree",
+	GEOMAP : "geomap"
+	
+}
+
+
 $(document).ready(function() {
 
 	var dominio = [];
@@ -21,6 +29,7 @@ $(document).ready(function() {
 	})();
 
 	dominio["persone"] = {
+		type : TYPE.SET,
 		elements : persone
 	};
 

@@ -30,6 +30,10 @@
 	background-color: orange;
 }
 
+.view-container .view-buttons form div {
+	display: inline;
+}
+
 .view-container .view-body {
 	height: 100%;
 	border: 2px solid red;
