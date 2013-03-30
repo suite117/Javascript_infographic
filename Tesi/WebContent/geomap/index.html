@@ -28,19 +28,7 @@
 				alert("jQuery Non Found!.");
 
 			$(document).ready(function() {
-				var data = (function() {
-					var json = null;
-					$.ajax({
-						'async' : false,
-						'global' : false,
-						'url' : "data.json",
-						'dataType' : "json",
-						'success' : function(data) {
-							json = data;
-						}
-					});
-					return json;
-				})();
+				var data = getJSON("data.json");
 
 				
 				var mapping = {

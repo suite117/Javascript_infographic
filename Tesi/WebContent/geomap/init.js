@@ -1,12 +1,12 @@
-function GeoMap(destinationDiv, data) {
-	this.destinationDiv = destinationDiv;
+function GeoMap(destinationDivId, data) {
+	this.destinationDivId = destinationDivId;
 	this.data = data;
 
 	var layers = new Array();
 	var center = [53.73, -0.30];
 
-	$("#" + this.destinationDiv).css("width", "600px").css("height", "400px");
-	this.map = new L.map(destinationDiv);
+	$("#" + this.destinationDivId).css("width", "600px").css("height", "400px");
+	this.map = new L.map(destinationDivId);
 
 	//var center = new L.LatLng(latitute, longitude);
 	// set up the map

@@ -22,3 +22,21 @@ function concatena(arguments) {
 function toList(arguments) {
 	return arguments;
 }
+
+function getJSON(url) {
+	var data = (function() {
+		var json = null;
+		$.ajax({
+			'async' : false,
+			'global' : false,
+			'url' : url,
+			'dataType' : "json",
+			'success' : function(data) {
+				json = data;
+			}
+		});
+		return json;
+	})();
+	
+	return data;
+}

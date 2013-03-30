@@ -5,6 +5,8 @@ var TYPE = {
 	
 }
 
+// MAIN di cloud.html
+
 $(document).ready(function() {
 
 	var dominio = [];
@@ -13,38 +15,14 @@ $(document).ready(function() {
 	createContainer();
 	createContainer();
 
-	var persone = (function() {
-		var json = null;
-		$.ajax({
-			'async' : false,
-			'global' : false,
-			'url' : "persone.json",
-			'dataType' : "json",
-			'success' : function(data) {
-				json = data;
-			}
-		});
-		return json;
-	})();
+	var persone = getJSON("persone.json");
 
 	dominio["persone"] = {
 		type : TYPE.SET,
 		elements : persone
 	};
 
-	var armi = (function() {
-		var json = null;
-		$.ajax({
-			'async' : false,
-			'global' : false,
-			'url' : "armi.json",
-			'dataType' : "json",
-			'success' : function(data) {
-				json = data;
-			}
-		});
-		return json;
-	})();
+	var armi = getJSON("armi.json");
 
 	dominio["armi"] = {
 		elements : armi
