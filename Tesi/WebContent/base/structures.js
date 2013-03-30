@@ -42,31 +42,6 @@ Object.equals = function(x, y) {
 	return true;
 }
 // Estensione della classe array
-Array.prototype.toList = function() {
-
-	var headers = new Array();
-	var rows = new Array();
-
-	for (var key in this[0]) {
-		if (!isFunction(this[0][key])) {
-			headers.push(key);
-		}
-	}
-
-	for (var i = 0; i < this.length; i++) {
-		if (!isFunction(this[i])) {
-			rows[i] = new Array();
-			for (var key in this[i]) {
-				if (!isFunction(this[i][key])) {
-					rows[i].push(this[i][key]);
-				}
-			}
-		}
-	}
-
-	return [headers, rows];
-
-}
 
 Array.prototype.printTable = function(idTable) {
 	var outText = "";

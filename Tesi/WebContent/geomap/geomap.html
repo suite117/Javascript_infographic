@@ -19,37 +19,34 @@
 
 		<script src="piechart/Semicircle.js"></script>
 		<script src="piechart/Pie.js"></script>
-
-		<script type="text/javascript" src="init.js"></script>
-		<link rel="stylesheet" href="style.css" />
+		
+		<script type="text/javascript" src="geomap.js"></script>
+		<link rel="stylesheet" href="geomap.css" />
 
 		<script type="text/javascript">
 			if ( typeof jQuery == 'undefined')
 				alert("jQuery Non Found!.");
 
 			$(document).ready(function() {
-				var data = getJSON("data.json");
+				var data = getJSON("../data/events.json");
 
-				
 				var mapping = {
 					"id" : "id",
-					"name":"name",
+					"name" : [concatena, "startTime", "startTime"],
 					"coordinates" : [toList, "lat", "lon"]
 				}
+				console.log(data.map(mapping));
 
-				var gm = new GeoMap('map', data.map(mapping));
+				var gm = new GeoMap('divmap', 'map', data);
+
 				
-				var gm2 = new GeoMap('map2', data.map(mapping));
-				gm2.remove(1);
 
 			});
 		</script>
 	</head>
 	<body>
-		<div id="map">
-		</div>
-		
-		<div id="map2">
-		</div>
+		<div id="divmap"></div>
+
+		<div id="map2"></div>
 	</body>
 </html>

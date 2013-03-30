@@ -1,4 +1,4 @@
-function GeoMap(destinationDivId, data) {
+function GeoMap(destinationDivId, idMap, data) {
 	this.destinationDivId = destinationDivId;
 	this.data = data;
 
@@ -14,7 +14,7 @@ function GeoMap(destinationDivId, data) {
 	var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 	var osmAttrib = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
 	L.tileLayer(osmUrl, {
-		minZoom : 8,
+		minZoom : 1,
 		maxZoom : 18,
 		attribution : osmAttrib
 	}).addTo(this.map);
@@ -77,7 +77,7 @@ function GeoMap(destinationDivId, data) {
 GeoMap.prototype.askForMarkers = function() {
 
 	for ( i = 0; i < this.data.length; i++) {
-		var marker = new L.Marker(this.data[i].coordinates);
+		var marker = new L.Marker(new L.LatLng(this.data[i].lat, this.data[i].lon));
 		marker.data = this.data[i];
 		marker.on('click', onMarkerClick);
 
@@ -101,15 +101,15 @@ GeoMap.prototype.add = function(id) {
 //this sets up an icon to be replaced when redraw.
 var LeafIcon = L.Icon.extend({
 	options : {
-		iconUrl : 'images/marker-icon.png',
-		shadowUrl : 'images/marker-shadow.png'
+		iconUrl : baseUrl + '/geomap/images/marker-icon.png',
+		shadowUrl : baseUrl + '/geomap/images/marker-shadow.png'
 	}
 });
 
 var LeafIconActive = L.Icon.extend({
 	options : {
-		iconUrl : 'images/marker-icon-active.png',
-		shadowUrl : 'images/marker-shadow.png'
+		iconUrl : baseUrl + '/geomap/images/marker-icon-active.png',
+		shadowUrl : baseUrl + '/geomap/images/marker-shadow.png'
 	}
 });
 

@@ -1,3 +1,5 @@
+var baseUrl = "/Javascript_infographic/Tesi/WebContent/";
+
 function getAge(dateString) {
 	var today = new Date();
 	var birthDate = new Date(dateString);
