@@ -1,14 +1,13 @@
-function GeoMap() {
-
-}
-
-GeoMap.init = function(destinationDiv, idMap, data) {
+function GeoMap(destinationDiv, data) {
+	this.destinationDiv = destinationDiv;
+	this.data = data;
 
 	var layers = new Array();
 	var center = [53.73, -0.30];
 
-	$("#" + destinationDiv).append('<div id="' + idMap + '" style="width: 600px; height: 400px"></div>"');
-	var map = new L.map(idMap);
+	$("#" + this.destinationDiv).css("width", "600px").css("height", "400px");
+	this.map = new L.map(destinationDiv);
+
 	//var center = new L.LatLng(latitute, longitude);
 	// set up the map
 
@@ -18,10 +17,10 @@ GeoMap.init = function(destinationDiv, idMap, data) {
 		minZoom : 8,
 		maxZoom : 18,
 		attribution : osmAttrib
-	}).addTo(map);
+	}).addTo(this.map);
 
 	// add and open popup
-	L.marker(center).addTo(map).bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+	L.marker(center).addTo(this.map).bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 
 	var list = [{
 		num : 75,
@@ -37,10 +36,10 @@ GeoMap.init = function(destinationDiv, idMap, data) {
 	function calculateRadius() {
 
 		//alert(map.getMinZoom());
-		if (map.getZoom() != null)
-			return map.getZoom() * 30;
+		if (this.map.getZoom() != null)
+			return this.map.getZoom() * 30;
 		else
-			return map.getMinZoom() * 30;
+			return this.map.getMinZoom() * 30;
 	}
 
 	// Pie chart
@@ -56,7 +55,7 @@ GeoMap.init = function(destinationDiv, idMap, data) {
 	var startZoom = 11;
 	var distance = 0.2 / startZoom;
 
-	map.on('zoomend', function(e) {
+	this.map.on('zoomend', function(e) {
 
 		var bounds = e.target.getBounds();
 		var minll = bounds.getSouthWest();
@@ -69,58 +68,66 @@ GeoMap.init = function(destinationDiv, idMap, data) {
 		e.target.addLayer(pie);
 	});
 
-	//this sets up an icon to be replaced when redraw.
-	var LeafIcon = L.Icon.extend({
-		options : {
-			iconUrl : 'images/marker-icon.png',
-			shadowUrl : 'images/marker-shadow.png'
-		}
-	});
+	this.markers = new Array();
 
-	var LeafIconActive = L.Icon.extend({
-		options : {
-			iconUrl : 'images/marker-icon-active.png',
-			shadowUrl : 'images/marker-shadow.png'
-		}
-	});
+	this.askForMarkers();
+	this.map.setView(center, startZoom);
+}
 
-	function onMarkerClick(e) {
+GeoMap.prototype.askForMarkers = function() {
 
-		var icon;
-		if (e.target.active) {
-			icon = new LeafIcon();
-			e.target.active = false;
-		} else {
-			icon = new LeafIconActive();
-			e.target.active = true;
-		}
-		e.target.setIcon(icon);
+	for ( i = 0; i < this.data.length; i++) {
+		var marker = new L.Marker(this.data[i].coordinates);
+		marker.data = this.data[i];
+		marker.on('click', onMarkerClick);
 
-		var popup = L.popup();
-		var content = "<p>" + e.target.data.name + "</p>";
-		// + e.target.data.artist;
-		e.target.bindPopup(content).openPopup();
+		marker.data.active = false;
+		var icon = new LeafIcon();
+		marker.setIcon(icon);
+
+		this.markers[marker.data.id] = marker;
+		this.map.addLayer(marker);
 	}
 
-	function askForMarkers() {
+};
 
-		//	$.getJSON('data.json', function(data) {
+GeoMap.prototype.remove = function(id) {
+	this.map.removeLayer(this.markers[id]);
+}
 
-		for ( i = 0; i < data.length; i++) {
-			var marker = new L.Marker(data[i].coordinates);//new L.Marker(new L.LatLng(data[i].lat, data[i].lon, true));
-			marker.data = data[i];
-			marker.on('click', onMarkerClick);
-
-			marker.data.active = false;
-			var icon = new LeafIcon();
-			marker.setIcon(icon);
-
-			map.addLayer(marker);
-		}
-		//	});
+GeoMap.prototype.add = function(id) {
+	this.map.addLayer(this.markers[id]);
+}
+//this sets up an icon to be replaced when redraw.
+var LeafIcon = L.Icon.extend({
+	options : {
+		iconUrl : 'images/marker-icon.png',
+		shadowUrl : 'images/marker-shadow.png'
 	}
+});
 
-	askForMarkers();
-	map.setView(center, startZoom);
+var LeafIconActive = L.Icon.extend({
+	options : {
+		iconUrl : 'images/marker-icon-active.png',
+		shadowUrl : 'images/marker-shadow.png'
+	}
+});
+
+function onMarkerClick(e) {
+
+	var icon;
+	if (e.target.active) {
+		icon = new LeafIcon();
+		e.target.active = false;
+	} else {
+		icon = new LeafIconActive();
+		e.target.active = true;
+	}
+	e.target.setIcon(icon);
+
+	var popup = L.popup();
+	var content = "<p>" + e.target.data.id + " " + e.target.data.name + "</p>";
+	// + e.target.data.artist;
+	e.target.bindPopup(content).openPopup();
 }
 
