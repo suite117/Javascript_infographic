@@ -31,20 +31,20 @@
 .view-container .over {
 	background-color: orange;
 }
+.view-container .view-buttons {
+	border: 2px solid red;
+}
 
 .view-container .view-buttons form div {
 	display: inline;
 }
 
-.view-container .view-body {
+.view-container .view-container-body {
 	height: 100%;
 	border: 2px solid red;
-}
-
-.view-container .view-body .content {
-	height: 100%;
 	overflow: auto;
 }
+
 
 /* clouds */
 .draggable-container {

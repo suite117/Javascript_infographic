@@ -3,7 +3,7 @@ function createContainer() {
 
 	var id = containerId++;
 
-	$("#views-container").append('<div id="view-container-' + id + '" class="view-container">' + '<div class="view-header"><div class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="view-container-body-' + id + '">&nbsp;</div></div>');
+	$("#views-container").append('<div id="view-container-' + id + '" class="view-container">' + '<div class="view-header"><div class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="view-container-body-' + id + '" class="view-container-body">&nbsp;</div></div>');
 
 	var form = $("#view-container-" + id + " form");
 
@@ -54,6 +54,7 @@ function createContainer() {
 					if (dis < 100) {
 						var map;
 						var destinationDivId = "view-container-body-" + id;
+						$("#" + destinationDivId).html("");
 						if (d.type == TYPE.SET)
 							map = new Table(destinationDivId, "table-" + id, d.elements);
 						else if (d.type == TYPE.GEOMAP)

@@ -5,8 +5,8 @@ function GeoMap(destinationDivId, idMap, data) {
 	var layers = new Array();
 	var center = [53.73, -0.30];
 
-	$("#" + this.destinationDivId).css("width", "600px").css("height", "400px");
-	this.map = new L.map(destinationDivId);
+	$("#" + this.destinationDivId).append('<div id="' + idMap + '" style="width:100%;height: 100%"></div>');
+	this.map = new L.map(idMap);
 
 	//var center = new L.LatLng(latitute, longitude);
 	// set up the map
@@ -68,14 +68,13 @@ function GeoMap(destinationDivId, idMap, data) {
 		e.target.addLayer(pie);
 	});
 
-	this.markers = new Array();
-
 	this.askForMarkers();
 	this.map.setView(center, startZoom);
 }
 
 GeoMap.prototype.askForMarkers = function() {
 
+	this.markers = new Array();
 	for ( i = 0; i < this.data.length; i++) {
 		var marker = new L.Marker(new L.LatLng(this.data[i].lat, this.data[i].lon));
 		marker.data = this.data[i];
