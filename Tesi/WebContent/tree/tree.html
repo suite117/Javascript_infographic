@@ -13,14 +13,12 @@
 
 	$(document).ready(function() { 
 		
-		$.getJSON('data.json', function(data) {
-			GraphTree(data, "#tree1");
+		$.getJSON('gerarchia_gruppo_organizzato.json', function(data) {
+			var tree = new Tree("tree1", "tree1svg", data);
+			//tree.add(1);
 			
 		});
-		$.getJSON('data2.json', function(data) {
-			GraphTree(data, "#tree2");
-			
-		});
+		
 		
 	});
 </script>
@@ -32,3 +30,4 @@
 </div>
 </body>
 </html>
+
