@@ -9,7 +9,8 @@ function Table(destinationDivId, idMap, set) {
 	var aoColumns = new Array();
 	for (var i = 0; i < listSet[0].length; i++) {
 		aoColumns.push({
-			"sTitle" : listSet[0][i]
+			"sTitle" : listSet[0][i],
+			 
 		});
 	}
 
@@ -17,6 +18,7 @@ function Table(destinationDivId, idMap, set) {
 	$('#' + this.idMap).dataTable({
 		"aaData" : listSet[1],
 		"aoColumns" : aoColumns,
+		"iDisplayLength": 25,
 		"oLanguage" : {
 			"sUrl" : baseUrl + "/datatable/dataTables.italian.json"
 		}

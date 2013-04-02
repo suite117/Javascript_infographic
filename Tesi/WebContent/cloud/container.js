@@ -2,10 +2,13 @@ var containerId = 0;
 function createContainer() {
 
 	var id = containerId++;
+	var prefix = 'view-container-';
+	var divId = prefix + id;
+	var nextId = id + 1;
 
-	$("#views-container").append('<div id="view-container-' + id + '" class="view-container">' + '<div class="view-header"><div class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="view-container-body-' + id + '" class="view-container-body">&nbsp;</div></div>');
+	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="view-container-body-' + id + '" class="view-container-body">&nbsp;</div></div>');
 
-	var form = $("#view-container-" + id + " form");
+	var form = $("#" + divId + " form");
 
 	var options = [["tutti", "ciascuno"], ["non noti"]];
 
@@ -24,8 +27,23 @@ function createContainer() {
 	}
 
 	$(document).ready(function() {
-		// select the view
-		$("#view-container-" + id + " .droppable").droppable({
+		// container listener
+		$("#" + divId).data("id", id);
+
+		$("#" + divId).on("dataChange", function(d, param1, param2) {
+
+			var nextContainer = $(d.currentTarget);
+			var nextId = $(d.currentTarget).data().id;
+			$("#" + prefix + nextId + " .view-container-body").text("ciao sono " + id);
+			updateNextContainer(id + 1);
+
+			console.log(nextContainer.data());
+			console.log(param1);
+			console.log(param2);
+		});
+
+		// aggiunge l'evento drop all'etichetta del container
+		$("#" + divId + " .droppable").droppable({
 			tolerance : 'touch',
 			over : function() {
 				$(this).removeClass('out').addClass('over');
@@ -63,9 +81,16 @@ function createContainer() {
 					}
 				}
 				$(this).removeClass('over').addClass('drop');
+				updateNextContainer(nextId);
+
 			}
 		});
 
 	});
+
+	function updateNextContainer(destinationId) {
+		$("#" + prefix + destinationId).trigger("dataChange", ['Pass', 'Along', 'Parameters']);
+	}
+
 }
 

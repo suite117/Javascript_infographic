@@ -25,7 +25,7 @@ $(document).ready(function() {
 
 	dominio["persone"] = {
 		type : TYPE.SET,
-		elements : persone.map(personeMap)
+		elements : persone.map1(personeMap)
 	};
 
 	var armi = getJSON("../data/armi.json");
