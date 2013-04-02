@@ -14,7 +14,8 @@
 	$(document).ready(function() { 
 		
 		$.getJSON('gerarchia_gruppo_organizzato.json', function(data) {
-			Tree.init("tree1", "tree1svg", data);
+			var tree = new Tree("tree1", "tree1svg", data);
+			//tree.add(1);
 			
 		});
 		

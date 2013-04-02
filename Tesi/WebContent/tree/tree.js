@@ -1,17 +1,15 @@
-function Tree() {
-}
-
-Tree.init = function(destinationDiv, idMap, data) {
-
-	var root = jsonToTreeJson(data);
-	var width = 800;
+function Tree(destinationDiv, idMap, data) {
+	
+	this.nodes = new Array();
+	this.root = jsonToTreeJson(data);
+	var width= 800;
 	var height = 600;
 	var m = [20, 20, 20, 20];
 	var w = width - m[1] - m[3];
 	var h = height - m[0] - m[2];
 
-	root.x0 = h / 2;
-	root.y0 = 0;
+	this.root.x0 = h / 2;
+	this.root.y0 = 0;
 
 	var i = 0;
 
@@ -47,27 +45,30 @@ Tree.init = function(destinationDiv, idMap, data) {
 		if (d.children) {
 			d.children.forEach(toggleAll);
 			toggle(d);
+			//this.nodes[d.id] = d;
 		}
 	}
 
-	;
+	
 
 	// initialize the display to show a few nodes.
-	root.children.forEach(toggleAll);
+	this.root.children.forEach(toggleAll);
 	// toggle(root.children[1]);
 	// toggle(root.children[9]);
 
-	update(root);
-
-	function update(source) {
+	update(this.root, this.root, this.nodes);
+	console.log(this.nodes);
+	
+	function update(source, root, nodeshash) {
 		var duration = d3.event && d3.event.altKey ? 5000 : 500;
 
 		// Compute the new tree layout.
 		var nodes = tree.nodes(root).reverse();
-
+		
 		// Normalize for fixed-depth.
 		nodes.forEach(function(d) {
 			d.y = d.depth * 180;
+			nodeshash[d.id] = d;
 		});
 
 		// Update the nodes...
@@ -80,7 +81,8 @@ Tree.init = function(destinationDiv, idMap, data) {
 			return "translate(" + source.y0 + "," + source.x0 + ")";
 		}).on("click", function(d) {
 			toggle(d);
-			update(d);
+			update(d, root, nodes);
+			//utile per i popup
 			if (d['info']) {
 				playvid(d['info']);
 			}
@@ -88,7 +90,7 @@ Tree.init = function(destinationDiv, idMap, data) {
 
 		nodeEnter.append("svg:circle").attr("r", 1e-6).style("fill", function(d) {
 			return d._children ? "lightsteelblue" : "#fff";
-		});
+		}).style("visibility", "visible");
 
 		nodeEnter.append("svg:text")
 		// .attr("y", function(d) { return d.children || d._children ? -10 : 10;
@@ -114,13 +116,16 @@ Tree.init = function(destinationDiv, idMap, data) {
 		nodeUpdate.select("text").style("fill-opacity", 1);
 
 		// Transition exiting ndoes to the parent's new position.
+		
 		var nodeExit = node.exit().transition().duration(duration).attr("transform", function(d) {
 			return "translate(" + source.y + "," + source.x + ")";
 		}).remove();
+		
 
 		nodeExit.select("circle").attr("r", 1e-6);
 		nodeExit.select("text").style("fill-opacity", 1e-6);
-
+		
+		
 		// Update the links...
 		var link = vis.selectAll("path.link").data(tree.links(nodes), function(d) {
 			return d.target.id;
@@ -160,16 +165,7 @@ Tree.init = function(destinationDiv, idMap, data) {
 		});
 	}
 
-	// Toggle children
-	function toggle(d) {
-		if (d.children) {
-			d._children = d.children;
-			d.children = null;
-		} else {
-			d.children = d._children;
-			d._children = null;
-		}
-	}
+	
 
 	// zoom in / out
 	function zoom(d) {
@@ -238,5 +234,20 @@ function findChildren(node, list) {
 
 		}
 	}
+}
+
+// Toggle children
+	function toggle(d) {
+		if (d.children) {
+			d._children = d.children;
+			d.children = null;
+		} else {
+			d.children = d._children;
+			d._children = null;
+		}
+	}
+
+Tree.prototype.add = function (id) {
+  toggle(this.nodes[id]);
 }
 
