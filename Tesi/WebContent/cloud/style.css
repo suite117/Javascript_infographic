@@ -21,7 +21,7 @@
 }
 .view-container .droppable {
 	border: 2px solid red;
-	border-radius: 15px 15px 0 0;
+	border-radius: 70px 70px 0 0;
 	height: 100px;
 	left: 38%;
 	position: relative;
@@ -63,9 +63,10 @@ div.draggable svg {
 	width: 120px;
 }
 
+/*
 svg {
 	border: 2px solid red;
-}
+} */
 
 g.button rect {
 	fill: steelblue;
