@@ -27,7 +27,8 @@ function initClouds(idDOM, dominio) {
 	 elements : [i + 1, i * 2 + 2, i * 3 + 3],
 	 };
 	 */
-
+	
+	//generate Id for elements inside set
 	function generateId(prefix, list) {
 		for (var i = 0; i < list.length; i++)
 			if (!isFunction(list[i]))
@@ -48,7 +49,8 @@ function initClouds(idDOM, dominio) {
 			i++;
 		}
 	}
-
+	
+	//draw the clouds
 	function draw() {
 
 		var zoomBehavior = d3.behavior.zoom().on("zoom", zoom);

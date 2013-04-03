@@ -14,6 +14,7 @@ $(document).ready(function() {
 	createContainer();
 	createContainer();
 	createContainer();
+	createContainer();
 
 	var persone = getJSON("../data/persone.json");
 
@@ -47,6 +48,13 @@ $(document).ready(function() {
 	dominio["eventi"] = {
 		type : TYPE.GEOMAP,
 		elements : events
+	};
+	
+	var gerarchiaGruppoOrganizzato = getJSON("../data/gerarchia_gruppo_organizzato.json");
+
+	dominio["gruppoOrganizzato"] = {
+		type : TYPE.TREE,
+		elements : gerarchiaGruppoOrganizzato
 	};
 
 	initClouds('#viz', dominio);

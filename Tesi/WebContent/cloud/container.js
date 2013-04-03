@@ -1,4 +1,6 @@
 var containerId = 0;
+
+//create container for views
 function createContainer() {
 
 	var id = containerId++;
@@ -29,12 +31,14 @@ function createContainer() {
 	$(document).ready(function() {
 		// container listener
 		$("#" + divId).data("id", id);
-
+		
+		//add a listener for custom event "dataChange"
 		$("#" + divId).on("dataChange", function(d, param1, param2) {
 
 			var nextContainer = $(d.currentTarget);
 			var nextId = $(d.currentTarget).data().id;
 			$("#" + prefix + nextId + " .view-container-body").text("ciao sono " + id);
+			//update the next container cascading
 			updateNextContainer(id + 1);
 
 			console.log(nextContainer.data());
@@ -77,6 +81,8 @@ function createContainer() {
 							map = new Table(destinationDivId, "table-" + id, d.elements);
 						else if (d.type == TYPE.GEOMAP)
 							map = new GeoMap(destinationDivId, "geomap-" + id, d.elements);
+						else if (d.type == TYPE.TREE)
+							map = new Tree(destinationDivId, "tree-" + id, d.elements);
 						break;
 					}
 				}
@@ -87,7 +93,8 @@ function createContainer() {
 		});
 
 	});
-
+	
+	//start custom event "dataChange" and update next view
 	function updateNextContainer(destinationId) {
 		$("#" + prefix + destinationId).trigger("dataChange", ['Pass', 'Along', 'Parameters']);
 	}
