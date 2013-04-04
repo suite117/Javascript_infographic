@@ -2,8 +2,8 @@ function Tree(destinationDiv, idMap, data) {
 	
 	this.nodes = new Array();
 	this.root = jsonToTreeJson(data);
-	var width= 800;
-	var height = 600;
+	var width= 550;
+	var height = 400;
 	var m = [20, 20, 20, 20];
 	var w = width - m[1] - m[3];
 	var h = height - m[0] - m[2];

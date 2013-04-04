@@ -6,14 +6,14 @@ function createContainer() {
 	var divId = prefix + id;
 	var nextId = id + 1;
 
-	$("#views-container").append('<div id="' + divId + '" class="view-container" style="position:relative;">' + '<div class="view-header"><div class="droppable">&nbsp;</div><div class="view-buttons"></div></div><div id="view-container-body-' + id + '" class="view-container-body">&nbsp;</div></div>');
+	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="view-container-body-' + id + '" class="view-container-body">&nbsp;</div></div>');
 
-	var buttons = $("#" + divId + " .view-buttons");
+	var form = $("#" + divId + " form");
 
-	var options = [["tutti", "solo selezionati"], ["non noti"]];
+	var options = [["tutti", "ciascuno"], ["non noti"]];
 
 	for (var k = 0; k < options.length; k++) {
-		buttons.append('<form id="radio-' + k + '"></form>');
+		form.append('<div id="radio-' + k + '"></div>');
 		var radioGroup = $("#view-container-" + id + " #radio-" + k);
 
 		for (var i = 0; i < options[k].length; i++) {
@@ -26,77 +26,70 @@ function createContainer() {
 
 	}
 
-	// container listener
-	$("#" + divId).data("id", id);
+	$(document).ready(function() {
+		// container listener
+		$("#" + divId).data("id", id);
 
-	// evento custom richiamato dal container sorgente
-	$("#" + divId).on("dataChange", function(d, param1, param2) {
+		$("#" + divId).on("dataChange", function(d, param1, param2) {
 
-		//var nextContainer = $(d.currentTarget);
+			var nextContainer = $(d.currentTarget);
+			var nextId = $(d.currentTarget).data().id;
+			$("#" + prefix + nextId + " .view-container-body").text("ciao sono " + id);
+			updateNextContainer(id + 1);
 
-		$("#" + divId + " .view-container-body").text("ciao sono " + id);
-		updateNextContainer(id + 1);
+			console.log(nextContainer.data());
+			console.log(param1);
+			console.log(param2);
+		});
 
-		console.log($(this).data());
-		console.log(param1);
-		console.log(param2);
-	});
+		// aggiunge l'evento drop all'etichetta del container
+		$("#" + divId + " .droppable").droppable({
+			tolerance : 'touch',
+			over : function() {
+				$(this).removeClass('out').addClass('over');
+			},
+			out : function() {
+				$(this).removeClass('over').addClass('out');
+			},
+			drop : function() {
+				//confirm('Permantly delete this item?');
+				// this = header sottostante
+				var offset = $(this).offset();
+				var x = offset.left;
+				var y = offset.top;
 
-	// aggiunge l'evento drop all'etichetta del container
-	$("#" + divId + " .droppable").droppable({
-		tolerance : 'touch',
-		over : function() {
-			$(this).removeClass('out').addClass('over');
-		},
-		out : function() {
-			$(this).removeClass('over').addClass('out');
-		},
-		drop : function() {
-			//confirm('Permantly delete this item?');
+				for (var k = 0; k < draggers.length; k++) {
 
-			// this = etichetta del viewer sottostante
-			var offset = $(this).offset();
-			var x = offset.left;
-			var y = offset.top;
+					var d = $(draggers[k]).data().d;
 
-			//  test for all clouds
-			for (var k = 0; k < draggers.length; k++) {
+					var x1 = d.x;
+					var y1 = d.y;
 
-				// get data of node
-				var d = $(draggers[k]).data().d;
+					var dis = distance([x, y], [x1, y1]);
+					//console.log([x, y] + " " + [x1, y1] + " " + dis);
+					//console.log("el ", d.elements);
 
-				var x1 = d.x;
-				var y1 = d.y;
-
-				var dis = distance([x, y], [x1, y1]);
-
-				if (dis < 100) {
-
-					// init container
-					$(this).data("d", d);
-					draw(d);
-					break;
+					if (dis < 100) {
+						var map;
+						var destinationDivId = "view-container-body-" + id;
+						$("#" + destinationDivId).html("");
+						if (d.type == TYPE.SET)
+							map = new Table(destinationDivId, "table-" + id, d.elements);
+						else if (d.type == TYPE.GEOMAP)
+							map = new GeoMap(destinationDivId, "geomap-" + id, d.elements);
+						else if (d.type == TYPE.TREE)
+							map = new Tree(destinationDivId, "tree-" + id, d.elements);
+						break;
+					}
 				}
-			}
-			$(this).removeClass('over').addClass('drop');
-			updateNextContainer(nextId);
+				$(this).removeClass('over').addClass('drop');
+				updateNextContainer(nextId);
 
-		}
+			}
+		});
+
 	});
 
-	function draw(d) {
-
-		var map;
-		var destinationDivId = "view-container-body-" + id;
-		$("#" + destinationDivId).html("");
-		if (d.type == TYPE.SET)
-			map = new Table(destinationDivId, "table-" + id, d.elements);
-		else if (d.type == TYPE.GEOMAP)
-			map = new GeoMap(destinationDivId, "geomap-" + id, d.elements);
-
-	}
-
-	// evento da richiamare per scatenare l'aggiornamento del viewer successivo
 	function updateNextContainer(destinationId) {
 		$("#" + prefix + destinationId).trigger("dataChange", ['Pass', 'Along', 'Parameters']);
 	}
