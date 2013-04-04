@@ -15,7 +15,7 @@ $(document).ready(function() {
 	createContainer();
 	createContainer();
 
-	var persone = getJSON("../data/persone.json");
+	var persone = getJSON("data/persone.json");
 
 	var personeMap = {
 		"id" : "id",
@@ -28,14 +28,14 @@ $(document).ready(function() {
 		elements : persone.map1(personeMap)
 	};
 
-	var armi = getJSON("../data/armi.json");
+	var armi = getJSON("data/armi.json");
 
 	dominio["armi"] = {
 		type : TYPE.SET,
 		elements : armi
 	};
 
-	var events = getJSON("../data/events.json");
+	var events = getJSON("data/events.json");
 	
 	var geoMapping = {
 					"id" : "id",
@@ -49,7 +49,7 @@ $(document).ready(function() {
 		elements : events
 	};
 	
-	var gerarchiaGruppoOrganizzato = getJSON("../data/gerarchia_gruppo_organizzato.json");
+	var gerarchiaGruppoOrganizzato = getJSON("data/gerarchia_gruppo_organizzato.json");
 
 	dominio["gruppoOrganizzato"] = {
 		type : TYPE.TREE,

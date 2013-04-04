@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<!-- Inclusioni di funzionalità base implementate utilizzate dai wrapper e dai viewer -->
+		<script type="text/javascript" src="base/functions.js"></script>
+		<script type="text/javascript" src="base/operators.js"></script>
+		<script type="text/javascript" src="base/array.js"></script>
+
+		<!-- Inclusione libreria JQuery -->
+		<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+
+		<!-- Inclusione libreria JQuery UI e del relativo template css -->
+		<script type="text/javascript" src="lib/jquery/jquery-ui.min.js"></script>
+		<link rel="stylesheet" href="lib/jquery/smoothness/jquery-ui.css" />
+
+		<!-- Inclusione libreria grafica D3 -->
+		<script type="text/javascript" src="lib/d3/d3.v3.min.js"></script>
+
+		<!-- Inlcusione della mappa per gestire le nuvole -->
+		<script type="text/javascript" src="cloud/cloud.js"></script>
+		<!-- Inlcusione della mappa per gestire i viewer -->
+		<script type="text/javascript" src="cloud/container.js"></script>
+
+		<!-- Inclusione del plugin JQuery DataTables -->
+		<script type="text/javascript" src="datatable/dataTables.js"></script>
+		<!-- inclusione del wrapper per la mappa che usa DataTables -->
+		<script type="text/javascript" src="datatable/table.js"></script>
+		<link type="text/css" rel="stylesheet" href="datatable/styles/table.css" />
+
+		<!-- Inclusione del wrapper per la mappa che usa il tree di D3 e relativo foglio di stile -->
+		<script type="text/javascript" src="tree/tree.js"></script>
+		<link type="text/css" rel="stylesheet" href="tree/style.css" />
+
+		<!-- Inclusione della libreria leaflet e relativo foglio di stile  per la gestione delle mappe geografiche -->
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
+		<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+
+		<!-- Mappe geografiche - Inclusioni ulteriori per la gestione delle torte -->
+		<script src="geomap/piechart/Semicircle.js"></script>
+		<script src="geomap/piechart/Pie.js"></script>
+
+		<!-- Inclusione del wrapper per la mappa gografica che usa Leaflet e relativo foglio di stile -->
+		<script type="text/javascript" src="geomap/geomap.js"></script>
+		<link rel="stylesheet" href="geomap/geomap.css" />
+
+		<!-- Main dell'applicazione e relativo foglio di stile -->
+		<script type="text/javascript" src="init.js"></script>
+		<link type="text/css" rel="stylesheet" href="style.css" />
+
+		<title>D3 Clouds and Maps + JQuery Maps + Leaflet</title>
+		<script type="text/javascript">
+			if ( typeof jQuery == 'undefined')
+				alert("jQuery Non Found!.");
+		</script>
+	</head>
+
+	<body>
+
+		<div id="dynamic"></div>
+		<div id="viz">
+			&nbsp;
+		</div>
+		<div id="debug">
+			&nbsp;
+		</div>
+		<div id="draggable-container" class="draggable-container">
+			&nbsp;
+		</div>
+		<div id="views-container" class="views-container">
+			&nbsp;
+		</div>
+	</body>
+
+</html>
