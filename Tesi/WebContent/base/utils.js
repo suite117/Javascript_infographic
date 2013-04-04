@@ -1,7 +1,27 @@
+// url base dell'applicazione
+var baseUrl = "/Javascript_infographic/Tesi/WebContent/";
+
 function isFunction(functionToCheck) {
 	var getType = {};
-	return functionToCheck
-			&& getType.toString.call(functionToCheck) === '[object Function]';
+	return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+}
+
+function getJSON(url) {
+	var data = (function() {
+		var json = null;
+		$.ajax({
+			'async' : false,
+			'global' : false,
+			'url' : url,
+			'dataType' : "json",
+			'success' : function(data) {
+				json = data;
+			}
+		});
+		return json;
+	})();
+
+	return data;
 }
 
 function createObjfromObj(input, mapping) {
@@ -24,7 +44,7 @@ function createObjfromObj(input, mapping) {
 						args[i] = input[arguments[0][i]];
 						//document.writeln(args[i] + "<br />");
 					}
-					
+
 					out[key] = f.call(null, args);
 				} else
 					// viene passato il singolo parametro

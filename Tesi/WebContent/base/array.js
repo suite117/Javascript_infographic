@@ -1,65 +1,46 @@
-
 // Stampa l'oggetto per funzioni di debug
 Array.prototype.print = function() {
-
-	//document.writeln("Instanceof: " + (this));
-	var outText = "<p>" + JSON.stringify(this) + "</p>";
-
-	document.writeln(outText);
-
-	return outText;
+	return JSON.stringify(this);
 };
 
 // Mapping di un oggetto ad un altro oggetto con applicazione di eventuali
 // funzioni
 Array.prototype.map1 = function(mapping) {
 
-	var outArr = new Array();
+	var out = new Array();
 	for (i in this) {
 		if (!isFunction(this[i]))
-			outArr[i] = createObjfromObj(this[i], mapping);
+			out[i] = createObjfromObj(this[i], mapping);
 	}
 
-	return outArr;
+	return out;
+};
+
+Array.prototype.joinTable = function(arr, idTab1, idTab2) {
+
+	var out = new Array();
+	var k = 0;
+	for (var i in this) {
+		if (!isFunction(this[i])) {
+			for (var j in arr) {
+				if (!isFunction(arr[j]) && this[i][idTab1] == arr[j][idTab2]) {
+					out[k] = clone(this[i]);
+					for (var key in arr[j]) {
+						if (key != idTab2 && key != idTab1)
+							out[k][key] = arr[j][key];
+					}
+					k++;
+				}
+
+			}
+		}
+
+	}
+
+	return out;
 };
 
 // Estensione della classe array
-
-Array.prototype.printTable = function(idTable) {
-	var outText = "";
-	var tHead = new Array();
-	var tagTBody = new Array();
-
-	for (var key in this[0]) {
-		if (!isFunction(this[0][key]))
-			tHead.push("<th>" + key + "</th>");
-	}
-
-	for (var i = 0; i < this.length; i++) {
-		if (!isFunction(this[i]) && tagTBody[i] == null) {
-			tagTBody[i] = new Array();
-			for (var key in this[i]) {
-				if (!isFunction(this[i][key])) {
-					tagTBody[i].push("<td>" + this[i][key] + "</td>");
-				}
-			}
-		}
-	}
-
-	outText += '<table id="' + idTable + '"><thead><tr>' + tHead.join("") + '</tr></thead><tbody>';
-
-	for (index in tagTBody) {
-		if (!isFunction(tagTBody[index]))
-			outText += "<tr>" + tagTBody[index] + "</tr>";
-
-	}
-
-	outText += "</tbody></table>";
-	document.writeln(outText);
-
-	return;
-};
-
 
 // Distanza tra due insiemi
 Array.prototype.distance = function(testArr) {
@@ -79,7 +60,6 @@ function equals(x, y) {
 	return x.id != null && y.id != null && x.id == y.id;
 
 };
-
 
 //Metodo che permette di verificare se un oggetto è contenuto in un array
 Array.prototype.contains = function(obj) {
@@ -157,7 +137,7 @@ Array.prototype.intersect = function(array) {
 			out.push(array[i]);
 
 	return out;
-}; 
+};
 
 //metodo che implementa la differenza tra insiemi
 Array.prototype.difference = function(array) {
@@ -182,7 +162,6 @@ Array.prototype.remove = function(id) {
 	}
 };
 
-
 // verifica se due array sono uguali
 Array.prototype.compareTo = function(testArr) {
 	if (this.length != testArr.length)
@@ -205,7 +184,3 @@ Array.prototype.compareTo = function(testArr) {
 	return true;
 };
 
-
-Array.prototype.toString1 = function() {
-	return JSON.stringify(this);
-};

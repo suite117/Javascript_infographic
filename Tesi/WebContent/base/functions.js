@@ -1,5 +1,3 @@
-var baseUrl = "/Javascript_infographic/Tesi/WebContent/";
-
 function getAge(dateString) {
 	var today = new Date();
 	var birthDate = new Date(dateString);
@@ -25,20 +23,6 @@ function toList(arguments) {
 	return arguments;
 }
 
-function getJSON(url) {
-	var data = (function() {
-		var json = null;
-		$.ajax({
-			'async' : false,
-			'global' : false,
-			'url' : url,
-			'dataType' : "json",
-			'success' : function(data) {
-				json = data;
-			}
-		});
-		return json;
-	})();
-	
-	return data;
+function toHTMLImgTag(path) {
+	return '<img src="' + path + '" style="width:100px; margin:0; padding: 0;"></img>';
 }
