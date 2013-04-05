@@ -14,6 +14,14 @@ $(document).ready(function() {
 	createContainer();
 	createContainer();
 	createContainer();
+	
+	var events = getJSON("data/events.json");
+
+	dominio["eventi"] = {
+		type : TYPE.GEOMAP,
+		elements : events
+	};
+
 
 	var persone = getJSON("data/persone.json");
 
@@ -32,12 +40,27 @@ $(document).ready(function() {
 	
 	var personePartecipanti = getJSON("data/personapartecipante.json");
 	
+	
+	
 	dominio["persone-partecipanti"] = {
 		type : TYPE.SET,
-		elements : personePartecipanti.joinTable(persone, "idPersona", "id")
+		elements : personePartecipanti 
 	};
 	
-	console.log("");
+	var epj = events.joinTable(personePartecipanti, "id", "idEvento");
+	
+	dominio["eventi-partecipanti"] = {
+		type : TYPE.SET,
+		elements : epj 
+	};
+	
+	var ppf = persone.filter(personePartecipanti, "id", "idPersona");
+	
+	dominio["pp-filter-2"] = {
+		type : TYPE.SET,
+		elements : ppf 
+	};
+	
 
 	var armi = getJSON("data/armi.json");
 
@@ -46,13 +69,7 @@ $(document).ready(function() {
 		elements : armi
 	};
 
-	var events = getJSON("data/events.json");
-
-	dominio["eventi"] = {
-		type : TYPE.GEOMAP,
-		elements : events
-	};
-
+	
 	var gerarchiaGruppoOrganizzato = getJSON("data/gerarchia_gruppo_organizzato.json");
 
 	dominio["gruppoOrganizzato"] = {

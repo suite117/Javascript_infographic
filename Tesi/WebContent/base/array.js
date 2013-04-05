@@ -7,7 +7,7 @@ Array.prototype.print = function() {
 // funzioni
 Array.prototype.map1 = function(mapping) {
 
-	var out = new Array();
+	var out = [];
 	for (i in this) {
 		if (!isFunction(this[i]))
 			out[i] = createObjfromObj(this[i], mapping);
@@ -18,17 +18,43 @@ Array.prototype.map1 = function(mapping) {
 
 Array.prototype.joinTable = function(arr, idTab1, idTab2) {
 
-	var out = new Array();
+	var out = [];
 	var k = 0;
 	for (var i in this) {
 		if (!isFunction(this[i])) {
 			for (var j in arr) {
 				if (!isFunction(arr[j]) && this[i][idTab1] == arr[j][idTab2]) {
-					out[k] = clone(this[i]);
+					// assegno i campi della prima tabella
+					out[k] = this[i];
+					// assegno i campi della seconda tabella
 					for (var key in arr[j]) {
-						if (key != idTab2 && key != idTab1)
+						// primo test per evitare di sovrascrivere l'id originario
+						// secondo test per non riportare la colonna di join della seconda tabella
+						if (key != idTab1 && key != idTab2)
 							out[k][key] = arr[j][key];
 					}
+					k++;
+				}
+
+			}
+		}
+
+	}
+
+	return out;
+};
+
+
+Array.prototype.filter = function(arr, idTab1, idTab2) {
+
+	var out = [];
+	var k = 0;
+	for (var i in this) {
+		if (!isFunction(this[i])) {
+			for (var j in arr) {
+				if (!isFunction(arr[j]) && this[i][idTab1] == arr[j][idTab2]) {
+					// assegno i campi della prima tabella
+					out[k] = this[i];
 					k++;
 				}
 
