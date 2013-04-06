@@ -1,3 +1,6 @@
+.ui-body-c, .ui-overlay-c {
+	background: white;
+}
 
 /* container */
 #views-container {
@@ -35,8 +38,8 @@
 	border: 2px solid red;
 }
 
-.view-container .view-buttons form div {
-	display: inline;
+.view-buttons .ui-slider-switch {
+	width: 12em
 }
 
 .view-container .view-container-body {
@@ -44,7 +47,6 @@
 	border: 2px solid red;
 	overflow: auto;
 }
-
 
 /* clouds */
 .draggable-container {
@@ -64,9 +66,9 @@ div.draggable svg {
 }
 
 /*
-svg {
-	border: 2px solid red;
-} */
+ svg {
+ border: 2px solid red;
+ } */
 
 g.button rect {
 	fill: steelblue;
