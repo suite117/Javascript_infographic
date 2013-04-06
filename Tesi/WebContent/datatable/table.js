@@ -1,4 +1,4 @@
-function Table(destinationDivId, idMap, set) {
+function Table(divId, destinationDivId, idMap, set) {
 
 	this.destinationDivId = destinationDivId;
 	this.idMap = idMap;

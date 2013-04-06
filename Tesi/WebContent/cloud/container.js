@@ -17,7 +17,7 @@ function radioButton(id, form, options) {
 		var inputId = 'radio-choice-' + i + '-fieldset-' + id;
 		fieldset.append('<input type="radio" name="' + inputId + '" id="' + inputId + '" value="' + options[i] + '" />');
 		fieldset.append('<label for="' + inputId + '">' + options[i] + '</label>');
-		
+
 		$("#" + inputId).on('click', function() {
 			$(this).attr("checked", true);
 			var label = $("#view-container-" + id + " label");
@@ -42,7 +42,7 @@ function createContainer() {
 	var id = containerId++;
 	var prefix = 'view-container-';
 	var divId = prefix + id;
-	var nextId = id + 1;
+	var nextId = prefix + parseInt(id + 1);
 	var data;
 	var map;
 
@@ -57,21 +57,32 @@ function createContainer() {
 	// container listener
 	$("#" + divId).data("id", id);
 
+	$("#" + divId).on("mapChanged", function(t, selected) {
+		updateNextContainer(nextId, selected);
+	});
+
 	$("#" + divId).on("dataChange", function(d, dataSource, param2) {
 		// quando entro qua dentro sono già nel container richiamato dal precedente
+		//console.log("data" + data.elements.print());
 
-		if (data != null) {
-			var els = data.elements.joinTable(dataSource.elements, "id", "idEvento");
-			console.log(els);
-			data.elements = els;
-			if (els.length != 0)
-				drawMap(id, data);
+		if (data != null && dataSource != null) {
+			var els = data.elements.filter(dataSource, "idEvento", "id");
+			console.log("id " + id);
+			console.log("dataSource " + dataSource.print());
+			//console.log("data.elements " + data.elements.print());
+			
+			console.log("els " + els.print());
+			
+			if (els.length != 0) {
+				var dataup = clone(data);
+				dataup.elements = els;
+				drawMap(dataup);
+			}
+				
+
+			// richiamo il container successivo a cascata
 		}
-		// richiamo il container successivo a cascata
-		updateNextContainer(id + 1);
 
-		//console.log(param1);
-		//console.log(param2);
 	});
 
 	// aggiunge l'evento drop all'etichetta del container
@@ -103,33 +114,36 @@ function createContainer() {
 				if (dis < 100) {
 					// conservo l'insieme
 					data = d;
-					drawMap();
+
+					drawMap(data);
 
 					break;
 				}
 			}
 			$(this).removeClass('over').addClass('drop');
-			updateNextContainer(nextId, data);
+			updateNextContainer(nextId, d.elements);
 
 		}
 	});
 
-	function drawMap() {
+	function drawMap(data) {
 
-		var destinationDivId = "view-container-body-" + id;
-		$("#" + destinationDivId).html("");
+		var bodyDivId = "view-container-body-" + id;
+		$("#" + bodyDivId).html("");
+
 		if (data.type == TYPE.SET)
-			map = new Table(destinationDivId, "table-" + id, data.elements);
+			map = new Table(divId, bodyDivId, "table-" + id, data.elements);
 		else if (data.type == TYPE.GEOMAP)
-			map = new GeoMap(destinationDivId, "geomap-" + id, data.elements);
+			map = new GeoMap(divId, bodyDivId, "geomap-" + id, data.elements);
 		else if (data.type == TYPE.TREE)
-			map = new Tree(destinationDivId, "tree-" + id, data.elements);
+			map = new Tree(divId, bodyDivId, "tree-" + id, data.elements);
 
 		return map;
 	}
 
-	function updateNextContainer(destinationId, data) {
-		$("#" + prefix + destinationId).trigger("dataChange", [data, 'Along', 'Parameters']);
+	function updateNextContainer(divId, elements) {
+		if (elements != null)
+			$("#" + divId).trigger("dataChange", [elements, 'Along', 'Parameters']);
 	}
 
 }
