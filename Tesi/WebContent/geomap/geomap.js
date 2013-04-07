@@ -3,7 +3,7 @@ function GeoMap(divId, destinationDivId, idMap, data) {
 	this.divId = divId;
 	this.destinationDivId = destinationDivId;
 	this.data = data;
-	
+	this.selected = [];
 
 	var layers = new Array();
 	var center = [53.73, -0.30];
@@ -93,7 +93,7 @@ GeoMap.prototype.askForMarkers = function() {
 
 	var divId = this.divId;
 	var data = this.data;
-	var selected = [];
+	var selected = this.selected;
 	function onMarkerClick(e) {
 
 		var icon;
@@ -102,35 +102,26 @@ GeoMap.prototype.askForMarkers = function() {
 			icon = new LeafIcon();
 			e.target.active = false;
 			selected.remove(e.target.data.id);
-			//el["active"] = false;
-			
 		} else {
 			icon = new LeafIconActive();
 			e.target.active = true;
-			//el["active"] = true;
 			selected.add(e.target.data);
-			//selected.push(e.target.data);
 		}
 		e.target.setIcon(icon);
 
 		var popup = L.popup();
 		var content = "<p>" + e.target.data.id + " " + e.target.data.name + "</p>";
-		// + e.target.data.artist;
 		e.target.bindPopup(content).openPopup();
 
-		//var data = $("#" + divId).data("d");
-		
-		/* for (var i = 0; i < data.length; i++) {
-			if (data[i].active == true) {
-				alert("active " + data[i].id);
-			}
-		} */
-		
-		$("#" + divId).trigger("mapChanged", [selected]);
-		//console.log("data ", data);
+
+		$("#" + divId).trigger("dataChanged");
 	}
 
 };
+
+GeoMap.prototype.getSelected = function() {
+	return this.selected;
+}
 
 GeoMap.prototype.remove = function(id) {
 	this.map.removeLayer(this.markers[id]);

@@ -30,11 +30,14 @@ function createContainer() {
 	// container listener
 	$("#" + divId).data("id", id);
 
-	$("#" + divId).on("mapChanged", function(t, selected) {
-		updateNextContainer(nextId, selected);
+	$("#" + divId).on("dataChanged", function(t, selected) {
+		if (data.all == true)
+			updateNextContainer(nextId, data);
+		else
+			updateNextContainer(nextId, map.getSelected());
 	});
 
-	$("#" + divId).on("dataChange", function(d, dataSource, param2) {
+	$("#" + divId).on("sourceChanged", function(d, dataSource, param2) {
 		// quando entro qua dentro sono già nel container richiamato dal precedente
 		//console.log("data" + data.elements.print());
 
@@ -85,7 +88,7 @@ function createContainer() {
 				if (dis < 100) {
 					// conservo l'insieme
 					data = d;
-
+					data.all = true;
 					drawMap(data);
 
 					break;
@@ -114,7 +117,7 @@ function createContainer() {
 
 	function updateNextContainer(divId, elements) {
 		if (elements != null)
-			$("#" + divId).trigger("dataChange", [elements, 'Along', 'Parameters']);
+			$("#" + divId).trigger("sourceChanged", [elements, 'Along', 'Parameters']);
 	}
 
 	function createFieldset(id, form, options) {
@@ -127,16 +130,24 @@ function createContainer() {
 			fieldset.append('<label for="' + inputId + '">' + options[i] + '</label>');
 
 			$("#" + inputId).on('click', function(e) {
-				
-				console.log($(this).val());
+
+				val = $(this).val();
+
+				if (val == 'tutti')
+					data.all = true;
+				else
+					data.all = false;
+
 				var label = $("#view-container-" + id + " label");
 				if (label.hasClass('ui-btn-active'))
 					label.removeClass("ui-btn-active");
-				else  {
+				else {
 					label.addClass('ui-btn-active');
 					$(this).attr("checked", true);
 				}
 				//fieldset.controlgroup("refresh");
+				
+				$("#" + divId).trigger('dataChanged');
 			});
 		}
 
