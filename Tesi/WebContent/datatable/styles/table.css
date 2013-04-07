@@ -30,6 +30,10 @@
  * DataTables features
  */
 
+.views-container tr.selected {
+	background-color : #DDFFDD;
+}
+
 td.sorting_1 {
 	width: 15%;
 }

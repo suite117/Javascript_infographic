@@ -36,7 +36,7 @@ function initClouds(idDOM, dominio) {
 	}
 
 	var i = 0;
-	var clouds = new Array();
+	var clouds = [];
 	for (var key in dominio) {
 		if (!isFunction(dominio[key])) {
 			//generateId(key,dominio[key].elements);

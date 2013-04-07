@@ -30,30 +30,35 @@ function createContainer() {
 	// container listener
 	$("#" + divId).data("id", id);
 
-	$("#" + divId).on("dataChanged", function(t, selected) {
-		if (data.all == true)
-			updateNextContainer(nextId, data);
+	$("#" + divId).on("dataChanged", function(t) {
+		var selected = map.getSelected();
+		console.log(selected);
+		if (data.all == true || selected == null)
+			data.elements = data._elements;
 		else
-			updateNextContainer(nextId, map.getSelected());
+			data.elements = selected;
+
+		//console.log(data.elements);
+		updateNextContainer(nextId, data);
 	});
 
-	$("#" + divId).on("sourceChanged", function(d, dataSource, param2) {
+	$("#" + divId).on("sourceChanged", function(t, dataSource, param2) {
 		// quando entro qua dentro sono già nel container richiamato dal precedente
 		//console.log("data" + data.elements.print());
 
 		if (data != null && dataSource != null) {
-			var els = data.elements.filter(dataSource, "idEvento", "id");
+			data.elements = data._elements;
+			var els = data.elements.filter(dataSource.elements, "idPersona", "id");
 			//console.log("id " + id);
-			//console.log("dataSource " + dataSource.print());
+			//console.log("dataSource " + dataSource.elements.print());
 			//console.log("data.elements " + data.elements.print());
-			//console.log("els " + els.print());
+			console.log("els " + els.print());
 
 			if (els.length != 0) {
-				var dataup = clone(data);
-				dataup.elements = els;
-				drawMap(dataup);
+				data.elements = els;
 			}
 
+			drawMap(data);
 			// richiamo il container successivo a cascata
 		}
 
@@ -89,13 +94,14 @@ function createContainer() {
 					// conservo l'insieme
 					data = d;
 					data.all = true;
+					data._elements = data.elements;
 					drawMap(data);
 
 					break;
 				}
 			}
 			$(this).removeClass('over').addClass('drop');
-			updateNextContainer(nextId, d.elements);
+			updateNextContainer(nextId, data);
 
 		}
 	});
@@ -117,7 +123,7 @@ function createContainer() {
 
 	function updateNextContainer(divId, elements) {
 		if (elements != null)
-			$("#" + divId).trigger("sourceChanged", [elements, 'Along', 'Parameters']);
+			$("#" + divId).trigger("sourceChanged", [elements]);
 	}
 
 	function createFieldset(id, form, options) {
@@ -146,7 +152,7 @@ function createContainer() {
 					$(this).attr("checked", true);
 				}
 				//fieldset.controlgroup("refresh");
-				
+
 				$("#" + divId).trigger('dataChanged');
 			});
 		}

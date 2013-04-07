@@ -5,7 +5,7 @@ function GeoMap(divId, destinationDivId, idMap, data) {
 	this.data = data;
 	this.selected = [];
 
-	var layers = new Array();
+	var layers = [];
 	var center = [53.73, -0.30];
 
 	$("#" + this.destinationDivId).append('<div id="' + idMap + '" style="width:100%;height: 100%"></div>');
