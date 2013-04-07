@@ -9,33 +9,6 @@ function createSelect(id, form, options) {
 	select.slider();
 }
 
-function radioButton(id, form, options) {
-	form.append('<fieldset id="fieldset-' + id + '" data-role="controlgroup" data-type="horizontal"></fieldset>');
-
-	var fieldset = $("#fieldset-" + id);
-	for (var i = 0; i < options.length; i++) {
-		var inputId = 'radio-choice-' + i + '-fieldset-' + id;
-		fieldset.append('<input type="radio" name="' + inputId + '" id="' + inputId + '" value="' + options[i] + '" />');
-		fieldset.append('<label for="' + inputId + '">' + options[i] + '</label>');
-
-		$("#" + inputId).on('click', function() {
-			$(this).attr("checked", true);
-			var label = $("#view-container-" + id + " label");
-			if (label.hasClass('ui-btn-active'))
-				label.removeClass("ui-btn-active");
-			else
-				label.addClass('ui-btn-active');
-
-			//fieldset.controlgroup("refresh");
-		});
-	}
-
-	form.trigger("create");
-	//fieldset.controlgroup("refresh");
-	$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).attr("checked", true).checkboxradio("refresh");
-
-}
-
 var containerId = 0;
 function createContainer() {
 
@@ -51,8 +24,8 @@ function createContainer() {
 	var form = $("#" + divId + " form");
 	var options = ["tutti", "solo selezionati"];
 
-	//radioButton(id, form, options);
-	createSelect(id, form, options);
+	createFieldset(id, form, options);
+	//createSelect(id, form, options);
 
 	// container listener
 	$("#" + divId).data("id", id);
@@ -67,18 +40,16 @@ function createContainer() {
 
 		if (data != null && dataSource != null) {
 			var els = data.elements.filter(dataSource, "idEvento", "id");
-			console.log("id " + id);
-			console.log("dataSource " + dataSource.print());
+			//console.log("id " + id);
+			//console.log("dataSource " + dataSource.print());
 			//console.log("data.elements " + data.elements.print());
-			
-			console.log("els " + els.print());
-			
+			//console.log("els " + els.print());
+
 			if (els.length != 0) {
 				var dataup = clone(data);
 				dataup.elements = els;
 				drawMap(dataup);
 			}
-				
 
 			// richiamo il container successivo a cascata
 		}
@@ -144,6 +115,35 @@ function createContainer() {
 	function updateNextContainer(divId, elements) {
 		if (elements != null)
 			$("#" + divId).trigger("dataChange", [elements, 'Along', 'Parameters']);
+	}
+
+	function createFieldset(id, form, options) {
+		form.append('<fieldset id="fieldset-' + id + '" data-role="controlgroup" data-type="horizontal"></fieldset>');
+
+		var fieldset = $("#fieldset-" + id);
+		for (var i = 0; i < options.length; i++) {
+			var inputId = 'radio-choice-' + i + '-fieldset-' + id;
+			fieldset.append('<input type="radio" name="' + inputId + '" id="' + inputId + '" value="' + options[i] + '" />');
+			fieldset.append('<label for="' + inputId + '">' + options[i] + '</label>');
+
+			$("#" + inputId).on('click', function(e) {
+				
+				console.log($(this).val());
+				var label = $("#view-container-" + id + " label");
+				if (label.hasClass('ui-btn-active'))
+					label.removeClass("ui-btn-active");
+				else  {
+					label.addClass('ui-btn-active');
+					$(this).attr("checked", true);
+				}
+				//fieldset.controlgroup("refresh");
+			});
+		}
+
+		form.trigger("create");
+		//fieldset.controlgroup("refresh");
+		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).attr("checked", true).checkboxradio("refresh");
+
 	}
 
 }

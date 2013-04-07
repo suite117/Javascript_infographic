@@ -5,23 +5,22 @@ var TYPE = {
 
 }
 
-// MAIN di cloud.html
-
-$(document).ready(function() {
+// MAIN of cloud.html
+// for JQuery Mobile instead of $(document).ready()
+$(document).bind('pageinit', function() {
 
 	var dominio = [];
 
 	createContainer();
 	createContainer();
 	createContainer();
-	
+
 	var events = getJSON("data/events.json");
 
 	dominio["eventi"] = {
 		type : TYPE.GEOMAP,
 		elements : events
 	};
-
 
 	var persone = getJSON("data/persone.json");
 
@@ -37,30 +36,27 @@ $(document).ready(function() {
 		type : TYPE.SET,
 		elements : persone.map1(personeMap)
 	};
-	
+
 	var personePartecipanti = getJSON("data/personapartecipante.json");
-	
-	
-	
+
 	dominio["persone-partecipanti"] = {
 		type : TYPE.SET,
-		elements : personePartecipanti 
+		elements : personePartecipanti
 	};
-	
+
 	var epj = events.joinTable(personePartecipanti, "id", "idEvento");
-	
+
 	dominio["eventi-partecipanti"] = {
 		type : TYPE.SET,
-		elements : epj 
+		elements : epj
 	};
-	
+
 	var ppf = persone.filter(personePartecipanti, "id", "idPersona");
-	
+
 	dominio["pp-filter-2"] = {
 		type : TYPE.SET,
-		elements : ppf 
+		elements : ppf
 	};
-	
 
 	var armi = getJSON("data/armi.json");
 
@@ -69,7 +65,6 @@ $(document).ready(function() {
 		elements : armi
 	};
 
-	
 	var gerarchiaGruppoOrganizzato = getJSON("data/gerarchia_gruppo_organizzato.json");
 
 	dominio["gruppoOrganizzato"] = {
