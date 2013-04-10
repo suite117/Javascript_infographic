@@ -1,3 +1,8 @@
+body {
+	font-size: 12px;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
 .ui-body-c, .ui-overlay-c {
 	background: white;
 }
@@ -23,10 +28,10 @@
 	height: 500px;
 }
 .view-container .droppable {
-	border: 2px solid red;
+	border: 2px solid #5A99C9;
 	border-radius: 70px 70px 0 0;
 	height: 100px;
-	left: 38%;
+	left: 36%;
 	position: relative;
 	top: 1px;
 	width: 130px;
@@ -35,7 +40,7 @@
 	background-color: orange;
 }
 .view-container .view-buttons {
-	border: 2px solid red;
+	border: 2px solid #5A99C9;
 }
 
 .view-buttons .ui-slider-switch {
@@ -44,14 +49,14 @@
 
 .view-container .view-container-body {
 	height: 100%;
-	border: 2px solid red;
+	border: 2px solid #5A99C9;
 	overflow: auto;
 }
 
 /* clouds */
 .draggable-container {
 	clear: both;
-	height: 125px;
+	height: 105px;
 	width: 100%;
 }
 

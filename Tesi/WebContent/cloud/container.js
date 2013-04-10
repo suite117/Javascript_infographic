@@ -1,4 +1,4 @@
-function createSelect(id, form, options) {
+function createSelectSlider(id, form, options) {
 	form.append('<select name="slider" id="flip-' + id + '" data-role="slider"></select>');
 
 	var select = $("#flip-" + id);
@@ -9,12 +9,25 @@ function createSelect(id, form, options) {
 	select.slider();
 }
 
+function createSelectMenu(id, form, options) {
+	form.append('<select name="menu" id="select-menu-' + id + '" data-mini="true"></select>');
+
+	var select = $("#select-menu-" + id);
+	for (var i = 0; i < options.length; i++) {
+		select.append('<option value="' + options[i] + '">' + options[i] + '</option>');
+	}
+
+	select.selectmenu();
+}
+
 var containerId = 0;
 function createContainer() {
 
 	var id = containerId++;
 	var prefix = 'view-container-';
 	var divId = prefix + id;
+	var bodyDivId = "view-container-body-" + id;
+	
 	var nextId = prefix + parseInt(id + 1);
 	var data;
 	var map;
@@ -22,17 +35,16 @@ function createContainer() {
 	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="view-container-body-' + id + '" class="view-container-body">&nbsp;</div></div>');
 
 	var form = $("#" + divId + " form");
-	var options = ["tutti", "solo selezionati"];
 
-	createFieldset(id, form, options);
-	//createSelect(id, form, options);
+	createFieldset(id, form, ["tutti", "solo selezionati"]);
+	createSelectMenu(id, form, ["tutti", "solo selezionati"]);
 
 	// container listener
 	$("#" + divId).data("id", id);
 
 	$("#" + divId).on("dataChanged", function(t) {
 		var selected = map.getSelected();
-		console.log(selected);
+		
 		if (data.all == true || selected == null)
 			data.elements = data._elements;
 		else
@@ -48,17 +60,18 @@ function createContainer() {
 
 		if (data != null && dataSource != null) {
 			data.elements = data._elements;
-			var els = data.elements.filter(dataSource.elements, "idPersona", "id");
+			var els = data.elements.filter(dataSource.elements, "idEvento", "id");
 			//console.log("id " + id);
 			//console.log("dataSource " + dataSource.elements.print());
 			//console.log("data.elements " + data.elements.print());
-			console.log("els " + els.print());
+			//console.log("els " + els.print());
 
 			if (els.length != 0) {
 				data.elements = els;
 			}
 
-			drawMap(data);
+			map.draw(data.elements);
+			//initMap(data);
 			// richiamo il container successivo a cascata
 		}
 
@@ -95,7 +108,7 @@ function createContainer() {
 					data = d;
 					data.all = true;
 					data._elements = data.elements;
-					drawMap(data);
+					initMap(data);
 
 					break;
 				}
@@ -106,9 +119,9 @@ function createContainer() {
 		}
 	});
 
-	function drawMap(data) {
+	function initMap(data) {
 
-		var bodyDivId = "view-container-body-" + id;
+		
 		$("#" + bodyDivId).html("");
 
 		if (data.type == TYPE.SET)

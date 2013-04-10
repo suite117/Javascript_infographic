@@ -10,6 +10,7 @@ var TYPE = {
 $(document).bind('pageinit', function() {
 
 	var dominio = [];
+	var relazioni = [];
 
 	createContainer();
 	createContainer();
@@ -18,14 +19,20 @@ $(document).bind('pageinit', function() {
 	var events = getJSON("data/events.json");
 
 	dominio["eventi"] = {
+		name : "evento",
 		type : TYPE.GEOMAP,
 		elements : events
+	};
+
+	dominio["eventi2"] = {
+		type : TYPE.GEOMAP,
+		elements : getJSON("data/events2.json")
 	};
 
 	var persone = getJSON("data/persone.json");
 
 	var personeMap = {
-		"Immagine" : [toHTMLImgTag, "image"],
+		"image" : "image", //[toHTMLImgTag, "image"],
 		"id" : "id",
 		"Nome" : "nome",
 		"Data di nascita" : "datanascita"
@@ -43,6 +50,8 @@ $(document).bind('pageinit', function() {
 		type : TYPE.SET,
 		elements : personePartecipanti
 	};
+	
+	
 
 	var epj = events.joinTable(personePartecipanti, "id", "idEvento");
 
@@ -51,26 +60,16 @@ $(document).bind('pageinit', function() {
 		elements : epj
 	};
 
-	var ppf = persone.filter(personePartecipanti, "id", "idPersona");
 
-	dominio["pp-filter-2"] = {
-		type : TYPE.SET,
-		elements : ppf
-	};
-
-	var armi = getJSON("data/armi.json");
-
-	dominio["armi"] = {
-		type : TYPE.SET,
-		elements : armi
-	};
-
-	var gerarchiaGruppoOrganizzato = getJSON("data/gerarchia_gruppo_organizzato.json");
-
+	
+	
 	dominio["gruppoOrganizzato"] = {
 		type : TYPE.TREE,
-		elements : gerarchiaGruppoOrganizzato
+		elements : getJSON("data/gerarchia_gruppo_organizzato.json")
 	};
+	
+	
+	
 
 	initClouds('#viz', dominio);
 

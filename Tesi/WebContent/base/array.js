@@ -44,7 +44,6 @@ Array.prototype.joinTable = function(arr, idTab1, idTab2) {
 	return out;
 };
 
-
 Array.prototype.filter = function(arr, idTab1, idTab2) {
 
 	var out = [];
@@ -181,9 +180,9 @@ Array.prototype.add = function(object) {
 
 };
 //Rimuove un oggetto da un array di oggetti che hanno il campo id
-Array.prototype.remove = function(id) {
+Array.prototype.remove = function(object) {
 	for (var i in this) {
-		if (this[i].id == id)
+		if (this[i].id == object.id)
 			this.splice(i, 1);
 	}
 };
@@ -210,3 +209,14 @@ Array.prototype.compareTo = function(testArr) {
 	return true;
 };
 
+// ritorna le etichettte dei campi
+Array.prototype.getFields = function() {
+	var headers = [];
+
+	for (var key in this[0]) {
+		if (!isFunction(this[0][key]))
+			headers.push(key);
+	}
+
+	return headers;
+}

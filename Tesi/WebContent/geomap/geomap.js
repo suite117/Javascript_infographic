@@ -3,7 +3,6 @@ function GeoMap(divId, destinationDivId, idMap, data) {
 	this.divId = divId;
 	this.destinationDivId = destinationDivId;
 	this.data = data;
-	this.selected = [];
 
 	var layers = [];
 	var center = [53.73, -0.30];
@@ -71,20 +70,31 @@ function GeoMap(divId, destinationDivId, idMap, data) {
 		e.target.addLayer(pie);
 	});
 
-	this.askForMarkers();
+	this.draw(this.data);
 	this.map.setView(center, startZoom);
 }
 
-GeoMap.prototype.askForMarkers = function() {
+GeoMap.prototype.draw = function(data) {
 
-	this.markers = new Array();
-	for ( i = 0; i < this.data.length; i++) {
-		var marker = new L.Marker(new L.LatLng(this.data[i].lat, this.data[i].lon));
-		marker.data = this.data[i];
+	this.data = data;
+
+	for (var marker in this.markers)
+	this.map.removeLayer(marker);
+
+	this.markers = [];
+	for (var i = 0; i < data.length; i++) {
+
+		var element = data[i];
+
+		var marker = new L.Marker(new L.LatLng(element.lat, element.lon));
+		marker.data = element;
 		marker.on('click', onMarkerClick);
 
-		marker.data.active = false;
 		var icon = new LeafIcon();
+		if (marker.data.selected) {
+			var icon = new LeafIconActive();
+		}
+
 		marker.setIcon(icon);
 
 		this.markers[marker.data.id] = marker;
@@ -93,19 +103,19 @@ GeoMap.prototype.askForMarkers = function() {
 
 	var divId = this.divId;
 	var data = this.data;
-	var selected = this.selected;
+
 	function onMarkerClick(e) {
 
 		var icon;
-		var el = data.find(e.target.data.id);
-		if (e.target.active) {
+		//var element = data.find(e.target.data.id);
+		if (e.target.data.selected) {
 			icon = new LeafIcon();
-			e.target.active = false;
-			selected.remove(e.target.data.id);
+			e.target.data.selected = false;
+
 		} else {
 			icon = new LeafIconActive();
-			e.target.active = true;
-			selected.add(e.target.data);
+			e.target.data.selected = true;
+
 		}
 		e.target.setIcon(icon);
 
@@ -113,14 +123,21 @@ GeoMap.prototype.askForMarkers = function() {
 		var content = "<p>" + e.target.data.id + " " + e.target.data.name + "</p>";
 		e.target.bindPopup(content).openPopup();
 
-
 		$("#" + divId).trigger("dataChanged");
 	}
 
 };
 
 GeoMap.prototype.getSelected = function() {
-	return this.selected;
+	var selected = [];
+
+	for (var i = 0; i < this.data.length; i++) {
+		var element = this.data[i];
+		if (element.selected)
+			selected.push(element);
+	}
+
+	return selected;
 }
 
 GeoMap.prototype.remove = function(id) {
