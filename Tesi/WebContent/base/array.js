@@ -16,6 +16,34 @@ Array.prototype.map1 = function(mapping) {
 	return out;
 };
 
+Array.prototype.containsId = function(idValue) {
+
+	var i = this.length;
+	while (i--) {
+		if (this[i].id == idValue) {
+			return true;
+		}
+	}
+	return false;
+};
+
+// rimuove gli elementi duplicati
+Array.prototype.removeDuplicates = function(idField) {
+
+	var id = idField ? idField : "id";
+	var elements = [];
+	var i = this.length;
+	while (i--) {
+
+		if (!elements.containsId(this[i][id])) {
+			elements.push(clone(this[i]));
+			elements[elements.length - 1]["id"] = elements[elements.length -1][id];
+		}
+	}
+
+	return elements;
+};
+
 Array.prototype.joinTable = function(arr, idTab1, idTab2) {
 
 	var out = [];
@@ -25,12 +53,12 @@ Array.prototype.joinTable = function(arr, idTab1, idTab2) {
 			for (var j in arr) {
 				if (!isFunction(arr[j]) && this[i][idTab1] == arr[j][idTab2]) {
 					// assegno i campi della prima tabella
-					out[k] = this[i];
+					out[k] = clone(this[i]);
 					// assegno i campi della seconda tabella
 					for (var key in arr[j]) {
 						// primo test per evitare di sovrascrivere l'id originario
 						// secondo test per non riportare la colonna di join della seconda tabella
-						if (key != idTab1 && key != idTab2)
+						if (key != idTab1)
 							out[k][key] = arr[j][key];
 					}
 					k++;
@@ -38,7 +66,7 @@ Array.prototype.joinTable = function(arr, idTab1, idTab2) {
 
 			}
 		}
-
+		//out["id"] = k;
 	}
 
 	return out;
@@ -76,10 +104,10 @@ Array.prototype.distance = function(testArr) {
 
 };
 
-/*concatena due array
- Array.prototype.append = function(array) {
- this.push.apply(this, array)
- };*/
+// concatena due array
+Array.prototype.append = function(array) {
+	this.push.apply(this, array)
+};
 
 function equals(x, y) {
 	return x.id != null && y.id != null && x.id == y.id;
@@ -97,14 +125,30 @@ Array.prototype.contains = function(obj) {
 	return false;
 };
 
-Array.prototype.find = function(id) {
+Array.prototype.find = function(idValue) {
 	var i = this.length;
 	while (i--) {
-		if (this[i].id == id) {
+		if (this[i].id == idValue) {
 			return this[i];
 		}
 	}
 	return null;
+};
+
+Array.prototype.findAll = function(fieldName, fieldValue) {
+	var i = this.length;
+	var out = [];
+	console.log(fieldName, fieldValue);
+	while (i--) {
+
+		console.log(this[i][fieldName]);
+		if (this[i].fieldName == fieldValue) {
+			out.push(this[i]);
+
+		}
+	}
+
+	return out;
 };
 
 //Permette di clonare gli oggetti
@@ -214,9 +258,28 @@ Array.prototype.getFields = function() {
 	var headers = [];
 
 	for (var key in this[0]) {
-		if (!isFunction(this[0][key]))
+		if (!isFunction(this[0][key])) {
+
 			headers.push(key);
+		}
 	}
 
 	return headers;
-}
+};
+
+Array.prototype.project = function(columns) {
+	var elementsProjected = [];
+	var k = 0;
+	for (var i = 0; i < this.length; i++) {
+		elementsProjected[k] = {};
+		for (var index in columns) {
+			var key = columns[index];
+			if (!isFunction(key)) {
+				elementsProjected[k][key] = this[i][key];
+			}
+		}
+		k++;
+	}
+
+	return elementsProjected;
+};

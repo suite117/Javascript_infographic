@@ -9,17 +9,6 @@ function createSelectSlider(id, form, options) {
 	select.slider();
 }
 
-function createSelectMenu(id, form, options) {
-	form.append('<select name="menu" id="select-menu-' + id + '" data-mini="true"></select>');
-
-	var select = $("#select-menu-" + id);
-	for (var i = 0; i < options.length; i++) {
-		select.append('<option value="' + options[i] + '">' + options[i] + '</option>');
-	}
-
-	select.selectmenu();
-}
-
 var containerId = 0;
 function createContainer() {
 
@@ -27,7 +16,7 @@ function createContainer() {
 	var prefix = 'view-container-';
 	var divId = prefix + id;
 	var bodyDivId = "view-container-body-" + id;
-	
+
 	var nextId = prefix + parseInt(id + 1);
 	var data;
 	var map;
@@ -36,44 +25,91 @@ function createContainer() {
 
 	var form = $("#" + divId + " form");
 
-	createFieldset(id, form, ["tutti", "solo selezionati"]);
-	createSelectMenu(id, form, ["tutti", "solo selezionati"]);
+	var fieldset = createFieldset(id, form, ["tutti", "solo selezionati"]);
+
+	containerOptions = ["chi", "cosa", "dove", "quando", "gerarchia"];
+
+	var select = createSelectMenu(id, form, containerOptions);
+
+	var type = TYPE.TABLE;
+	var all = true;
+	var selected = [];
+
+	select.on('change', function(e) {
+
+		var selectedOption = $(this).val();
+
+		switch(selectedOption) {
+			case "chi":
+			case "cosa":
+				type = TYPE.TABLE;
+				break;
+			case "dove":
+				type = TYPE.GEOMAP;
+				break;
+			case "quando":
+				type = TYPE.TIMELINE;
+				break;
+			case "gerarchia":
+				type = TYPE.TREE;
+				break;
+		}
+
+		//initMap(data);
+
+		$("#" + divId).trigger('stateChanged', [false, false, true]);
+	});
 
 	// container listener
 	$("#" + divId).data("id", id);
 
-	$("#" + divId).on("dataChanged", function(t) {
-		var selected = map.getSelected();
-		
-		if (data.all == true || selected == null)
-			data.elements = data._elements;
-		else
-			data.elements = selected;
+	$("#" + divId).on("mapClicked", function(t, id, isSelected) {
+		var elementsUnique = data.elements.removeDuplicates(data.views[type][0]);
+		console.log(elementsUnique);
+		if (!all)
+			$("#" + divId).trigger('stateChanged', [false, true, false]);
 
-		//console.log(data.elements);
-		updateNextContainer(nextId, data);
 	});
 
-	$("#" + divId).on("sourceChanged", function(t, dataSource, param2) {
-		// quando entro qua dentro sono già nel container richiamato dal precedente
-		//console.log("data" + data.elements.print());
+	$("#" + divId).on("stateChanged", function(t, sourceChanged, mapClicked, viewChanged) {
 
-		if (data != null && dataSource != null) {
-			data.elements = data._elements;
-			var els = data.elements.filter(dataSource.elements, "idEvento", "id");
-			//console.log("id " + id);
-			//console.log("dataSource " + dataSource.elements.print());
-			//console.log("data.elements " + data.elements.print());
-			//console.log("els " + els.print());
+		//console.log('sourceChanged ' + sourceChanged);
 
-			if (els.length != 0) {
-				data.elements = els;
+		if (map == null || viewChanged)
+			initMap(data);
+		else if (!mapClicked)
+			updateMap(data);
+
+		if (viewChanged || sourceChanged || mapClicked)
+			updateNextContainer(data, nextId, sourceChanged, mapClicked);
+
+	});
+
+	function updateNextContainer(data, nextId, sourceChanged, mapClicked) {
+		if (sourceChanged || mapClicked) {
+
+			var elements;
+			if (all)
+				elements = data.elements;
+			else {
+				elements = map.getSelected();
+				console.log(selected);
 			}
 
-			map.draw(data.elements);
-			//initMap(data);
-			// richiamo il container successivo a cascata
+			var out = clone(data);
+			out.elements = elements;
+			
+			$("#" + nextId).trigger("sourceChanged", [out]);
 		}
+	}
+
+
+	$("#" + divId).on("sourceChanged", function(t, dataSource, param2) {
+
+		data = dataSource;
+
+		// aggiorno il contenuto richiamo il container successivo a cascata
+		$("#" + divId).trigger('stateChanged', [true, false, false]);
 
 	});
 
@@ -106,56 +142,95 @@ function createContainer() {
 				if (dis < 100) {
 					// conservo l'insieme
 					data = d;
-					data.all = true;
-					data._elements = data.elements;
-					initMap(data);
 
+					$("#" + divId).trigger('stateChanged', [true, false, false]);
 					break;
 				}
 			}
 			$(this).removeClass('over').addClass('drop');
-			updateNextContainer(nextId, data);
 
 		}
 	});
 
 	function initMap(data) {
 
+		// le colonne della proiezione
+		var columns = data.views[type];
+
 		
+		if (data == null)
+			alert("data è null");
+		
+
+		// rimuove i duplicati
+		var elementsUnique = data.elements.removeDuplicates(columns[0]);
+
+		if (id == 1)
+			console.log(elementsUnique);
+
 		$("#" + bodyDivId).html("");
+		switch(type) {
+			case TYPE.TABLE:
+				elementsUnique = elementsUnique.project(columns);
 
-		if (data.type == TYPE.SET)
-			map = new Table(divId, bodyDivId, "table-" + id, data.elements);
-		else if (data.type == TYPE.GEOMAP)
-			map = new GeoMap(divId, bodyDivId, "geomap-" + id, data.elements);
-		else if (data.type == TYPE.TREE)
-			map = new Tree(divId, bodyDivId, "tree-" + id, data.elements);
+				map = new Table(divId, bodyDivId, "table-" + id, elementsUnique, {
+					include : data.views[TYPE.TABLE]
+				});
+				break;
+			case TYPE.GEOMAP:
+				map = new GeoMap(divId, bodyDivId, "geomap-" + id, elementsUnique);
+				break;
+			case TYPE.TREE:
+				map = new Tree(divId, bodyDivId, "tree-" + id, elementsUnique);
+				break;
+		}
 
-		return map;
+		//console.log(elementsUnique);
 	}
 
-	function updateNextContainer(divId, elements) {
-		if (elements != null)
-			$("#" + divId).trigger("sourceChanged", [elements]);
+	function updateMap(data) {
+
+		if (data == null)
+			alert("data è null");
+
+		var columns = data.views[type];
+
+		// rimuove i duplicati
+		var elementsUnique = data.elements.removeDuplicates(columns[0]);
+
+		switch(type) {
+			case TYPE.TABLE:
+				elementsUnique = data.elements.project(columns);
+				break;
+		}
+
+		map.draw(elementsUnique);
+
 	}
 
+	var oldVal;
+	var val;
 	function createFieldset(id, form, options) {
 		form.append('<fieldset id="fieldset-' + id + '" data-role="controlgroup" data-type="horizontal"></fieldset>');
 
 		var fieldset = $("#fieldset-" + id);
+		var sourceChanged;
+
 		for (var i = 0; i < options.length; i++) {
 			var inputId = 'radio-choice-' + i + '-fieldset-' + id;
 			fieldset.append('<input type="radio" name="' + inputId + '" id="' + inputId + '" value="' + options[i] + '" />');
 			fieldset.append('<label for="' + inputId + '">' + options[i] + '</label>');
 
 			$("#" + inputId).on('click', function(e) {
-
+				oldVal = val;
 				val = $(this).val();
 
-				if (val == 'tutti')
-					data.all = true;
-				else
-					data.all = false;
+				if (val == 'tutti') {
+					all = true;
+				} else {
+
+					all = false;
+				}
 
 				var label = $("#view-container-" + id + " label");
 				if (label.hasClass('ui-btn-active'))
@@ -165,8 +240,8 @@ function createContainer() {
 					$(this).attr("checked", true);
 				}
 				//fieldset.controlgroup("refresh");
-
-				$("#" + divId).trigger('dataChanged');
+				if (oldVal != val)
+					$("#" + divId).trigger('stateChanged', [false, true, false]);
 			});
 		}
 
@@ -174,6 +249,21 @@ function createContainer() {
 		//fieldset.controlgroup("refresh");
 		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).attr("checked", true).checkboxradio("refresh");
 
+		return fieldset;
+
+	}
+
+	function createSelectMenu(id, form, options) {
+		form.append('<select name="menu" id="select-menu-' + id + '" data-mini="true"></select>');
+
+		var select = $("#select-menu-" + id);
+		for (var i = 0; i < options.length; i++) {
+			select.append('<option value="' + options[i] + '">' + options[i] + '</option>');
+		}
+
+		select.selectmenu();
+
+		return select;
 	}
 
 }

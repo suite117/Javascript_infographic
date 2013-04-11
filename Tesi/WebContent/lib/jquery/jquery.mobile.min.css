@@ -16,11 +16,11 @@
 
 form div.ui-select {
     display: block;
-    max-width: 33%;
+    left: 217px;
     position: relative;
-    
+    top: -38px;
+    width: 30%;
 }
-
 
 form div.ui-slider:after {
     clear: none;

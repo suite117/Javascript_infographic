@@ -1,16 +1,15 @@
-function GeoMap(divId, destinationDivId, idMap, data) {
+function GeoMap(divId, destinationDivId, idMap, data, optional) {
 
 	this.divId = divId;
 	this.destinationDivId = destinationDivId;
 	this.data = data;
 
 	var layers = [];
-	var center = [53.73, -0.30];
+	this.center = optional ? optional.center : [data[0].lat, data[0].lon];
 
 	$("#" + this.destinationDivId).append('<div id="' + idMap + '" style="width:100%;height: 100%"></div>');
 	this.map = new L.map(idMap);
 
-	//var center = new L.LatLng(latitute, longitude);
 	// set up the map
 
 	var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -22,7 +21,7 @@ function GeoMap(divId, destinationDivId, idMap, data) {
 	}).addTo(this.map);
 
 	// add and open popup
-	L.marker(center).addTo(this.map).bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+	L.marker(this.center).addTo(this.map).bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 
 	var list = [{
 		num : 75,
@@ -45,7 +44,7 @@ function GeoMap(divId, destinationDivId, idMap, data) {
 	}
 
 	// Pie chart
-	var pie = L.pie(center, list, {
+	var pie = L.pie(this.center, list, {
 		radius : 200
 	}, {
 		pathOptions : {
@@ -54,7 +53,7 @@ function GeoMap(divId, destinationDivId, idMap, data) {
 		}
 	});
 
-	var startZoom = 11;
+	var startZoom = 8;
 	var distance = 0.2 / startZoom;
 
 	this.map.on('zoomend', function(e) {
@@ -70,16 +69,20 @@ function GeoMap(divId, destinationDivId, idMap, data) {
 		e.target.addLayer(pie);
 	});
 
+	this.map.setView(this.center, startZoom);
 	this.draw(this.data);
-	this.map.setView(center, startZoom);
 }
+
 
 GeoMap.prototype.draw = function(data) {
 
 	this.data = data;
+	//console.log(data);
 
-	for (var marker in this.markers)
-	this.map.removeLayer(marker);
+	if (this.markers != null)
+		for (var i = 0; i < this.markers.length; i++) {
+			this.map.removeLayer(this.markers[i]);
+		}
 
 	this.markers = [];
 	for (var i = 0; i < data.length; i++) {
@@ -94,10 +97,9 @@ GeoMap.prototype.draw = function(data) {
 		if (marker.data.selected) {
 			var icon = new LeafIconActive();
 		}
-
 		marker.setIcon(icon);
 
-		this.markers[marker.data.id] = marker;
+		this.markers.push(marker);
 		this.map.addLayer(marker);
 	}
 
@@ -123,7 +125,7 @@ GeoMap.prototype.draw = function(data) {
 		var content = "<p>" + e.target.data.id + " " + e.target.data.name + "</p>";
 		e.target.bindPopup(content).openPopup();
 
-		$("#" + divId).trigger("dataChanged");
+		$("#" + divId).trigger("mapClicked", [e.target.data.id, e.target.data.selected]);
 	}
 
 };

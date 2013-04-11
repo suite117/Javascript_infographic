@@ -1,14 +1,21 @@
-function Table(divId, destinationDivId, idMap, data) {
+function Table(divId, destinationDivId, idMap, data, optional) {
 
 	this.divId = divId;
 	this.destinationDivId = destinationDivId;
 	this.idMap = idMap;
 
 	this.selected = [];
-	
+
+	var includedColumns;
+	if (optional != null) {
+		includedColumns = optional.include ? optional.include : ["id"];
+	}
+
 	var fields = data.getFields();
-	this.columns = [];	
+	this.columns = [];
+
 	for (var i = 0; i < fields.length; i++) {
+
 		this.columns.push({
 			"sTitle" : fields[i],
 		});
@@ -16,13 +23,16 @@ function Table(divId, destinationDivId, idMap, data) {
 			this.indexIdColumn = i;
 		else if (fields[i] == "image")
 			this.indexImageColumn = i;
+
 	}
 
 	this.draw(data);
 }
 
 Table.prototype.draw = function(data) {
+	
 	this.data = data;
+	
 	// creazione tabella
 	$('#' + this.destinationDivId).html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="' + this.idMap + '"></table>');
 
@@ -33,13 +43,14 @@ Table.prototype.draw = function(data) {
 	var destinationDivId = this.destinationDivId;
 
 	// trasformazione dell' input in lista compatible con datatable'
-	var listdata = toList(data);
+	var listdata = toList(this.data);
 
 	this.rows = listdata[1];
 
 	var indexIdColumn = this.indexIdColumn;
 	var indexImageColumn = this.indexImageColumn;
 
+	
 	this.table = $('#' + this.idMap).dataTable({
 		"aaData" : this.rows,
 		"aoColumns" : this.columns,
@@ -76,6 +87,7 @@ Table.prototype.draw = function(data) {
 	var table = this.table;
 	$('#' + this.idMap + " tbody").delegate("tr", "click", function() {
 		var iPos = table.fnGetPosition(this);
+		var isSelected = false;
 		if (iPos != null) {
 			// array riga
 			var row = table.fnGetData(iPos);
@@ -89,15 +101,17 @@ Table.prototype.draw = function(data) {
 			} else {
 				$(this).addClass("selected");
 				selected.push(element);
+				isSelected = true;
 				//console.log(selected);
 
 			}
 
-			$("#" + divId).trigger("dataChanged");
+			$("#" + divId).trigger("mapClicked", [id, isSelected]);
 			//console.log(selected);
 
 		}
 	});
+	
 }
 //delete row
 Table.prototype.deleteRow = function(index) {
@@ -108,15 +122,21 @@ Table.prototype.getSelected = function() {
 	var selected = [];
 
 	var rows = this.table.fnGetNodes();
+	
 	for (var i = 0; i < rows.length; i++) {
-		var id = $(rows[i]).find('td:eq(' + this.indexIdColumn + ')').html();
-		if ($(rows[i]).hasClass('selected')) {
+		
+		//console.log($(rows[i]).attr("class"));
+		if ($(rows[i]).hasClass("selected")) {
+			var id = $(rows[i]).find('td:eq(' + this.indexIdColumn + ')').html();
 			selected.push(this.data.find(id));
 		}
 	}
 
-	console.log(selected);
-	//return this.selected;
+	//console.log(selected);
+	if (selected.length == 0) {
+		return this.selected;
+	}
+	return selected;
 };
 
 function toList(data) {

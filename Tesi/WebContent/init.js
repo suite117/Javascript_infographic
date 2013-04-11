@@ -1,5 +1,5 @@
 var TYPE = {
-	SET : "set",
+	TABLE : "table",
 	TREE : "tree",
 	GEOMAP : "geomap"
 
@@ -39,37 +39,26 @@ $(document).bind('pageinit', function() {
 
 	};
 
-	dominio["persone"] = {
-		type : TYPE.SET,
-		elements : persone.map1(personeMap)
-	};
+	var persone = persone.map1(personeMap);
 
 	var personePartecipanti = getJSON("data/personapartecipante.json");
 
-	dominio["persone-partecipanti"] = {
-		type : TYPE.SET,
-		elements : personePartecipanti
-	};
-	
-	
-
 	var epj = events.joinTable(personePartecipanti, "id", "idEvento");
 
-	dominio["eventi-partecipanti"] = {
-		type : TYPE.SET,
-		elements : epj
+	var personepeventi = persone.joinTable(epj, "id", "idPersona");
+	
+	
+	console.log("personepeventi",personepeventi);
+
+	dominio["personepeventi"] = {
+		elements : personepeventi,
+		views : {"table": ["idPersona", "id", "Nome", "idEvento"], "geomap" : ["idEvento"]}
 	};
 
-
-	
-	
 	dominio["gruppoOrganizzato"] = {
 		type : TYPE.TREE,
 		elements : getJSON("data/gerarchia_gruppo_organizzato.json")
 	};
-	
-	
-	
 
 	initClouds('#viz', dominio);
 

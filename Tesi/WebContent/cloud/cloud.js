@@ -38,14 +38,14 @@ function initClouds(idDOM, dominio) {
 			n = (150 * i);
 			d = 700;
 			r = n % d;
-			
+
 			clouds[i] = dominio[key];
 			clouds[i].id = key;
-			
+
 			clouds[i].x = r + offsetX;
 			clouds[i].y = 110 * (n - r) / d + offsetY;
 			clouds[i].scale = 0.35;
-			console.log(clouds[i].y);
+
 			clouds[i].state = STATE.NONE;
 			i++;
 		}
@@ -197,26 +197,9 @@ function initClouds(idDOM, dominio) {
 
 			// verifica se esiste il container
 			var divCloud;
-			var svgCloud = d3.select("#draggable-container draggable-" + d.id + " svg");
-			if (svgCloud[0][0] == null) {
+		
 
-				$("div#draggable-container").append('<div id="draggable-' + d.id + '" class="draggable"></div>');
-				divCloud = $("div#draggable-" + d.id);
-				divCloud.data("d", d);
-				var svgCloud = d3.select(divCloud[0]).append("svg");
-			}
-
-			var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(-51,-45), scale(0.3)");
-
-			var pathContent = d3.select(this).select("path")[0][0].getAttribute("d");
-			g.append("path").attr("d", pathContent);
-
-			var textContent = d3.select(this).select("text")[0][0].textContent;
-			g.append("text").attr("x", 100).attr("y", 50).attr("transform", "translate(193,255)").text(textContent);
-
-			d3.select(this).remove();
-
-			createDraggableCloud(divCloud);
+			createDraggableCloud(divCloud, this, d);
 
 			return;
 		}
@@ -276,7 +259,27 @@ function distance(d1, d2) {
 }
 
 var draggers = new Array();
-function createDraggableCloud(divCloud) {
+function createDraggableCloud(divCloud, cloud, d) {
+
+	var svgCloud = d3.select("#draggable-container draggable-" + d.id + " svg");
+	if (svgCloud[0][0] == null) {
+
+		$("div#draggable-container").append('<div id="draggable-' + d.id + '" class="draggable"></div>');
+		divCloud = $("div#draggable-" + d.id);
+		divCloud.data("d", d);
+		var svgCloud = d3.select(divCloud[0]).append("svg");
+	}
+
+	var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(-51,-45), scale(0.3)");
+
+	var pathContent = d3.select(cloud).select("path")[0][0].getAttribute("d");
+	g.append("path").attr("d", pathContent);
+
+	var textContent = d3.select(cloud).select("text")[0][0].textContent;
+	g.append("text").attr("x", 100).attr("y", 50).attr("transform", "translate(193,255)").text(textContent);
+
+	d3.select(cloud).remove();
+	
 
 	draggers.push(divCloud);
 
