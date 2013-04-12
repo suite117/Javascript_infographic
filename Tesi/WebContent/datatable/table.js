@@ -29,10 +29,11 @@ function Table(divId, destinationDivId, idMap, data, optional) {
 	this.draw(data);
 }
 
-Table.prototype.draw = function(data) {
-	
+Table.prototype.draw = function(data, active) {
+
 	this.data = data;
-	
+	this.selected = active ? active : this.selected;
+
 	// creazione tabella
 	$('#' + this.destinationDivId).html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="' + this.idMap + '"></table>');
 
@@ -50,7 +51,6 @@ Table.prototype.draw = function(data) {
 	var indexIdColumn = this.indexIdColumn;
 	var indexImageColumn = this.indexImageColumn;
 
-	
 	this.table = $('#' + this.idMap).dataTable({
 		"aaData" : this.rows,
 		"aoColumns" : this.columns,
@@ -111,7 +111,7 @@ Table.prototype.draw = function(data) {
 
 		}
 	});
-	
+
 }
 //delete row
 Table.prototype.deleteRow = function(index) {
@@ -122,9 +122,9 @@ Table.prototype.getSelected = function() {
 	var selected = [];
 
 	var rows = this.table.fnGetNodes();
-	
+
 	for (var i = 0; i < rows.length; i++) {
-		
+
 		//console.log($(rows[i]).attr("class"));
 		if ($(rows[i]).hasClass("selected")) {
 			var id = $(rows[i]).find('td:eq(' + this.indexIdColumn + ')').html();
@@ -133,7 +133,7 @@ Table.prototype.getSelected = function() {
 	}
 
 	//console.log(selected);
-	
+
 	return selected;
 };
 

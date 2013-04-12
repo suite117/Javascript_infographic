@@ -56,8 +56,10 @@ function createContainer() {
 		}
 
 		//initMap(data);
-
-		$("#" + divId).trigger('stateChanged', [false, false, true]);
+		
+		console.log("checked", $('#radio-choice-0-fieldset-' + id).attr("checked"));
+		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).trigger("click", ["tutti"]);
+		//$("#" + divId).trigger('stateChanged', [false, false, true]);
 	});
 
 	// container listener
@@ -98,7 +100,7 @@ function createContainer() {
 		if (map == null || viewChanged)
 			initMap(data);
 		else if (!mapClicked)
-			updateMap(data);
+			updateMap(data, active);
 
 		if (viewChanged || sourceChanged || mapClicked)
 			updateNextContainer(data, active, nextId, sourceChanged, mapClicked);
@@ -129,7 +131,7 @@ function createContainer() {
 
 		data = dataSource;
 		active = active.intersect(activeSource);
-		
+
 		// aggiorno il contenuto richiamo il container successivo a cascata
 		$("#" + divId).trigger('stateChanged', [true, false, false]);
 
@@ -205,7 +207,7 @@ function createContainer() {
 		//console.log(elementsUnique);
 	}
 
-	function updateMap(data) {
+	function updateMap(data, active) {
 
 		if (data == null)
 			alert("data è null");
@@ -214,6 +216,7 @@ function createContainer() {
 
 		// rimuove i duplicati
 		var elementsUnique = data.elements.removeDuplicates(columns[0]);
+		var activeUnique = active.removeDuplicates(columns[0]);
 
 		switch(type) {
 			case TYPE.TABLE:
@@ -221,7 +224,7 @@ function createContainer() {
 				break;
 		}
 
-		map.draw(elementsUnique);
+		map.draw(elementsUnique, active);
 
 	}
 
@@ -238,9 +241,9 @@ function createContainer() {
 			fieldset.append('<input type="radio" name="' + inputId + '" id="' + inputId + '" value="' + options[i] + '" />');
 			fieldset.append('<label for="' + inputId + '">' + options[i] + '</label>');
 
-			$("#" + inputId).on('click', function(e) {
+			$("#" + inputId).on('click', function(e, forceVal) {
 				oldVal = val;
-				val = $(this).val();
+				val = forceVal ? forceVal : $(this).val();
 
 				if (val == 'tutti') {
 					all = true;
@@ -258,7 +261,7 @@ function createContainer() {
 				}
 				//fieldset.controlgroup("refresh");
 				if (oldVal != val)
-					$("#" + divId).trigger('stateChanged', [false, true, false]);
+					$("#" + divId).trigger('stateChanged', [false, true, forceVal ?  true : false]);
 			});
 		}
 

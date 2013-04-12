@@ -6,6 +6,7 @@ function GeoMap(divId, destinationDivId, idMap, data, optional) {
 
 	var layers = [];
 	this.center = optional ? optional.center : [data[0].lat, data[0].lon];
+	this.selected = optional ? optional.active : [];
 
 	$("#" + this.destinationDivId).append('<div id="' + idMap + '" style="width:100%;height: 100%"></div>');
 	this.map = new L.map(idMap);
@@ -131,15 +132,15 @@ GeoMap.prototype.draw = function(data) {
 };
 
 GeoMap.prototype.getSelected = function() {
-	var selected = [];
+	
 
 	for (var i = 0; i < this.data.length; i++) {
 		var element = this.data[i];
 		if (element.selected)
-			selected.push(element);
+			this.selected.push(element);
 	}
 
-	return selected;
+	return this.selected;
 }
 
 GeoMap.prototype.remove = function(id) {
