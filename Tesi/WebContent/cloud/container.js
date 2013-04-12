@@ -56,8 +56,8 @@ function createContainer() {
 		}
 
 		//initMap(data);
-		
-		console.log("checked", $('#radio-choice-0-fieldset-' + id).attr("checked"));
+		active = [];
+		//console.log("checked", $('#radio-choice-0-fieldset-' + id).attr("checked"));
 		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).trigger("click", ["tutti"]);
 		//$("#" + divId).trigger('stateChanged', [false, false, true]);
 	});
