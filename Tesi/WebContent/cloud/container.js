@@ -120,16 +120,16 @@ function createContainer() {
 			var out = clone(data);
 			out.elements = elements;
 
-			$("#" + nextId).trigger("sourceChanged", [out]);
+			$("#" + nextId).trigger("sourceChanged", [out, active]);
 		}
 	}
 
 
-	$("#" + divId).on("sourceChanged", function(t, dataSource, param2) {
+	$("#" + divId).on("sourceChanged", function(t, dataSource, activeSource) {
 
 		data = dataSource;
-		active = active.intersect(data.elements);
-
+		active = active.intersect(activeSource);
+		
 		// aggiorno il contenuto richiamo il container successivo a cascata
 		$("#" + divId).trigger('stateChanged', [true, false, false]);
 
