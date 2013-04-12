@@ -65,13 +65,13 @@ function createContainer() {
 
 	$("#" + divId).on("mapClicked", function(t, idValue, isSelected) {
 		//var elementsUnique = data.elements.removeDuplicates(data.views[type][0]);
-	
+
 		// recuper il campo id per la selezione attuale'
 		var idField = data.views[type][0];
 		var elements;
 		var mapSelected = map.getSelected();
 		if (isSelected) {
-			
+
 			for (var i = 0; i < mapSelected.length; i++) {
 				elements = data.elements.findAll(idField, mapSelected[i].id);
 				active.addAll(elements);
@@ -80,9 +80,9 @@ function createContainer() {
 			elements = data.elements.findAll(idField, idValue);
 			active = active.removeAll(elements);
 		}
-		
-		console.log("elements", elements);
-		console.log("active", active);
+
+		//console.log("elements", elements);
+		//console.log("active", active);
 
 		//console.log(elementsUnique);
 		if (!all)
@@ -93,6 +93,7 @@ function createContainer() {
 	$("#" + divId).on("stateChanged", function(t, sourceChanged, mapClicked, viewChanged) {
 
 		//console.log('sourceChanged ' + sourceChanged);
+		console.log("input to stateChanged " + divId, data.elements);
 
 		if (map == null || viewChanged)
 			initMap(data);
@@ -100,11 +101,11 @@ function createContainer() {
 			updateMap(data);
 
 		if (viewChanged || sourceChanged || mapClicked)
-			updateNextContainer(data, nextId, sourceChanged, mapClicked);
+			updateNextContainer(data, active, nextId, sourceChanged, mapClicked);
 
 	});
 
-	function updateNextContainer(data, nextId, sourceChanged, mapClicked) {
+	function updateNextContainer(data, active, nextId, sourceChanged, mapClicked) {
 		if (sourceChanged || mapClicked) {
 
 			var elements;
@@ -112,10 +113,10 @@ function createContainer() {
 				elements = data.elements;
 			else {
 				elements = active;
-
+				console.log("active", active);
 			}
 
-			console.log("elemens", elements);
+			console.log("out to " + nextId, elements);
 			var out = clone(data);
 			out.elements = elements;
 
@@ -127,6 +128,7 @@ function createContainer() {
 	$("#" + divId).on("sourceChanged", function(t, dataSource, param2) {
 
 		data = dataSource;
+		active = active.intersect(data.elements);
 
 		// aggiorno il contenuto richiamo il container successivo a cascata
 		$("#" + divId).trigger('stateChanged', [true, false, false]);
@@ -182,9 +184,6 @@ function createContainer() {
 
 		// rimuove i duplicati
 		var elementsUnique = data.elements.removeDuplicates(columns[0]);
-
-		if (id == 2)
-			console.log(2, elementsUnique);
 
 		$("#" + bodyDivId).html("");
 		switch(type) {

@@ -133,9 +133,7 @@ Table.prototype.getSelected = function() {
 	}
 
 	//console.log(selected);
-	if (selected.length == 0) {
-		return this.selected;
-	}
+	
 	return selected;
 };
 
