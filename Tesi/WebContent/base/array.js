@@ -138,11 +138,11 @@ Array.prototype.find = function(idValue) {
 Array.prototype.findAll = function(fieldName, fieldValue) {
 	var i = this.length;
 	var out = [];
-	console.log(fieldName, fieldValue);
+	//console.log("fieldName", fieldName, fieldValue);
 	while (i--) {
 
-		console.log(this[i][fieldName]);
-		if (this[i].fieldName == fieldValue) {
+		//console.log("found", this[i][fieldName]);
+		if (this[i][fieldName] == fieldValue) {
 			out.push(this[i]);
 
 		}
@@ -150,6 +150,26 @@ Array.prototype.findAll = function(fieldName, fieldValue) {
 
 	return out;
 };
+
+
+Array.prototype.removeAll = function(elements) {
+	
+	var out = [];
+	
+	for(var i = 0; i < this.length; i++) {
+		var exclude = false;
+		for(var j = 0; j < elements.length; j++) {
+			if (elements[j].id == this[i].id) {
+				exclude = true;
+				break;
+			}
+		}
+		if (!exclude)
+			out.push(this[i]);
+	}
+	
+	return out;
+}
 
 //Permette di clonare gli oggetti
 function clone(obj) {
@@ -223,6 +243,13 @@ Array.prototype.add = function(object) {
 		this.push(object);
 
 };
+
+Array.prototype.addAll = function(elements) {
+	
+	for(var i = 0; i < elements.length; i++)
+		this.add(elements[i]);
+	
+}
 //Rimuove un oggetto da un array di oggetti che hanno il campo id
 Array.prototype.remove = function(object) {
 	for (var i in this) {

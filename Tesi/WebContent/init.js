@@ -52,7 +52,7 @@ $(document).bind('pageinit', function() {
 
 	dominio["personepeventi"] = {
 		elements : personepeventi,
-		views : {"table": ["idPersona", "id", "Nome", "idEvento"], "geomap" : ["idEvento"]}
+		views : {"table": ["id", "image", "Nome", "idEvento"], "geomap" : ["idEvento"]}
 	};
 
 	dominio["gruppoOrganizzato"] = {

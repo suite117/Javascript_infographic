@@ -33,7 +33,7 @@ function createContainer() {
 
 	var type = TYPE.TABLE;
 	var all = true;
-	var selected = [];
+	var active = [];
 
 	select.on('change', function(e) {
 
@@ -63,9 +63,28 @@ function createContainer() {
 	// container listener
 	$("#" + divId).data("id", id);
 
-	$("#" + divId).on("mapClicked", function(t, id, isSelected) {
-		var elementsUnique = data.elements.removeDuplicates(data.views[type][0]);
-		console.log(elementsUnique);
+	$("#" + divId).on("mapClicked", function(t, idValue, isSelected) {
+		//var elementsUnique = data.elements.removeDuplicates(data.views[type][0]);
+	
+		// recuper il campo id per la selezione attuale'
+		var idField = data.views[type][0];
+		var elements;
+		var mapSelected = map.getSelected();
+		if (isSelected) {
+			
+			for (var i = 0; i < mapSelected.length; i++) {
+				elements = data.elements.findAll(idField, mapSelected[i].id);
+				active.addAll(elements);
+			}
+		} else {
+			elements = data.elements.findAll(idField, idValue);
+			active = active.removeAll(elements);
+		}
+		
+		console.log("elements", elements);
+		console.log("active", active);
+
+		//console.log(elementsUnique);
 		if (!all)
 			$("#" + divId).trigger('stateChanged', [false, true, false]);
 
@@ -92,13 +111,14 @@ function createContainer() {
 			if (all)
 				elements = data.elements;
 			else {
-				elements = map.getSelected();
-				console.log(selected);
+				elements = active;
+
 			}
 
+			console.log("elemens", elements);
 			var out = clone(data);
 			out.elements = elements;
-			
+
 			$("#" + nextId).trigger("sourceChanged", [out]);
 		}
 	}
@@ -139,7 +159,7 @@ function createContainer() {
 
 				var dis = distance([x, y], [x1, y1]);
 
-				if (dis < 100) {
+				if (dis < 80) {
 					// conservo l'insieme
 					data = d;
 
@@ -157,16 +177,14 @@ function createContainer() {
 		// le colonne della proiezione
 		var columns = data.views[type];
 
-		
 		if (data == null)
 			alert("data è null");
-		
 
 		// rimuove i duplicati
 		var elementsUnique = data.elements.removeDuplicates(columns[0]);
 
-		if (id == 1)
-			console.log(elementsUnique);
+		if (id == 2)
+			console.log(2, elementsUnique);
 
 		$("#" + bodyDivId).html("");
 		switch(type) {
