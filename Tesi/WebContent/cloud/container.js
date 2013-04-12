@@ -260,8 +260,8 @@ function createContainer() {
 					$(this).attr("checked", true);
 				}
 				//fieldset.controlgroup("refresh");
-				if (oldVal != val)
-					$("#" + divId).trigger('stateChanged', [false, true, forceVal ?  true : false]);
+
+				$("#" + divId).trigger('stateChanged', [false, oldVal != val ? true : false, forceVal ? true : false]);
 			});
 		}
 
