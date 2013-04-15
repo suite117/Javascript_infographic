@@ -12,8 +12,7 @@ function Table(divId, destinationDivId, idMap, data, optional) {
 	}
 
 	var fields = data.getFields();
-	this.columns = [];
-
+	this.columns = [];		
 	for (var i = 0; i < fields.length; i++) {
 
 		this.columns.push({
@@ -32,6 +31,7 @@ function Table(divId, destinationDivId, idMap, data, optional) {
 Table.prototype.draw = function(data, active) {
 
 	this.data = data;
+	console.log(data);
 	this.selected = active ? active : this.selected;
 
 	// creazione tabella
@@ -131,8 +131,6 @@ Table.prototype.getSelected = function() {
 			selected.push(this.data.find(id));
 		}
 	}
-
-	//console.log(selected);
 
 	return selected;
 };

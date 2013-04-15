@@ -57,7 +57,6 @@ function createContainer() {
 
 		//initMap(data);
 		active = [];
-		//console.log("checked", $('#radio-choice-0-fieldset-' + id).attr("checked"));
 		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).trigger("click", ["tutti"]);
 		//$("#" + divId).trigger('stateChanged', [false, false, true]);
 	});
@@ -65,26 +64,28 @@ function createContainer() {
 	// container listener
 	$("#" + divId).data("id", id);
 
+	// azione relatia al click del mouse su un elemento della mappa
 	$("#" + divId).on("mapClicked", function(t, idValue, isSelected) {
 		//var elementsUnique = data.elements.removeDuplicates(data.views[type][0]);
 
 		// recuper il campo id per la selezione attuale'
 		var idField = data.views[type][0];
 		var elements;
-		var mapSelected = map.getSelected();
+		//var mapSelected = map.getSelected();
+		
 		if (isSelected) {
-
-			for (var i = 0; i < mapSelected.length; i++) {
-				elements = data.elements.findAll(idField, mapSelected[i].id);
+			//active = [];
+			//for (var i = 0; i < mapSelected.length; i++) {
+				elements = data.elements.findAll(idField, idValue);
 				active.addAll(elements);
-			}
+			//}
 		} else {
 			elements = data.elements.findAll(idField, idValue);
 			active = active.removeAll(elements);
 		}
 
 		//console.log("elements", elements);
-		//console.log("active", active);
+		console.log("active", active);
 
 		//console.log(elementsUnique);
 		if (!all)
@@ -95,7 +96,7 @@ function createContainer() {
 	$("#" + divId).on("stateChanged", function(t, sourceChanged, mapClicked, viewChanged) {
 
 		//console.log('sourceChanged ' + sourceChanged);
-		console.log("input to stateChanged " + divId, data.elements);
+		//console.log("input to stateChanged " + divId, data.elements);
 
 		if (map == null || viewChanged)
 			initMap(data);
@@ -115,10 +116,10 @@ function createContainer() {
 				elements = data.elements;
 			else {
 				elements = active;
-				console.log("active", active);
+				//console.log("active", active);
 			}
 
-			console.log("out to " + nextId, elements);
+			//console.log("out to " + nextId, elements);
 			var out = clone(data);
 			out.elements = elements;
 
@@ -147,6 +148,9 @@ function createContainer() {
 			$(this).removeClass('over').addClass('out');
 		},
 		drop : function() {
+
+			if (id != 0)
+				return;
 			//confirm('Permantly delete this item?');
 			// this = etichetta droppable del container sottostante
 			var offset = $(this).offset();
@@ -247,10 +251,8 @@ function createContainer() {
 
 				if (val == 'tutti') {
 					all = true;
-				} else {
-
+				} else
 					all = false;
-				}
 
 				var label = $("#view-container-" + id + " label");
 				if (label.hasClass('ui-btn-active'))

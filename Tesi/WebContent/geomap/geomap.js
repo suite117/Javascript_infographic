@@ -5,8 +5,9 @@ function GeoMap(divId, destinationDivId, idMap, data, optional) {
 	this.data = data;
 
 	var layers = [];
-	this.center = optional ? optional.center : [data[0].lat, data[0].lon];
-	this.selected = optional ? optional.active : [];
+
+	this.center = optional ? optional.center : [0, 0];
+	this.selected = [];
 
 	$("#" + this.destinationDivId).append('<div id="' + idMap + '" style="width:100%;height: 100%"></div>');
 	this.map = new L.map(idMap);
@@ -22,7 +23,7 @@ function GeoMap(divId, destinationDivId, idMap, data, optional) {
 	}).addTo(this.map);
 
 	// add and open popup
-	L.marker(this.center).addTo(this.map).bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+	//L.marker(this.center).addTo(this.map).bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 
 	var list = [{
 		num : 75,
@@ -66,16 +67,20 @@ function GeoMap(divId, destinationDivId, idMap, data, optional) {
 		e.target.removeLayer(pie);
 		pie.options.radius = (pie.options.radius / distance) * (maxll.lat - minll.lat);
 		distance = maxll.lat - minll.lat;
-
 		e.target.addLayer(pie);
 	});
+
+	if (data == null || data.length == 0)
+		return;
 
 	this.map.setView(this.center, startZoom);
 	this.draw(this.data);
 }
 
-
 GeoMap.prototype.draw = function(data) {
+
+	this.center = data[0] ? [data[0].lat, data[0].lon] : this.center;
+	this.map.setView(this.center, this.map.getZoom());
 
 	this.data = data;
 	//console.log(data);
@@ -90,7 +95,9 @@ GeoMap.prototype.draw = function(data) {
 
 		var element = data[i];
 
-		var marker = new L.Marker(new L.LatLng(element.lat, element.lon));
+		var marker = new L.Marker(new L.LatLng(element.lat, element.lon), options = {
+			"title" : data[i].id
+		});
 		marker.data = element;
 		marker.on('click', onMarkerClick);
 
@@ -105,7 +112,6 @@ GeoMap.prototype.draw = function(data) {
 	}
 
 	var divId = this.divId;
-	var data = this.data;
 
 	function onMarkerClick(e) {
 
@@ -131,8 +137,26 @@ GeoMap.prototype.draw = function(data) {
 
 };
 
+
+
 GeoMap.prototype.getSelected = function() {
+
+	for (var i = 0; i < this.data.length; i++) {
+		var element = this.data[i];
+		if (element.selected)
+			this.selected.push(element);
+	}
+
 	
+	
+	var s = $("#" + destinationDivId + " .leaflet-icon-active");
+	console.log("selected", s);
+	
+	
+	return this.selected;
+}
+
+GeoMap.prototype.getSelected = function() {
 
 	for (var i = 0; i < this.data.length; i++) {
 		var element = this.data[i];
@@ -154,14 +178,16 @@ GeoMap.prototype.add = function(id) {
 var LeafIcon = L.Icon.extend({
 	options : {
 		iconUrl : baseUrl + '/geomap/images/marker-icon.png',
-		shadowUrl : baseUrl + '/geomap/images/marker-shadow.png'
+		shadowUrl : baseUrl + '/geomap/images/marker-shadow.png',
+		className : 'leaflet-icon'
 	}
 });
 
 var LeafIconActive = L.Icon.extend({
 	options : {
 		iconUrl : baseUrl + '/geomap/images/marker-icon-active.png',
-		shadowUrl : baseUrl + '/geomap/images/marker-shadow.png'
+		shadowUrl : baseUrl + '/geomap/images/marker-shadow.png',
+		className : 'leaflet-icon-active'
 	}
 });
 

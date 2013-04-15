@@ -16,44 +16,21 @@ $(document).bind('pageinit', function() {
 	createContainer();
 	createContainer();
 
-	var events = getJSON("data/events.json");
+	//var personePartecipanti = getJSON("data/personapartecipante.json");
 
-	dominio["eventi"] = {
-		name : "evento",
-		type : TYPE.GEOMAP,
-		elements : events
-	};
+	//var epj = events.joinTable(personePartecipanti, "id", "idEvento");
 
-	dominio["eventi2"] = {
-		type : TYPE.GEOMAP,
-		elements : getJSON("data/events2.json")
-	};
-
-	var persone = getJSON("data/persone.json");
-
-	var personeMap = {
-		"image" : "image", //[toHTMLImgTag, "image"],
-		"id" : "id",
-		"Nome" : "nome",
-		"Data di nascita" : "datanascita"
-
-	};
-
-	var persone = persone.map1(personeMap);
-
-	var personePartecipanti = getJSON("data/personapartecipante.json");
-
-	var epj = events.joinTable(personePartecipanti, "id", "idEvento");
-
-	var personepeventi = persone.joinTable(epj, "id", "idPersona");
-	
-	
-	console.log("personepeventi",personepeventi);
+	//var personepeventi = persone.joinTable(epj, "id", "idPersona");
 
 	dominio["personepeventi"] = {
-		elements : personepeventi,
-		views : {"table": ["id", "image", "Nome", "idEvento"], "geomap" : ["idEvento"]}
+		elements : getJSON("data/pp.json"), //personepeventi,
+		views : {
+			"table" : ["id", "nome", "idEvento"],
+			"geomap" : ["idEvento"]
+		}
 	};
+
+	console.log("personepeventi", dominio["personepeventi"].elements);
 
 	dominio["gruppoOrganizzato"] = {
 		type : TYPE.TREE,
@@ -61,5 +38,7 @@ $(document).bind('pageinit', function() {
 	};
 
 	initClouds('#viz', dominio);
+
+	//createDraggableCloud(dominio["personepeventi"]);
 
 });
