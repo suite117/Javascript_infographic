@@ -20,7 +20,7 @@ Array.prototype.containsId = function(idValue) {
 
 	var i = this.length;
 	while (i--) {
-		if (this[i].id == idValue) {
+		if (this[i]["id"] == idValue) {
 			return true;
 		}
 	}
@@ -28,16 +28,19 @@ Array.prototype.containsId = function(idValue) {
 };
 
 // rimuove gli elementi duplicati
-Array.prototype.removeDuplicates = function(idField) {
+Array.prototype.removeDuplicates = function(columns) {
 
-	var id = idField ? idField : "id";
+	var idField = columns[0];
 	var elements = [];
-	var i = this.length;
-	while (i--) {
-
-		if (!elements.containsId(this[i][id])) {
-			elements.push(clone(this[i]));
-			elements[elements.length - 1]["id"] = elements[elements.length -1][id];
+	for (var i = 0; i < this.length; i++) {
+		if (!elements.containsId(this[i][idField])) {
+			var element = clone(this[i]);
+			element["id"] = this[i][idField];
+			//for (var j = 1; j < columns.length; j++) {
+			//	element[columns[j]] = this[i][columns[j]];
+			//}
+			elements.push(element);
+			
 		}
 	}
 
@@ -143,7 +146,7 @@ Array.prototype.findAll = function(fieldName, fieldValue) {
 
 		//console.log("found", this[i][fieldName]);
 		if (this[i][fieldName] == fieldValue) {
-			out.push(this[i]);
+			out.add(this[i]);
 
 		}
 	}
@@ -151,14 +154,13 @@ Array.prototype.findAll = function(fieldName, fieldValue) {
 	return out;
 };
 
-
 Array.prototype.removeAll = function(elements) {
-	
+
 	var out = [];
-	
-	for(var i = 0; i < this.length; i++) {
+
+	for (var i = 0; i < this.length; i++) {
 		var exclude = false;
-		for(var j = 0; j < elements.length; j++) {
+		for (var j = 0; j < elements.length; j++) {
 			if (elements[j].id == this[i].id) {
 				exclude = true;
 				break;
@@ -167,10 +169,9 @@ Array.prototype.removeAll = function(elements) {
 		if (!exclude)
 			out.push(this[i]);
 	}
-	
+
 	return out;
 }
-
 //Permette di clonare gli oggetti
 function clone(obj) {
 	// Handle the 3 simple types, and null or undefined
@@ -245,15 +246,23 @@ Array.prototype.add = function(object) {
 };
 
 Array.prototype.addAll = function(elements) {
-	
-	for(var i = 0; i < elements.length; i++)
+
+	for (var i = 0; i < elements.length; i++)
 		this.add(elements[i]);
-	
+
 }
 //Rimuove un oggetto da un array di oggetti che hanno il campo id
 Array.prototype.remove = function(object) {
 	for (var i in this) {
 		if (this[i].id == object.id)
+			this.splice(i, 1);
+	}
+};
+
+
+Array.prototype.removeById = function(idValue) {
+	for (var i in this) {
+		if (this[i].id == idValue)
 			this.splice(i, 1);
 	}
 };

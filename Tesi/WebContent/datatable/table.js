@@ -12,7 +12,7 @@ function Table(divId, destinationDivId, idMap, data, optional) {
 	}
 
 	var fields = data.getFields();
-	this.columns = [];		
+	this.columns = [];
 	for (var i = 0; i < fields.length; i++) {
 
 		this.columns.push({
@@ -28,11 +28,11 @@ function Table(divId, destinationDivId, idMap, data, optional) {
 	this.draw(data);
 }
 
-Table.prototype.draw = function(data, active) {
+Table.prototype.draw = function(data, selected) {
 
 	this.data = data;
-	console.log(data);
-	this.selected = active ? active : this.selected;
+	//console.log("data", data);
+	this.selected = selected ? selected : this.selected;
 
 	// creazione tabella
 	$('#' + this.destinationDivId).html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="' + this.idMap + '"></table>');
@@ -65,8 +65,12 @@ Table.prototype.draw = function(data, active) {
 			$(nRow).attr("id", destinationDivId + "-tr-" + id);
 
 			// aggiunge la classe selected se è tra i selezionati
-			if (selected.find(id) != null)
-				$(nRow).addClass("selected");
+			for (var i = 0; i < selected.length; i++) {
+				if (id == selected[i]) {
+					$(nRow).addClass("selected");
+					break;
+				}
+			}
 
 			// processa se presente il path di un'immagine
 			$('td:eq(' + indexImageColumn + ')', nRow).html('<img src="' + aData[indexImageColumn] + '" style="width:100px; margin:0; padding: 0;"></img>');

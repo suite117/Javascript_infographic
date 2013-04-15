@@ -77,13 +77,14 @@ function GeoMap(divId, destinationDivId, idMap, data, optional) {
 	this.draw(this.data);
 }
 
-GeoMap.prototype.draw = function(data) {
+GeoMap.prototype.draw = function(data, selected) {
+
+	this.data = data;
+	//console.log("data", data);
+	this.selected = selected ? selected : this.selected;
 
 	this.center = data[0] ? [data[0].lat, data[0].lon] : this.center;
 	this.map.setView(this.center, this.map.getZoom());
-
-	this.data = data;
-	//console.log(data);
 
 	if (this.markers != null)
 		for (var i = 0; i < this.markers.length; i++) {
@@ -96,15 +97,20 @@ GeoMap.prototype.draw = function(data) {
 		var element = data[i];
 
 		var marker = new L.Marker(new L.LatLng(element.lat, element.lon), options = {
-			"title" : data[i].id
+			"title" : "t" + data[i].id
 		});
 		marker.data = element;
 		marker.on('click', onMarkerClick);
 
 		var icon = new LeafIcon();
-		if (marker.data.selected) {
-			var icon = new LeafIconActive();
+
+		for (var j = 0; j < this.selected.length; j++) {
+			if (marker.data.id == selected[j]) {
+				icon = new LeafIconActive();
+				break;
+			}
 		}
+
 		marker.setIcon(icon);
 
 		this.markers.push(marker);
@@ -136,25 +142,6 @@ GeoMap.prototype.draw = function(data) {
 	}
 
 };
-
-
-
-GeoMap.prototype.getSelected = function() {
-
-	for (var i = 0; i < this.data.length; i++) {
-		var element = this.data[i];
-		if (element.selected)
-			this.selected.push(element);
-	}
-
-	
-	
-	var s = $("#" + destinationDivId + " .leaflet-icon-active");
-	console.log("selected", s);
-	
-	
-	return this.selected;
-}
 
 GeoMap.prototype.getSelected = function() {
 

@@ -29,13 +29,14 @@ function createContainer() {
 
 	containerOptions = ["chi", "cosa", "dove", "quando", "gerarchia"];
 
-	var select = createSelectMenu(id, form, containerOptions);
+	var selectMenu = createSelectMenu(id, form, containerOptions);
 
 	var type = TYPE.TABLE;
 	var all = true;
 	var active = [];
+	var selected = [];
 
-	select.on('change', function(e) {
+	selectMenu.on('change', function(e) {
 
 		var selectedOption = $(this).val();
 
@@ -57,6 +58,7 @@ function createContainer() {
 
 		//initMap(data);
 		active = [];
+		selected = [];
 		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).trigger("click", ["tutti"]);
 		//$("#" + divId).trigger('stateChanged', [false, false, true]);
 	});
@@ -66,26 +68,35 @@ function createContainer() {
 
 	// azione relatia al click del mouse su un elemento della mappa
 	$("#" + divId).on("mapClicked", function(t, idValue, isSelected) {
-		//var elementsUnique = data.elements.removeDuplicates(data.views[type][0]);
 
 		// recuper il campo id per la selezione attuale'
 		var idField = data.views[type][0];
 		var elements;
 		//var mapSelected = map.getSelected();
-		
+		elements = data.elements.findAll(idField, idValue);
 		if (isSelected) {
 			//active = [];
 			//for (var i = 0; i < mapSelected.length; i++) {
-				elements = data.elements.findAll(idField, idValue);
-				active.addAll(elements);
+
+			//active.addAll(elements);
+
+			selected.push(idValue);
 			//}
 		} else {
-			elements = data.elements.findAll(idField, idValue);
-			active = active.removeAll(elements);
+			//elements = data.elements.findAll(idField, idValue);
+			//active = active.removeAll(elements);
+
+			for (var i = 0; i < selected.length; i++) {
+				if (selected[i] == idValue) {
+					selected.splice(i, 1);
+					break;
+				}
+
+			}
 		}
 
 		//console.log("elements", elements);
-		console.log("active", active);
+		console.log("selected", selected);
 
 		//console.log(elementsUnique);
 		if (!all)
@@ -101,7 +112,7 @@ function createContainer() {
 		if (map == null || viewChanged)
 			initMap(data);
 		else if (!mapClicked)
-			updateMap(data, active);
+			updateMap(data);
 
 		if (viewChanged || sourceChanged || mapClicked)
 			updateNextContainer(data, active, nextId, sourceChanged, mapClicked);
@@ -111,17 +122,29 @@ function createContainer() {
 	function updateNextContainer(data, active, nextId, sourceChanged, mapClicked) {
 		if (sourceChanged || mapClicked) {
 
-			var elements;
-			if (all)
-				elements = data.elements;
-			else {
-				elements = active;
-				//console.log("active", active);
+			
+			if (!all) {
+				var elements = [];
+				active = [];
+				var columns = data.views[type];
+				var idField = columns[0];
+
+				//var mapSelected = map.getSelected();
+
+				for (var i = 0; i < selected.length; i++) {
+					elements = data.elements.findAll(idField, selected[i]);
+					//elements = data.elements.removeDuplicates(columns);
+					//console.log("idField", idField);
+					console.log("elements", elements);
+					active.addAll(elements);
+				}
+
+				console.log("active", active);
 			}
 
 			//console.log("out to " + nextId, elements);
 			var out = clone(data);
-			out.elements = elements;
+			out.elements = all ? data.elements : active;
 
 			$("#" + nextId).trigger("sourceChanged", [out, active]);
 		}
@@ -131,7 +154,7 @@ function createContainer() {
 	$("#" + divId).on("sourceChanged", function(t, dataSource, activeSource) {
 
 		data = dataSource;
-		active = active.intersect(activeSource);
+		//active = active.intersect(activeSource);
 
 		// aggiorno il contenuto richiamo il container successivo a cascata
 		$("#" + divId).trigger('stateChanged', [true, false, false]);
@@ -189,7 +212,7 @@ function createContainer() {
 			alert("data è null");
 
 		// rimuove i duplicati
-		var elementsUnique = data.elements.removeDuplicates(columns[0]);
+		var elementsUnique = data.elements.removeDuplicates(columns);
 
 		$("#" + bodyDivId).html("");
 		switch(type) {
@@ -211,7 +234,7 @@ function createContainer() {
 		//console.log(elementsUnique);
 	}
 
-	function updateMap(data, active) {
+	function updateMap(data) {
 
 		if (data == null)
 			alert("data è null");
@@ -219,8 +242,11 @@ function createContainer() {
 		var columns = data.views[type];
 
 		// rimuove i duplicati
-		var elementsUnique = data.elements.removeDuplicates(columns[0]);
-		var activeUnique = active.removeDuplicates(columns[0]);
+		var elementsUnique = data.elements.removeDuplicates(columns);
+		//console.log("elementsUnique", elementsUnique);
+
+		//var activeUnique = active.removeDuplicates(columns);
+		//console.log("activeUnique", activeUnique);
 
 		switch(type) {
 			case TYPE.TABLE:
@@ -228,7 +254,7 @@ function createContainer() {
 				break;
 		}
 
-		map.draw(elementsUnique, active);
+		map.draw(elementsUnique, selected);
 
 	}
 
