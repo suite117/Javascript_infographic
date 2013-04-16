@@ -146,7 +146,7 @@ Array.prototype.findAll = function(fieldName, fieldValue) {
 
 		//console.log("found", this[i][fieldName]);
 		if (this[i][fieldName] == fieldValue) {
-			out.add(this[i]);
+			out.push(this[i]);
 
 		}
 	}
@@ -251,6 +251,15 @@ Array.prototype.addAll = function(elements) {
 		this.add(elements[i]);
 
 }
+
+
+Array.prototype.pushAll = function(elements) {
+
+	for (var i = 0; i < elements.length; i++)
+		this.push(elements[i]);
+
+}
+
 //Rimuove un oggetto da un array di oggetti che hanno il campo id
 Array.prototype.remove = function(object) {
 	for (var i in this) {

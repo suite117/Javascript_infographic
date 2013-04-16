@@ -35,6 +35,8 @@ function createContainer() {
 	var all = true;
 	var active = [];
 	var selected = [];
+	var idField = "id";
+	var dataView = [];
 
 	selectMenu.on('change', function(e) {
 
@@ -59,6 +61,7 @@ function createContainer() {
 		//initMap(data);
 		active = [];
 		selected = [];
+		idField = data.views[type][0];
 		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).trigger("click", ["tutti"]);
 		//$("#" + divId).trigger('stateChanged', [false, false, true]);
 	});
@@ -70,33 +73,38 @@ function createContainer() {
 	$("#" + divId).on("mapClicked", function(t, idValue, isSelected) {
 
 		// recuper il campo id per la selezione attuale'
-		var idField = data.views[type][0];
-		var elements;
+
 		//var mapSelected = map.getSelected();
-		elements = data.elements.findAll(idField, idValue);
+		//var elements = data.elements.findAll(idField, idValue);
 		if (isSelected) {
 			//active = [];
 			//for (var i = 0; i < mapSelected.length; i++) {
 
-			//active.addAll(elements);
+			//active.pushAll(elements);
 
-			selected.push(idValue);
+			isPresent = false;
+			for (var i = 0; i < selected.length; i++) {
+				if (selected[i] == idValue) {
+					isPresent = true;
+					break;
+				}
+			}
+			if (!isPresent)
+				selected.push(idValue);
 			//}
 		} else {
 			//elements = data.elements.findAll(idField, idValue);
 			//active = active.removeAll(elements);
 
-			for (var i = 0; i < selected.length; i++) {
+			for (var i = 0; i < selected.length; i++)
 				if (selected[i] == idValue) {
 					selected.splice(i, 1);
 					break;
 				}
-
-			}
 		}
 
 		//console.log("elements", elements);
-		console.log("selected", selected);
+		console.log("selected mapClicked", selected);
 
 		//console.log(elementsUnique);
 		if (!all)
@@ -106,55 +114,80 @@ function createContainer() {
 
 	$("#" + divId).on("stateChanged", function(t, sourceChanged, mapClicked, viewChanged) {
 
-		//console.log('sourceChanged ' + sourceChanged);
 		//console.log("input to stateChanged " + divId, data.elements);
 
 		if (map == null || viewChanged)
-			initMap(data);
+			initMap(dataView);
 		else if (!mapClicked)
-			updateMap(data);
+			updateMap(dataView, selected);
 
 		if (viewChanged || sourceChanged || mapClicked)
-			updateNextContainer(data, active, nextId, sourceChanged, mapClicked);
+			updateNextContainer(data, selected, nextId, sourceChanged, mapClicked);
 
 	});
 
-	function updateNextContainer(data, active, nextId, sourceChanged, mapClicked) {
+	function updateNextContainer(data, selectedIds, nextId, sourceChanged, mapClicked) {
 		if (sourceChanged || mapClicked) {
 
-			
-			if (!all) {
-				var elements = [];
-				active = [];
-				var columns = data.views[type];
-				var idField = columns[0];
+			/* if (!all) {
+			 //var elements = [];
+			 //active = [];
+			 var columns = data.views[type];
 
-				//var mapSelected = map.getSelected();
+			 //var mapSelected = map.getSelected();
 
-				for (var i = 0; i < selected.length; i++) {
-					elements = data.elements.findAll(idField, selected[i]);
-					//elements = data.elements.removeDuplicates(columns);
-					//console.log("idField", idField);
-					console.log("elements", elements);
-					active.addAll(elements);
-				}
+			 //for (var i = 0; i < selected.length; i++) {
+			 //	elements = data.elements.findAll(columns[0], selected[i]);
+			 //elements = data.elements.removeDuplicates(columns);
+			 //console.log("idField", idField);
+			 //	console.log("elements", elements);
+			 //	active.pushAll(elements);
+			 //	}
 
-				console.log("active", active);
-			}
+			 
+			 }
 
-			//console.log("out to " + nextId, elements);
-			var out = clone(data);
-			out.elements = all ? data.elements : active;
+			 //console.log("out to " + nextId, elements);
+			 //var out = clone(data);
+			 //out.elements = active; */
+			console.log("selected nextCont", selected);
 
-			$("#" + nextId).trigger("sourceChanged", [out, active]);
+			$("#" + nextId).trigger("sourceChanged", [data, data.views[type][0], !all ? selected : null]);
 		}
 	}
 
 
-	$("#" + divId).on("sourceChanged", function(t, dataSource, activeSource) {
+	$("#" + divId).on("sourceChanged", function(t, dataSource, idFieldSource, selectedSource) {
 
-		data = dataSource;
+		// inizializzazione data del container (base di dati)
+
+		//selected = [];
+		console.log("CONTAINER " + id);
+
+		if (selectedSource != null) {
+			console.log("selectedSource", selectedSource);
+			dataView.elements = [];
+			for (var i = 0; i < data.elements.length; i++) {
+				var element = data.elements[i];
+				for (var j = 0; j < selectedSource.length; j++) {
+					if (element[idFieldSource] == selectedSource[j]) {
+						dataView.elements.push(element);
+						break;
+					}
+				}
+			}
+		} else {
+			data = dataSource;
+			dataView = clone(data);
+		}
+
 		//active = active.intersect(activeSource);
+		
+		console.log("data.elements", data.elements);
+		console.log("dataView.elements", dataView.elements);
+
+		// ricerca righe con
+		//
 
 		// aggiorno il contenuto richiamo il container successivo a cascata
 		$("#" + divId).trigger('stateChanged', [true, false, false]);
@@ -193,7 +226,7 @@ function createContainer() {
 				if (dis < 80) {
 					// conservo l'insieme
 					data = d;
-
+					dataView = data;
 					$("#" + divId).trigger('stateChanged', [true, false, false]);
 					break;
 				}
@@ -205,14 +238,15 @@ function createContainer() {
 
 	function initMap(data) {
 
-		// le colonne della proiezione
-		var columns = data.views[type];
-
 		if (data == null)
 			alert("data è null");
 
+		// le colonne della proiezione
+		var columns = data.views[type];
+
 		// rimuove i duplicati
 		var elementsUnique = data.elements.removeDuplicates(columns);
+		//console.log("elementsUnique", elementsUnique);
 
 		$("#" + bodyDivId).html("");
 		switch(type) {
@@ -231,10 +265,9 @@ function createContainer() {
 				break;
 		}
 
-		//console.log(elementsUnique);
 	}
 
-	function updateMap(data) {
+	function updateMap(data, selected) {
 
 		if (data == null)
 			alert("data è null");
@@ -250,7 +283,7 @@ function createContainer() {
 
 		switch(type) {
 			case TYPE.TABLE:
-				elementsUnique = data.elements.project(columns);
+				elementsUnique = elementsUnique.project(columns);
 				break;
 		}
 
