@@ -132,7 +132,7 @@ Table.prototype.getSelected = function() {
 		//console.log($(rows[i]).attr("class"));
 		if ($(rows[i]).hasClass("selected")) {
 			var id = $(rows[i]).find('td:eq(' + this.indexIdColumn + ')').html();
-			selected.push(this.data.find(id));
+			selected.push(parseInt(id));
 		}
 	}
 

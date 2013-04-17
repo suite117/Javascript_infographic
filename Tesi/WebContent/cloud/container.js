@@ -35,6 +35,7 @@ function createContainer() {
 	var all = true;
 	var active = [];
 	var selected = [];
+	var selectedAll = [];
 	var idField = "id";
 	var dataView = [];
 
@@ -59,8 +60,9 @@ function createContainer() {
 		}
 
 		//initMap(data);
-		active = [];
+		//active = [];
 		selected = [];
+
 		idField = data.views[type][0];
 		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).trigger("click", ["tutti"]);
 		//$("#" + divId).trigger('stateChanged', [false, false, true]);
@@ -104,7 +106,7 @@ function createContainer() {
 		}
 
 		//console.log("elements", elements);
-		console.log("selected mapClicked", selected);
+		//console.log("selected mapClicked", selected);
 
 		//console.log(elementsUnique);
 		if (!all)
@@ -116,43 +118,54 @@ function createContainer() {
 
 		//console.log("input to stateChanged " + divId, data.elements);
 
+		// le colonne della proiezione
+		var columns = data.views[type];
+
+		// rimuove i duplicati
+		var elementsUnique = dataView.elements.removeDuplicates(columns);
+		//console.log("elementsUnique", elementsUnique);
+
+		selectedAll = [];
+		for (var ii = 0; ii < elementsUnique.length; ii++) {
+			selectedAll.push(elementsUnique[ii][columns[0]]);
+		}
+
+		//selected = map.getSelected();
+		//console.log("selected", selected);
+		selected_new = [];
+		//if (!all) {
+			for (var i = 0; i < selected.length; i++) {
+				isPresent = false;
+				for (var j = 0; j < selectedAll.length; j++)
+					if (selected[i] == selectedAll[j]) {
+						isPresent = true;
+						break;
+					}
+				if (isPresent)
+					selected_new.push(selected[i]);
+			}
+			
+			selected = selected_new;
+		//}
+
 		if (map == null || viewChanged)
-			initMap(dataView);
+			initMap(elementsUnique);
 		else if (!mapClicked)
-			updateMap(dataView, selected);
+			updateMap(elementsUnique, selected);
 
 		if (viewChanged || sourceChanged || mapClicked)
-			updateNextContainer(data, selected, nextId, sourceChanged, mapClicked);
+			updateNextContainer(map, data, selected, nextId, sourceChanged, mapClicked);
 
 	});
 
-	function updateNextContainer(data, selectedIds, nextId, sourceChanged, mapClicked) {
+	function updateNextContainer(map, data, selectedIds, nextId, sourceChanged, mapClicked) {
 		if (sourceChanged || mapClicked) {
 
-			/* if (!all) {
-			 //var elements = [];
-			 //active = [];
-			 var columns = data.views[type];
+			//console.log("out to " + nextId, elements);
+			//var out = clone(data);
+			//out.elements = active; */
 
-			 //var mapSelected = map.getSelected();
-
-			 //for (var i = 0; i < selected.length; i++) {
-			 //	elements = data.elements.findAll(columns[0], selected[i]);
-			 //elements = data.elements.removeDuplicates(columns);
-			 //console.log("idField", idField);
-			 //	console.log("elements", elements);
-			 //	active.pushAll(elements);
-			 //	}
-
-			 
-			 }
-
-			 //console.log("out to " + nextId, elements);
-			 //var out = clone(data);
-			 //out.elements = active; */
-			console.log("selected nextCont", selected);
-
-			$("#" + nextId).trigger("sourceChanged", [data, data.views[type][0], !all ? selected : null]);
+			$("#" + nextId).trigger("sourceChanged", [data, data.views[type][0], !all ? selected : selectedAll]);
 		}
 	}
 
@@ -160,31 +173,44 @@ function createContainer() {
 	$("#" + divId).on("sourceChanged", function(t, dataSource, idFieldSource, selectedSource) {
 
 		// inizializzazione data del container (base di dati)
-
-		//selected = [];
-		console.log("CONTAINER " + id);
-
-		if (selectedSource != null) {
-			console.log("selectedSource", selectedSource);
-			dataView.elements = [];
-			for (var i = 0; i < data.elements.length; i++) {
-				var element = data.elements[i];
-				for (var j = 0; j < selectedSource.length; j++) {
-					if (element[idFieldSource] == selectedSource[j]) {
-						dataView.elements.push(element);
-						break;
-					}
-				}
-			}
-		} else {
+		if (data == null) {
 			data = dataSource;
 			dataView = clone(data);
 		}
 
+		//selected = [];
+		//	console.log("CONTAINER " + id);
+
+		//	console.log("selectedSource", selectedSource);
+		dataView.elements = [];
+
+		for (var i = 0; i < data.elements.length; i++) {
+			var element = data.elements[i];
+			for (var j = 0; j < selectedSource.length; j++) {
+				if (element[idFieldSource] == selectedSource[j]) {
+					dataView.elements.push(element);
+					break;
+				}
+
+			}
+
+			/*
+			 isPresent = false;
+			 for (var k = 0; k < selectedAll.length; k++) {
+			 if (element[idField] == selectedAll[k]) {
+			 isPresent = true;
+			 break;
+			 }
+			 }
+			 if (!isPresent)
+			 selectedAll.push(element[idField]);
+			 */
+		}
+
 		//active = active.intersect(activeSource);
-		
-		console.log("data.elements", data.elements);
-		console.log("dataView.elements", dataView.elements);
+
+		//	console.log("data.elements", data.elements);
+		//console.log("dataView.elements", dataView.elements);
 
 		// ricerca righe con
 		//
@@ -226,7 +252,8 @@ function createContainer() {
 				if (dis < 80) {
 					// conservo l'insieme
 					data = d;
-					dataView = data;
+					dataView = clone(data);
+
 					$("#" + divId).trigger('stateChanged', [true, false, false]);
 					break;
 				}
@@ -236,22 +263,15 @@ function createContainer() {
 		}
 	});
 
-	function initMap(data) {
+	function initMap(elementsUnique) {
 
-		if (data == null)
-			alert("data è null");
-
-		// le colonne della proiezione
-		var columns = data.views[type];
-
-		// rimuove i duplicati
-		var elementsUnique = data.elements.removeDuplicates(columns);
-		//console.log("elementsUnique", elementsUnique);
+		if (elementsUnique == null)
+			alert("elementsUnique è null");
 
 		$("#" + bodyDivId).html("");
 		switch(type) {
 			case TYPE.TABLE:
-				elementsUnique = elementsUnique.project(columns);
+				elementsUnique = elementsUnique.project(dataView.views[type]);
 
 				map = new Table(divId, bodyDivId, "table-" + id, elementsUnique, {
 					include : data.views[TYPE.TABLE]
@@ -267,23 +287,14 @@ function createContainer() {
 
 	}
 
-	function updateMap(data, selected) {
+	function updateMap(elementsUnique, selected) {
 
-		if (data == null)
-			alert("data è null");
-
-		var columns = data.views[type];
-
-		// rimuove i duplicati
-		var elementsUnique = data.elements.removeDuplicates(columns);
-		//console.log("elementsUnique", elementsUnique);
-
-		//var activeUnique = active.removeDuplicates(columns);
-		//console.log("activeUnique", activeUnique);
+		if (elementsUnique == null)
+			alert("elementsUnique è null");
 
 		switch(type) {
 			case TYPE.TABLE:
-				elementsUnique = elementsUnique.project(columns);
+				elementsUnique = elementsUnique.project(dataView.views[type]);
 				break;
 		}
 
@@ -322,7 +333,7 @@ function createContainer() {
 				}
 				//fieldset.controlgroup("refresh");
 
-				$("#" + divId).trigger('stateChanged', [false, oldVal != val ? true : false, forceVal ? true : false]);
+				$("#" + divId).trigger('stateChanged', [forceVal ? true : false, oldVal != val ? true : false, forceVal ? true : false]);
 			});
 		}
 

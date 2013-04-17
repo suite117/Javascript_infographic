@@ -55,7 +55,7 @@ function GeoMap(divId, destinationDivId, idMap, data, optional) {
 		}
 	});
 
-	var startZoom = 8;
+	var startZoom = 6;
 	var distance = 0.2 / startZoom;
 
 	this.map.on('zoomend', function(e) {
@@ -144,14 +144,15 @@ GeoMap.prototype.draw = function(data, selected) {
 };
 
 GeoMap.prototype.getSelected = function() {
-
+	var selected = []
+	
 	for (var i = 0; i < this.data.length; i++) {
 		var element = this.data[i];
 		if (element.selected)
-			this.selected.push(element);
+			selected.push(parseInt(element.id));
 	}
 
-	return this.selected;
+	return selected;
 }
 
 GeoMap.prototype.remove = function(id) {
