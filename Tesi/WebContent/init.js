@@ -26,7 +26,7 @@ $(document).bind('pageinit', function() {
 		elements : getJSON("data/pp.json"), //personepeventi,
 		views : {
 			"table" : ["id", "nome", "idEvento"],
-			"geomap" : ["idEvento"]
+			"geomap" : ["idEvento", "lat", "lon", "nomeEvento"]
 		}
 	};
 

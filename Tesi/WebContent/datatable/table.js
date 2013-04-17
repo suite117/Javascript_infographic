@@ -1,6 +1,6 @@
-function Table(divId, destinationDivId, idMap, data, optional) {
+function Table(destinationDivId, idMap, data, optional) {
 
-	this.divId = divId;
+	
 	this.destinationDivId = destinationDivId;
 	this.idMap = idMap;
 
@@ -39,7 +39,7 @@ Table.prototype.draw = function(data, selected) {
 
 	// inizializzazione tabella
 
-	var divId = this.divId;
+	
 	var selected = this.selected;
 	var destinationDivId = this.destinationDivId;
 
@@ -110,7 +110,7 @@ Table.prototype.draw = function(data, selected) {
 
 			}
 
-			$("#" + divId).trigger("mapClicked", [id, isSelected]);
+			$("#" + destinationDivId).trigger("mapClicked", [id, isSelected]);
 			//console.log(selected);
 
 		}

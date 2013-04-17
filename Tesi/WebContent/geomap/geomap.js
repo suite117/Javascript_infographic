@@ -1,12 +1,16 @@
-function GeoMap(divId, destinationDivId, idMap, data, optional) {
+function GeoMap(destinationDivId, idMap, data, optional) {
 
-	this.divId = divId;
+	
 	this.destinationDivId = destinationDivId;
 	this.data = data;
 
 	var layers = [];
 
-	this.center = optional ? optional.center : [0, 0];
+	if (optional != null) {
+		this.center = optional.center ? optional.center : [0, 0];
+		this.idField = optional.id ? optional.id : "id";
+		this.nameField = optional.name ? optional.name : "name";
+	}
 	this.selected = [];
 
 	$("#" + this.destinationDivId).append('<div id="' + idMap + '" style="width:100%;height: 100%"></div>');
@@ -69,12 +73,15 @@ function GeoMap(divId, destinationDivId, idMap, data, optional) {
 		distance = maxll.lat - minll.lat;
 		e.target.addLayer(pie);
 	});
+	
+	console.log("data.length", data.length);
 
-	if (data == null || data.length == 0)
-		return;
+	
 
 	this.map.setView(this.center, startZoom);
-	this.draw(this.data);
+	
+	if (data != null && data.length == 0)
+		this.draw(this.data);
 }
 
 GeoMap.prototype.draw = function(data, selected) {
@@ -97,7 +104,7 @@ GeoMap.prototype.draw = function(data, selected) {
 		var element = data[i];
 
 		var marker = new L.Marker(new L.LatLng(element.lat, element.lon), options = {
-			"title" : "t" + data[i].id
+			"title" : "t" + data[i][this.idField]
 		});
 		marker.data = element;
 		marker.on('click', onMarkerClick);
@@ -105,7 +112,7 @@ GeoMap.prototype.draw = function(data, selected) {
 		var icon = new LeafIcon();
 
 		for (var j = 0; j < this.selected.length; j++) {
-			if (marker.data.id == selected[j]) {
+			if (marker.data[this.idField] == selected[j]) {
 				icon = new LeafIconActive();
 				break;
 			}
@@ -117,8 +124,10 @@ GeoMap.prototype.draw = function(data, selected) {
 		this.map.addLayer(marker);
 	}
 
-	var divId = this.divId;
-
+	
+	var idField = this.idField;
+	var nameField = this.nameField;
+	var destinationDivId = this.destinationDivId;
 	function onMarkerClick(e) {
 
 		var icon;
@@ -135,21 +144,22 @@ GeoMap.prototype.draw = function(data, selected) {
 		e.target.setIcon(icon);
 
 		var popup = L.popup();
-		var content = "<p>" + e.target.data.id + " " + e.target.data.name + "</p>";
+		console.log("e.target.data",e.target.data);
+		var content = "<p>" + e.target.data[idField] + " " + e.target.data[nameField] + "</p>";
 		e.target.bindPopup(content).openPopup();
 
-		$("#" + divId).trigger("mapClicked", [e.target.data.id, e.target.data.selected]);
+		$("#" + destinationDivId).trigger("mapClicked", [e.target.data[idField], e.target.data.selected]);
 	}
 
 };
 
 GeoMap.prototype.getSelected = function() {
 	var selected = []
-	
+
 	for (var i = 0; i < this.data.length; i++) {
 		var element = this.data[i];
 		if (element.selected)
-			selected.push(parseInt(element.id));
+			selected.push(parseInt(element[this.idField]));
 	}
 
 	return selected;

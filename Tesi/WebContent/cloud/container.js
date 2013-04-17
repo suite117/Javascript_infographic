@@ -72,7 +72,7 @@ function createContainer() {
 	$("#" + divId).data("id", id);
 
 	// azione relatia al click del mouse su un elemento della mappa
-	$("#" + divId).on("mapClicked", function(t, idValue, isSelected) {
+	$("#" + bodyDivId).on("mapClicked", function(t, idValue, isSelected) {
 
 		// recuper il campo id per la selezione attuale'
 
@@ -134,18 +134,18 @@ function createContainer() {
 		//console.log("selected", selected);
 		selected_new = [];
 		//if (!all) {
-			for (var i = 0; i < selected.length; i++) {
-				isPresent = false;
-				for (var j = 0; j < selectedAll.length; j++)
-					if (selected[i] == selectedAll[j]) {
-						isPresent = true;
-						break;
-					}
-				if (isPresent)
-					selected_new.push(selected[i]);
-			}
-			
-			selected = selected_new;
+		for (var i = 0; i < selected.length; i++) {
+			isPresent = false;
+			for (var j = 0; j < selectedAll.length; j++)
+				if (selected[i] == selectedAll[j]) {
+					isPresent = true;
+					break;
+				}
+			if (isPresent)
+				selected_new.push(selected[i]);
+		}
+
+		selected = selected_new;
 		//}
 
 		if (map == null || viewChanged)
@@ -268,20 +268,25 @@ function createContainer() {
 		if (elementsUnique == null)
 			alert("elementsUnique è null");
 
+		var columns = dataView.views[type];
+		elementsUnique = elementsUnique.project(columns);
+
 		$("#" + bodyDivId).html("");
 		switch(type) {
 			case TYPE.TABLE:
-				elementsUnique = elementsUnique.project(dataView.views[type]);
 
-				map = new Table(divId, bodyDivId, "table-" + id, elementsUnique, {
+				map = new Table(bodyDivId, "table-" + id, elementsUnique, {
 					include : data.views[TYPE.TABLE]
 				});
 				break;
 			case TYPE.GEOMAP:
-				map = new GeoMap(divId, bodyDivId, "geomap-" + id, elementsUnique);
+				map = new GeoMap(bodyDivId, "geomap-" + id, elementsUnique, {
+					id : columns[0],
+					name : "nomeEvento",
+				});
 				break;
 			case TYPE.TREE:
-				map = new Tree(divId, bodyDivId, "tree-" + id, elementsUnique);
+				map = new Tree(bodyDivId, "tree-" + id, elementsUnique);
 				break;
 		}
 
@@ -292,9 +297,14 @@ function createContainer() {
 		if (elementsUnique == null)
 			alert("elementsUnique è null");
 
+		var columns = dataView.views[type];
+		elementsUnique = elementsUnique.project(columns);
+
+		console.log("elementsUnique", elementsUnique);
+
 		switch(type) {
 			case TYPE.TABLE:
-				elementsUnique = elementsUnique.project(dataView.views[type]);
+
 				break;
 		}
 
@@ -333,7 +343,7 @@ function createContainer() {
 				}
 				//fieldset.controlgroup("refresh");
 
-				$("#" + divId).trigger('stateChanged', [forceVal ? true : false, oldVal != val ? true : false, forceVal ? true : false]);
+				$("#" + divId).trigger('stateChanged', [ forceVal ? true : false, oldVal != val ? true : false, forceVal ? true : false]);
 			});
 		}
 

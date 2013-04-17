@@ -1,6 +1,6 @@
-function Tree(divId, destinationDiv, idMap, data) {
+function Tree(destinationDivId, idMap, data) {
 	
-	this.divId = divId;
+	
 	this.nodes = new Array();
 	this.root = jsonToTreeJson(data);
 	var width= 800;
@@ -32,7 +32,7 @@ function Tree(divId, destinationDiv, idMap, data) {
 	var minx = 0;
 	var miny = 0;
 
-	var vis = d3.select("#" + destinationDiv).append("svg:svg").attr("id", idMap).attr("width", w + m[1] + m[3]).attr("height", h + m[0] + m[2]).attr("viewBox", minx + " " + miny + " " + (width - 200) + " " + height);
+	var vis = d3.select("#" + destinationDivId).append("svg:svg").attr("id", idMap).attr("width", w + m[1] + m[3]).attr("height", h + m[0] + m[2]).attr("viewBox", minx + " " + miny + " " + (width - 200) + " " + height);
 	vis.append("svg:g").attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 	// .attr("pointer-events", // "all")
 	// .call(d3.behavior.zoom().scaleExtent([1,8]).on("zoom",zoom));

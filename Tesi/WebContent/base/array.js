@@ -35,7 +35,7 @@ Array.prototype.removeDuplicates = function(columns) {
 	for (var i = 0; i < this.length; i++) {
 		if (!elements.containsId(this[i][idField])) {
 			var element = clone(this[i]);
-			element["id"] = this[i][idField];
+			//element["id"] = this[i][idField];
 			//for (var j = 1; j < columns.length; j++) {
 			//	element[columns[j]] = this[i][columns[j]];
 			//}
