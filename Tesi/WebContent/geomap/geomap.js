@@ -1,17 +1,17 @@
 function GeoMap(destinationDivId, idMap, data, optional) {
 
-	
 	this.destinationDivId = destinationDivId;
 	this.data = data;
-
-	var layers = [];
-
-	if (optional != null) {
-		this.center = optional.center ? optional.center : [0, 0];
-		this.idField = optional.id ? optional.id : "id";
-		this.nameField = optional.name ? optional.name : "name";
-	}
 	this.selected = [];
+
+	this.center = [0, 0];
+	this.idField = "id";
+	this.nameField = "name";
+	if (optional != null) {
+		this.center = optional.center ? optional.center : this.center;
+		this.idField = optional.id ? optional.id : this.idField;
+		this.nameField = optional.name ? optional.name : this.nameField;
+	}
 
 	$("#" + this.destinationDivId).append('<div id="' + idMap + '" style="width:100%;height: 100%"></div>');
 	this.map = new L.map(idMap);
@@ -73,14 +73,12 @@ function GeoMap(destinationDivId, idMap, data, optional) {
 		distance = maxll.lat - minll.lat;
 		e.target.addLayer(pie);
 	});
-	
-	console.log("data.length", data.length);
 
-	
+	//console.log("data.length", data.length);
 
 	this.map.setView(this.center, startZoom);
-	
-	if (data != null && data.length == 0)
+
+	if (data != null && data.length != 0)
 		this.draw(this.data);
 }
 
@@ -124,7 +122,6 @@ GeoMap.prototype.draw = function(data, selected) {
 		this.map.addLayer(marker);
 	}
 
-	
 	var idField = this.idField;
 	var nameField = this.nameField;
 	var destinationDivId = this.destinationDivId;
@@ -144,7 +141,7 @@ GeoMap.prototype.draw = function(data, selected) {
 		e.target.setIcon(icon);
 
 		var popup = L.popup();
-		console.log("e.target.data",e.target.data);
+		//console.log("e.target.data", e.target.data);
 		var content = "<p>" + e.target.data[idField] + " " + e.target.data[nameField] + "</p>";
 		e.target.bindPopup(content).openPopup();
 

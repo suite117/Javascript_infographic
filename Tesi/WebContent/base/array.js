@@ -16,11 +16,11 @@ Array.prototype.map1 = function(mapping) {
 	return out;
 };
 
-Array.prototype.containsId = function(idValue) {
+Array.prototype.containsId = function(idField, idValue) {
 
 	var i = this.length;
 	while (i--) {
-		if (this[i]["id"] == idValue) {
+		if (this[i][idField] == idValue) {
 			return true;
 		}
 	}
@@ -28,12 +28,11 @@ Array.prototype.containsId = function(idValue) {
 };
 
 // rimuove gli elementi duplicati
-Array.prototype.removeDuplicates = function(columns) {
+Array.prototype.removeDuplicates = function(idField) {
 
-	var idField = columns[0];
 	var elements = [];
 	for (var i = 0; i < this.length; i++) {
-		if (!elements.containsId(this[i][idField])) {
+		if (!elements.containsId(idField, this[i][idField])) {
 			var element = clone(this[i]);
 			//element["id"] = this[i][idField];
 			//for (var j = 1; j < columns.length; j++) {

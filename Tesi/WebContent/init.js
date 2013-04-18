@@ -25,12 +25,12 @@ $(document).bind('pageinit', function() {
 	dominio["personepeventi"] = {
 		elements : getJSON("data/pp.json"), //personepeventi,
 		views : {
-			"table" : ["id", "nome", "idEvento"],
-			"geomap" : ["idEvento", "lat", "lon", "nomeEvento"]
+			"table" : {columns:["id", "nome", "idEvento"]},
+			"geomap" : {columns: ["idEvento", "lat", "lon", "nomeEvento"]}
 		}
 	};
 
-	console.log("personepeventi", dominio["personepeventi"].elements);
+	//console.log("personepeventi", dominio["personepeventi"].elements);
 
 	dominio["gruppoOrganizzato"] = {
 		type : TYPE.TREE,

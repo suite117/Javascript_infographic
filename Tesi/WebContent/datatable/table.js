@@ -6,9 +6,9 @@ function Table(destinationDivId, idMap, data, optional) {
 
 	this.selected = [];
 
-	var includedColumns;
+	var imageField = "image";	
 	if (optional != null) {
-		includedColumns = optional.include ? optional.include : ["id"];
+		imageField = optional.image ? optional.image : imageField;
 	}
 
 	var fields = data.getFields();
