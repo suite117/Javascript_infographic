@@ -23,6 +23,7 @@ $(document).bind('pageinit', function() {
 	//var personepeventi = persone.joinTable(epj, "id", "idPersona");
 
 	dominio["personepeventi"] = {
+		name : "Persone partecipanti a degli eventi",
 		elements : getJSON("data/pp.json"), //personepeventi,
 		views : {
 			"table" : {columns:["id", "nome", "idEvento"]},
@@ -32,13 +33,13 @@ $(document).bind('pageinit', function() {
 
 	//console.log("personepeventi", dominio["personepeventi"].elements);
 
-	dominio["gruppoOrganizzato"] = {
+	 /* dominio["gruppoOrganizzato"] = {
 		type : TYPE.TREE,
 		elements : getJSON("data/gerarchia_gruppo_organizzato.json")
-	};
+	}; */
 
 	initClouds('#viz', dominio);
 
-	//createDraggableCloud(dominio["personepeventi"]);
+	//createDraggableCloud('debug', dominio["personepeventi"]);
 
 });

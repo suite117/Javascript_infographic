@@ -21,7 +21,7 @@ function createContainer() {
 	var data;
 	var map;
 
-	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="view-container-body-' + id + '" class="view-container-body">&nbsp;</div></div>');
+	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="view-container-body-' + id + '" class="view-container-body">&nbsp;</div></div>');
 
 	var form = $("#" + divId + " form");
 
@@ -153,6 +153,14 @@ function createContainer() {
 
 		//var columns = dataView.views[type].columns;
 		elementsUnique = elementsUnique.project(columns);
+		var d = {};
+		d.id = id;
+		d.name = type + "-" + id;
+		d.elements = elementsUnique;
+		d.views = data.views;
+
+		if (id != 0)
+			createDraggableCloud("view-container-droppable-" + id, d);
 
 		//console.log("elementsUnique", elementsUnique);
 
@@ -249,7 +257,7 @@ function createContainer() {
 					// conservo l'insieme
 					data = d;
 					dataView = clone(data);
-
+					selected = [];
 					$("#" + divId).trigger('stateChanged', [true, false, false]);
 					break;
 				}

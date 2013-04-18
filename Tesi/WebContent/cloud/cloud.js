@@ -72,7 +72,7 @@ function initClouds(idDOM, dominio) {
 		path.attr("d", cloudPathContent);
 
 		g.append("text").attr("class", "list").attr("x", 100).attr("y", 50).attr("transform", "translate(204,245)").text(function(d) {
-			return d.id;
+			return d.name;
 			//+ d.elements.toString1();
 		});
 
@@ -200,7 +200,8 @@ function initClouds(idDOM, dominio) {
 			//var pathContent = d3.select(cloud).select("path")[0][0].getAttribute("d");
 			var cloud = this;
 			d3.select(cloud).remove();
-			createDraggableCloud(d);
+
+			createDraggableCloud("draggable-container", d);
 
 			return;
 		}
@@ -260,28 +261,25 @@ function distance(d1, d2) {
 }
 
 var draggers = new Array();
-function createDraggableCloud(d) {
+function createDraggableCloud(divId, d) {
 
 	var divCloud;
 
-	// verifica se esiste il container
-	var svgCloud = d3.select("#draggable-container draggable-" + d.id + " svg");
-	if (svgCloud[0][0] == null) {
-
-		$("div#draggable-container").append('<div id="draggable-' + d.id + '" class="draggable"></div>');
-		divCloud = $("div#draggable-" + d.id);
+	// verifica se esiste l'svg con quell'id
+	//var svgCloud = d3.select("#" + divId + '-draggable-' + d.id + " svg");
+	//if (svgCloud[0][0] == null) {
+		$("#" + divId + '-draggable-' + d.id).html("");
+		$("#" + divId).append('<div id="' + divId + '-draggable-' + d.id + '" class="draggable"></div>');
+		divCloud = $("#" + divId + "-draggable-" + d.id);
 		divCloud.data("d", d);
-		var svgCloud = d3.select(divCloud[0]).append("svg");
-	}
+		svgCloud = d3.select(divCloud[0]).append("svg");
+	//}
 
 	var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(-51,-45), scale(0.3)");
 
 	g.append("path").attr("d", cloudPathContent);
 
-	
-	g.append("text").attr("x", 100).attr("y", 50).attr("transform", "translate(193,255)").text(d.id);
-
-	
+	g.append("text").attr("x", 100).attr("y", 50).attr("transform", "translate(193,255)").text(d.name);
 
 	draggers.push(divCloud);
 
