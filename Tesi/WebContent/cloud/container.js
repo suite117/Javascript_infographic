@@ -1,13 +1,3 @@
-function createSelectSlider(id, form, options) {
-	form.append('<select name="slider" id="flip-' + id + '" data-role="slider"></select>');
-
-	var select = $("#flip-" + id);
-	for (var i = 0; i < options.length; i++) {
-		select.append('<option value="' + options[i] + '">' + options[i] + '</option>');
-	}
-
-	select.slider();
-}
 
 var containerId = 0;
 function createContainer() {
@@ -21,23 +11,33 @@ function createContainer() {
 	var data;
 	var map;
 
+	// creazione della barra dei bottoni
 	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="view-container-body-' + id + '" class="view-container-body">&nbsp;</div></div>');
 
 	var form = $("#" + divId + " form");
 
 	var fieldset = createFieldset(id, form, ["tutti", "solo selezionati"]);
 
+	// creazione menu del viewer con opzioni
 	containerOptions = ["chi", "cosa", "dove", "quando", "gerarchia"];
-
 	var selectMenu = createSelectMenu(id, form, containerOptions);
 
+	// inizializzazioni
 	var type = TYPE.TABLE;
 	var all = true;
 	var active = [];
-	var selected = [];
-	var selectedAll = [];
-	var idField = "id";
+	var selectedIdList = [];
+	var idList = [];
+	var idField = getIdField();
 	var dataView = [];
+
+	function getIdField() {
+		if (data == null)
+			return "id";
+		else
+			return data.views[type].id ? data.views[type].id : data.views[type].columns[0];
+	}
+
 
 	selectMenu.on('change', function(e) {
 
@@ -59,11 +59,15 @@ function createContainer() {
 				break;
 		}
 
-		//initMap(data);
-		//active = [];
-		selected = [];
+		if (data.views[type] == null || data.views == null) {
+			$("#" + bodyDivId).html("I dati non consentono questa visualizzazione");
+			return;
+		}
+		selectedIdList = [];
 
-		idField = data.views[type].columns[0];
+		idField = getIdField();
+
+		// scatena l'evento tutti per riaggiornare il viewer e gli altri a cascata
 		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).trigger("click", ["tutti"]);
 		//$("#" + divId).trigger('stateChanged', [false, false, true]);
 	});
@@ -76,37 +80,29 @@ function createContainer() {
 
 		// recuper il campo id per la selezione attuale'
 
-		//var mapSelected = map.getSelected();
-		//var elements = data.elements.findAll(idField, idValue);
 		if (isSelected) {
-			//active = [];
-			//for (var i = 0; i < mapSelected.length; i++) {
-
-			//active.pushAll(elements);
 
 			isPresent = false;
-			for (var i = 0; i < selected.length; i++) {
-				if (selected[i] == idValue) {
+			for (var i = 0; i < selectedIdList.length; i++) {
+				if (selectedIdList[i] == idValue) {
 					isPresent = true;
 					break;
 				}
 			}
 			if (!isPresent)
-				selected.push(idValue);
-			//}
-		} else {
-			//elements = data.elements.findAll(idField, idValue);
-			//active = active.removeAll(elements);
+				selectedIdList.push(idValue);
 
-			for (var i = 0; i < selected.length; i++)
-				if (selected[i] == idValue) {
-					selected.splice(i, 1);
+		} else {
+
+			for (var i = 0; i < selectedIdList.length; i++)
+				if (selectedIdList[i] == idValue) {
+					selectedIdList.splice(i, 1);
 					break;
 				}
 		}
 
 		//console.log("elements", elements);
-		//console.log("selected mapClicked", selected);
+		//console.log("selectedIdList mapClicked", selectedIdList);
 
 		//console.log(elementsUnique);
 		if (!all)
@@ -118,46 +114,44 @@ function createContainer() {
 
 		//console.log("input to stateChanged " + divId, data.elements);
 
-		// le colonne della proiezione
-		var columns = data.views[type].columns;
-		var idField = columns[0];
-
+		// recupero il campo id della proiezione attuale
+		var idField = getIdField();
 		// rimuove i duplicati
 		var elementsUnique = dataView.elements.removeDuplicates(idField);
-		//console.log("idField", idField);
-		//console.log("elementsUnique", elementsUnique);
 
-		selectedAll = [];
+		idList = [];
 		for (var ii = 0; ii < elementsUnique.length; ii++) {
-			selectedAll.push(elementsUnique[ii][idField]);
+			idList.push(elementsUnique[ii][idField]);
 		}
-
-		//selected = map.getSelected();
-		//console.log("selected", selected);
 
 		if (!all) {
 			selected_new = [];
-			for (var i = 0; i < selected.length; i++) {
+			for (var i = 0; i < selectedIdList.length; i++) {
 				isPresent = false;
-				for (var j = 0; j < selectedAll.length; j++)
-					if (selected[i] == selectedAll[j]) {
+				for (var j = 0; j < idList.length; j++)
+					if (selectedIdList[i] == idList[j]) {
 						isPresent = true;
 						break;
 					}
 				if (isPresent)
-					selected_new.push(selected[i]);
+					selected_new.push(selectedIdList[i]);
 			}
 
-			selected = selected_new;
+			selectedIdList = selected_new;
 		}
 
-		//var columns = dataView.views[type].columns;
+		// proiezione dei campi rispetto alle colonne specificate nella view selezionata
+		// recupero le colonne della proiezione
+		var columns = data.views[type].columns;
 		elementsUnique = elementsUnique.project(columns);
+
+		// creazione nuovo oggetto per avere i campi per il viewer selezionato
 		var d = {};
 		d.id = id;
 		d.name = type + "-" + id;
 		d.elements = elementsUnique;
-		d.views = data.views;
+		d.views = {};
+		d.views[type] = data.views[type];
 
 		if (id != 0)
 			createDraggableCloud("view-container-droppable-" + id, d);
@@ -167,21 +161,18 @@ function createContainer() {
 		if (map == null || viewChanged)
 			initMap(elementsUnique);
 		else if (!mapClicked)
-			updateMap(elementsUnique, selected);
+			updateMap(elementsUnique, selectedIdList);
 
 		if (viewChanged || sourceChanged || mapClicked)
-			updateNextContainer(map, data, selected, nextId, sourceChanged, mapClicked);
+			updateNextContainer(map, data, selectedIdList, nextId, sourceChanged, mapClicked);
 
 	});
 
 	function updateNextContainer(map, data, selectedIds, nextId, sourceChanged, mapClicked) {
 		if (sourceChanged || mapClicked) {
 
-			//console.log("out to " + nextId, elements);
-			//var out = clone(data);
-			//out.elements = active; */
-			var idField = data.views[type].columns[0];
-			$("#" + nextId).trigger("sourceChanged", [data, idField, !all ? selected : selectedAll]);
+			var idField = getIdField();
+			$("#" + nextId).trigger("sourceChanged", [data, idField, !all ? selectedIdList : idList]);
 		}
 	}
 
@@ -194,12 +185,8 @@ function createContainer() {
 			dataView = clone(data);
 		}
 
-		//selected = [];
-		//console.log("CONTAINER " + id);
-
-		//console.log("selectedSource", selectedSource);
+		// inizializzazione base di dati per la view attuale
 		dataView.elements = [];
-
 		for (var i = 0; i < data.elements.length; i++) {
 			var element = data.elements[i];
 			for (var j = 0; j < selectedSource.length; j++) {
@@ -209,15 +196,6 @@ function createContainer() {
 				}
 			}
 		}
-
-		//console.log("dataView.elements", dataView.elements);
-		//active = active.intersect(activeSource);
-
-		//	console.log("data.elements", data.elements);
-		//console.log("dataView.elements", dataView.elements);
-
-		// ricerca righe con
-		//
 
 		// aggiorno il contenuto richiamo il container successivo a cascata
 		$("#" + divId).trigger('stateChanged', [true, false, false]);
@@ -233,11 +211,12 @@ function createContainer() {
 		out : function() {
 			$(this).removeClass('over').addClass('out');
 		},
+		// evento nuvola sull'etichetta del container
 		drop : function() {
 
 			if (id != 0)
 				return;
-			//confirm('Permantly delete this item?');
+
 			// this = etichetta droppable del container sottostante
 			var offset = $(this).offset();
 			var x = offset.left;
@@ -254,10 +233,10 @@ function createContainer() {
 				var dis = distance([x, y], [x1, y1]);
 
 				if (dis < 80) {
-					// conservo l'insieme
+					// conservo l'insieme della nuvola
 					data = d;
 					dataView = clone(data);
-					selected = [];
+					selectedIdList = [];
 					$("#" + divId).trigger('stateChanged', [true, false, false]);
 					break;
 				}
@@ -294,7 +273,7 @@ function createContainer() {
 
 	}
 
-	function updateMap(elementsUnique, selected) {
+	function updateMap(elementsUnique, selectedIdList) {
 
 		if (elementsUnique == null)
 			alert("elementsUnique è null");
@@ -305,7 +284,7 @@ function createContainer() {
 				break;
 		}
 
-		map.draw(elementsUnique, selected);
+		map.draw(elementsUnique, selectedIdList);
 
 	}
 
@@ -324,6 +303,8 @@ function createContainer() {
 
 			$("#" + inputId).on('click', function(e, forceVal) {
 				oldVal = val;
+
+				// per forzare l'aggiornamento quando si cambia la vista'
 				val = forceVal ? forceVal : $(this).val();
 
 				if (val == 'tutti') {
@@ -338,7 +319,6 @@ function createContainer() {
 					label.addClass('ui-btn-active');
 					$(this).attr("checked", true);
 				}
-				//fieldset.controlgroup("refresh");
 
 				$("#" + divId).trigger('stateChanged', [ forceVal ? true : false, oldVal != val ? true : false, forceVal ? true : false]);
 			});
@@ -363,6 +343,19 @@ function createContainer() {
 		select.selectmenu();
 
 		return select;
+	}
+
+	function createSelectSlider(id, form, options) {
+		form.append('<select name="slider" id="flip-' + id + '" data-role="slider"></select>');
+
+		var select = $("#flip-" + id);
+		for (var i = 0; i < options.length; i++) {
+			select.append('<option value="' + options[i] + '">' + options[i] + '</option>');
+		}
+
+		select.slider();
+
+		return selext;
 	}
 
 }

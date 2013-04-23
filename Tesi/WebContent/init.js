@@ -9,36 +9,38 @@ var TYPE = {
 // for JQuery Mobile instead of $(document).ready()
 $(document).bind('pageinit', function() {
 
+	// creazione dominio come insieme di nuvole (insiemi)
 	var dominio = [];
-	var relazioni = [];
 
+	// creazione di 3 container
 	createContainer();
 	createContainer();
 	createContainer();
 
-	//var personePartecipanti = getJSON("data/personapartecipante.json");
-
-	//var epj = events.joinTable(personePartecipanti, "id", "idEvento");
-
-	//var personepeventi = persone.joinTable(epj, "id", "idPersona");
-
+	// recupero dal database le persone che hanno partecipato a degli eventi
 	dominio["personepeventi"] = {
 		name : "Persone partecipanti a degli eventi",
-		elements : getJSON("data/pp.json"), //personepeventi,
+		elements : getJSON("data/pp.json"), // lettura campi da json generato in maniera random
 		views : {
-			"table" : {columns:["id", "nome", "idEvento"]},
-			"geomap" : {columns: ["idEvento", "lat", "lon", "nomeEvento"]}
+			"table" : { // vista tabella
+				columns : ["id", "nome", "idEvento"],
+				id : "id"
+			},
+			"geomap" : { // vista mappa geografica
+				columns : ["idEvento", "lat", "lon", "nomeEvento"],
+				id : "idEvento"
+			}
 		}
 	};
 
 	//console.log("personepeventi", dominio["personepeventi"].elements);
 
-	 /* dominio["gruppoOrganizzato"] = {
-		type : TYPE.TREE,
-		elements : getJSON("data/gerarchia_gruppo_organizzato.json")
-	}; */
+	/* dominio["gruppoOrganizzato"] = {
+	 type : TYPE.TREE,
+	 elements : getJSON("data/gerarchia_gruppo_organizzato.json")
+	 }; */
 
-	initClouds('#viz', dominio);
+	initClouds('#clouds', dominio);
 
 	//createDraggableCloud('debug', dominio["personepeventi"]);
 

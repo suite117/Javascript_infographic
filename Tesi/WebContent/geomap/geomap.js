@@ -1,3 +1,12 @@
+/**
+* This is the description for my class.
+*
+* @class GeoMap
+* @constructor
+* @param {String} destinationDivId id dell'elemento DOM destinazione a cui sarà appesa la mappa
+* @param {String} idMap id dell'elemento DOM mappa
+* 
+*/
 function GeoMap(destinationDivId, idMap, data, optional) {
 
 	this.destinationDivId = destinationDivId;
