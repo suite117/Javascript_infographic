@@ -1,14 +1,15 @@
 function Table(destinationDivId, idMap, data, optional) {
 
-	
 	this.destinationDivId = destinationDivId;
 	this.idMap = idMap;
 
 	this.selected = [];
 
-	var imageField = "image";	
+	var idField;
+	var imageField;
 	if (optional != null) {
-		imageField = optional.image ? optional.image : imageField;
+		idField = optional.id ? optional.id : "id";
+		imageField = optional.image ? optional.image : "image";
 	}
 
 	var fields = data.getFields();
@@ -18,9 +19,9 @@ function Table(destinationDivId, idMap, data, optional) {
 		this.columns.push({
 			"sTitle" : fields[i],
 		});
-		if (fields[i] == "id")
+		if (fields[i] == idField)
 			this.indexIdColumn = i;
-		else if (fields[i] == "image")
+		else if (fields[i] == imageField)
 			this.indexImageColumn = i;
 
 	}
@@ -38,8 +39,6 @@ Table.prototype.draw = function(data, selected) {
 	$('#' + this.destinationDivId).html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="' + this.idMap + '"></table>');
 
 	// inizializzazione tabella
-
-	
 	var selected = this.selected;
 	var destinationDivId = this.destinationDivId;
 
@@ -100,11 +99,11 @@ Table.prototype.draw = function(data, selected) {
 			var element = data.find(id);
 			if ($(this).hasClass("selected")) {
 				$(this).removeClass("selected");
-				selected.remove(element);
+				//selected.remove(element);
 				//console.log(selected);
 			} else {
 				$(this).addClass("selected");
-				selected.push(element);
+				//selected.push(element);
 				isSelected = true;
 				//console.log(selected);
 

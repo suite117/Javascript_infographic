@@ -1,10 +1,3 @@
-var TYPE = {
-	TABLE : "table",
-	TREE : "tree",
-	GEOMAP : "geomap"
-
-}
-
 // MAIN of cloud.html
 // for JQuery Mobile instead of $(document).ready()
 $(document).bind('pageinit', function() {
@@ -13,21 +6,37 @@ $(document).bind('pageinit', function() {
 	var dominio = [];
 
 	// creazione di 3 container
-	createContainer();
-	createContainer();
-	createContainer();
+	var containerOptions = ["chi", "cosa", "dove", "quando"];
+	createContainer(containerOptions);
+	createContainer(containerOptions);
+	createContainer(containerOptions);
 
 	// recupero dal database le persone che hanno partecipato a degli eventi
 	dominio["personepeventi"] = {
 		name : "Persone partecipanti a degli eventi",
 		elements : getJSON("data/pp.json"), // lettura campi da json generato in maniera random
 		views : {
-			"table" : { // vista tabella
-				columns : ["id", "nome", "idEvento"],
-				id : "id"
+			"chi" : { // vista tabella
+				type : "table",
+				columns : ["immagine", "id", "nome", "idEvento"],
+				id : "id",
+				image : "immagine"
+
 			},
-			"geomap" : { // vista mappa geografica
+			"cosa" : { // vista tabella
+				type : "table",
+				columns : ["idPersona", "nome", "idEvento"],
+				id : "idPersona"
+			},
+			"dove" : { // vista mappa geografica
+				type : "geomap",
 				columns : ["idEvento", "lat", "lon", "nomeEvento"],
+				id : "idEvento",
+				name : "nomeEvento"
+			},
+			"quando" : { // vista mappa geografica
+				type : "timeline",
+				columns : ["idEvento", "nomeEvento", "startTime", "endTime"],
 				id : "idEvento"
 			}
 		}
@@ -36,7 +45,7 @@ $(document).bind('pageinit', function() {
 	//console.log("personepeventi", dominio["personepeventi"].elements);
 
 	/* dominio["gruppoOrganizzato"] = {
-	 type : TYPE.TREE,
+	 name : "Gruppo organizzato",
 	 elements : getJSON("data/gerarchia_gruppo_organizzato.json")
 	 }; */
 

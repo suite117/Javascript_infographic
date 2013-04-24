@@ -1,6 +1,5 @@
-
 var containerId = 0;
-function createContainer() {
+function createContainer(containerOp) {
 
 	var id = containerId++;
 	var prefix = 'view-container-';
@@ -19,11 +18,12 @@ function createContainer() {
 	var fieldset = createFieldset(id, form, ["tutti", "solo selezionati"]);
 
 	// creazione menu del viewer con opzioni
-	containerOptions = ["chi", "cosa", "dove", "quando", "gerarchia"];
+	containerOptions = containerOp;
 	var selectMenu = createSelectMenu(id, form, containerOptions);
 
 	// inizializzazioni
-	var type = TYPE.TABLE;
+	var viewOption = containerOptions[0];
+	var type = "table";
 	var all = true;
 	var active = [];
 	var selectedIdList = [];
@@ -35,36 +35,21 @@ function createContainer() {
 		if (data == null)
 			return "id";
 		else
-			return data.views[type].id ? data.views[type].id : data.views[type].columns[0];
+			return data.views[viewOption].id ? data.views[viewOption].id : data.views[viewOption].columns[0];
 	}
 
 
 	selectMenu.on('change', function(e) {
 
-		var selectedOption = $(this).val();
+		viewOption = $(this).val();
 
-		switch(selectedOption) {
-			case "chi":
-			case "cosa":
-				type = TYPE.TABLE;
-				break;
-			case "dove":
-				type = TYPE.GEOMAP;
-				break;
-			case "quando":
-				type = TYPE.TIMELINE;
-				break;
-			case "gerarchia":
-				type = TYPE.TREE;
-				break;
-		}
-
-		if (data.views[type] == null || data.views == null) {
+		if (data.views[viewOption] == null || data.views == null) {
 			$("#" + bodyDivId).html("I dati non consentono questa visualizzazione");
 			return;
 		}
-		selectedIdList = [];
 
+		type = data.views[viewOption].type;
+		selectedIdList = [];
 		idField = getIdField();
 
 		// scatena l'evento tutti per riaggiornare il viewer e gli altri a cascata
@@ -142,13 +127,13 @@ function createContainer() {
 
 		// proiezione dei campi rispetto alle colonne specificate nella view selezionata
 		// recupero le colonne della proiezione
-		var columns = data.views[type].columns;
+		var columns = data.views[viewOption].columns;
 		elementsUnique = elementsUnique.project(columns);
 
 		// creazione nuovo oggetto per avere i campi per il viewer selezionato
 		var d = {};
 		d.id = id;
-		d.name = type + "-" + id;
+		d.name = viewOption + "-" + id;
 		d.elements = elementsUnique;
 		d.views = {};
 		d.views[type] = data.views[type];
@@ -161,7 +146,7 @@ function createContainer() {
 		if (map == null || viewChanged)
 			initMap(elementsUnique);
 		else if (!mapClicked)
-			updateMap(elementsUnique, selectedIdList);
+			map.draw(elementsUnique, selectedIdList);
 
 		if (viewChanged || sourceChanged || mapClicked)
 			updateNextContainer(map, data, selectedIdList, nextId, sourceChanged, mapClicked);
@@ -250,41 +235,30 @@ function createContainer() {
 
 		if (elementsUnique == null)
 			alert("elementsUnique è null");
+			
+		var viewOptions = data.views[viewOption];
 
 		$("#" + bodyDivId).html("");
 		switch(type) {
-			case TYPE.TABLE:
-
+			case "table":
 				map = new Table(bodyDivId, "table-" + id, elementsUnique, {
-					id : idField,
-
+					id : viewOptions.id,
+					image : viewOptions.image
 				});
 				break;
-			case TYPE.GEOMAP:
+			case "geomap":
 				map = new GeoMap(bodyDivId, "geomap-" + id, elementsUnique, {
-					id : idField,
-					name : "nomeEvento",
+					id : viewOptions.id,
+					name : viewOptions.name
 				});
 				break;
-			case TYPE.TREE:
-				map = new Tree(bodyDivId, "tree-" + id, elementsUnique);
+			case "tree":
+				map = new Tree(bodyDivId, "tree-" + id, elementsUnique, {
+					id : viewOptions.id,
+					name : "nomeEvento"
+				});
 				break;
 		}
-
-	}
-
-	function updateMap(elementsUnique, selectedIdList) {
-
-		if (elementsUnique == null)
-			alert("elementsUnique è null");
-
-		switch(type) {
-			case TYPE.TABLE:
-
-				break;
-		}
-
-		map.draw(elementsUnique, selectedIdList);
 
 	}
 
@@ -356,6 +330,10 @@ function createContainer() {
 		select.slider();
 
 		return selext;
+	}
+
+	function createButton(id, form, options) {
+		
 	}
 
 }
