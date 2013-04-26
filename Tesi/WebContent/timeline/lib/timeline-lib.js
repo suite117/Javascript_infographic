@@ -4653,6 +4653,7 @@ links.Timeline.prototype.isSelected = function (index) {
 /**
  * Unselect the currently selected event (if any)
  */
+
 links.Timeline.prototype.unselectItem = function() {
     if (this.selection) {
         var item = this.items[this.selection.index];

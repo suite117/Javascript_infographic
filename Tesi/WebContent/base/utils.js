@@ -7,21 +7,26 @@ function isFunction(functionToCheck) {
 }
 
 function getJSON(url) {
-	var data = (function() {
-		var json = null;
-		$.ajax({
-			'async' : false,
-			'global' : false,
-			'url' : url,
-			'dataType' : "json",
-			'success' : function(data) {
-				json = data;
-			}
-		});
-		return json;
-	})();
-
+	var data;
+	$.ajax({
+		async : false, //thats the trick
+		url : url,
+		dataType : 'json',
+		success : function(response) {
+			data = response;
+		}
+	});
 	return data;
+}
+
+function getJSON2(url) {
+	var t;
+	$.getJSON(url, {
+		//param : someparam
+	}, function(data) {
+		t = data;
+	})
+	return t;
 }
 
 function createObjfromObj(input, mapping) {

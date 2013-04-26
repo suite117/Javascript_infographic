@@ -1,7 +1,3 @@
-
-
-//var rows = [[new Date(2011, 1, 23), null, '<div>Conversation</div><img src="images/comments-icon.png" style="width:32px; height:32px;">'], [new Date(2011, 1, 23, 23, 0, 0), null, '<div>Mail from boss</div><img src="images/mail-icon.png" style="width:32px; height:32px;">'], [new Date(2011, 1, 24, 16, 0, 0), null, 'Report'], [new Date(2011, 1, 26), new Date(2011, 2, 2), 'Traject A'], [new Date(2011, 1, 27), null, '<div>Memo</div><img src="images/notes-edit-icon.png" style="width:48px; height:48px;">'], [new Date(2011, 1, 29), null, '<div>Phone call</div><img src="images/Hardware-Mobile-Phone-icon.png" style="width:32px; height:32px;">'], [new Date(2011, 1, 28), new Date(2011, 2, 3), 'Traject B'], [new Date(2011, 2, 4, 12, 0, 0), null, '<div>Report</div><img src="images/attachment-icon.png" style="width:32px; height:32px;">']];
-
 function convertListToDate(list) {
 	var date = new Date();
 
@@ -26,7 +22,10 @@ function Timeline(destinationDivId, idMap, data, optional) {
 		row[0] = convertListToDate(data[i].start);
 		console.log(row[0]);
 		row[1] = convertListToDate(data[i].end);
-		row[2] = '<div>' + data[i].name + '</div><img src="' + data[i].image + '" style="width:32px; height:32px;">';
+		
+		row[2] = '<div>' + data[i].name + '</div>';
+		if (data[i].image != undefined)
+			row[2] += '<img src="' + data[i].image + '" style="width:32px; height:32px;">';
 		rows.push(row);
 	}
 

@@ -3,19 +3,26 @@
 	<head>
 		<title>Timeline demo</title>
 
+		<script type="text/javascript" src="../base/utils.js"></script>
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
 		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 		<script type="text/javascript" src="lib/timeline-lib.js"></script>
 		<link rel="stylesheet" type="text/css" href="lib/timeline.css">
 		<script type="text/javascript" src="timeline.js"></script>
 
-		<script type="text/javascript">
-			var oList = getJSON("events.json");
-			var t = new Timeline('mytimeline', 'timeline-1', oList);
-		</script>
+		
 
 	</head>
 
 	<body>
+		
+		<script type="text/javascript">
+			var list = getJSON("events.json");
+			console.log("list", list);
+			var t = new Timeline('mytimeline', 'timeline-1', list);
+		</script>
+		
 		<p>
 			Starttime:
 			<input type="text" id="startDate" value="">
