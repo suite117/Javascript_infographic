@@ -34,11 +34,11 @@ $(document).bind('pageinit', function() {
 				id : "idEvento",
 				name : "nomeEvento"
 			},
-			"quando" : {// vista mappa geografica
+			/* "quando" : {// vista mappa geografica
 				type : "timeline",
 				columns : ["idEvento", "nomeEvento", "startTime", "endTime"],
 				id : "idEvento"
-			}
+			} */
 		}
 	};
 
