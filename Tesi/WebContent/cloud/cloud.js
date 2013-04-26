@@ -15,12 +15,17 @@ var STATE = {
 };
 
 //initialize the clouds, idDOM is the target DOM element
-function initClouds(idDOM, dominio) {
+function initClouds(idDOM, dominio, optional) {
 
 	divSVG = d3.select(idDOM);
 	idDOM = idDOM;
+
 	var width = "100%";
 	var height = 200;
+	if (optional != null) {
+		width = optional.width ? optional.width : width;
+		height = optional.height ? optional.height : height;
+	}
 
 	//generate Id for elements inside set
 	function generateId(prefix, list) {
@@ -268,16 +273,17 @@ function createDraggableCloud(divId, d) {
 	// verifica se esiste l'svg con quell'id
 	//var svgCloud = d3.select("#" + divId + '-draggable-' + d.id + " svg");
 	//if (svgCloud[0][0] == null) {
-		$("#" + divId + '-draggable-' + d.id).html("");
-		$("#" + divId).append('<div id="' + divId + '-draggable-' + d.id + '" class="draggable"></div>');
-		divCloud = $("#" + divId + "-draggable-" + d.id);
-		divCloud.data("d", d);
-		svgCloud = d3.select(divCloud[0]).append("svg");
+	$("#" + divId + '-draggable-' + d.id).html("");
+	$("#" + divId).append('<div id="' + divId + '-draggable-' + d.id + '" class="draggable"></div>');
+	divCloud = $("#" + divId + "-draggable-" + d.id);
+	divCloud.data("d", d);
+	svgCloud = d3.select(divCloud[0]).append("svg");
 	//}
 
 	var g = svgCloud.append("g").attr("class", "cloud").attr("transform", "translate(-51,-45), scale(0.3)");
 
-	g.append("path").attr("d", cloudPathContent);
+	var path = g.append("path").attr("d", cloudPathContent);
+	path.attr("class", d.name.split("-")[0]);
 
 	g.append("text").attr("x", 100).attr("y", 50).attr("transform", "translate(193,255)").text(d.name);
 

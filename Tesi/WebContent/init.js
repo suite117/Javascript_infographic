@@ -16,25 +16,25 @@ $(document).bind('pageinit', function() {
 		name : "Persone partecipanti a degli eventi",
 		elements : getJSON("data/pp.json"), // lettura campi da json generato in maniera random
 		views : {
-			"chi" : { // vista tabella
+			"chi" : {// vista tabella
 				type : "table",
 				columns : ["immagine", "id", "nome", "idEvento"],
 				id : "id",
 				image : "immagine"
 
 			},
-			"cosa" : { // vista tabella
+			"cosa" : {// vista tabella
 				type : "table",
 				columns : ["idPersona", "nome", "idEvento"],
 				id : "idPersona"
 			},
-			"dove" : { // vista mappa geografica
+			"dove" : {// vista mappa geografica
 				type : "geomap",
 				columns : ["idEvento", "lat", "lon", "nomeEvento"],
 				id : "idEvento",
 				name : "nomeEvento"
 			},
-			"quando" : { // vista mappa geografica
+			"quando" : {// vista mappa geografica
 				type : "timeline",
 				columns : ["idEvento", "nomeEvento", "startTime", "endTime"],
 				id : "idEvento"
@@ -49,7 +49,9 @@ $(document).bind('pageinit', function() {
 	 elements : getJSON("data/gerarchia_gruppo_organizzato.json")
 	 }; */
 
-	initClouds('#clouds', dominio);
+	initClouds('#clouds', dominio, { 
+		height : 150
+	});
 
 	//createDraggableCloud('debug', dominio["personepeventi"]);
 
