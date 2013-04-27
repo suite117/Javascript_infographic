@@ -34,12 +34,10 @@ Array.prototype.removeDuplicates = function(idField) {
 	for (var i = 0; i < this.length; i++) {
 		if (!elements.containsId(idField, this[i][idField])) {
 			var element = clone(this[i]);
-			//element["id"] = this[i][idField];
-			//for (var j = 1; j < columns.length; j++) {
-			//	element[columns[j]] = this[i][columns[j]];
-			//}
+			element["id"] = this[i][idField];
+
 			elements.push(element);
-			
+
 		}
 	}
 
@@ -251,14 +249,12 @@ Array.prototype.addAll = function(elements) {
 
 }
 
-
 Array.prototype.pushAll = function(elements) {
 
 	for (var i = 0; i < elements.length; i++)
 		this.push(elements[i]);
 
 }
-
 //Rimuove un oggetto da un array di oggetti che hanno il campo id
 Array.prototype.remove = function(object) {
 	for (var i in this) {
@@ -266,7 +262,6 @@ Array.prototype.remove = function(object) {
 			this.splice(i, 1);
 	}
 };
-
 
 Array.prototype.removeById = function(idValue) {
 	for (var i in this) {

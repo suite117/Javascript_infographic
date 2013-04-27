@@ -49,10 +49,17 @@
 		<!-- Inclusione del wrapper per la mappa gografica che usa Leaflet e relativo foglio di stile -->
 		<script type="text/javascript" src="geomap/geomap.js"></script>
 		<link rel="stylesheet" href="geomap/geomap.css" />
+		
+		<!-- Timeline -->
+		<script type="text/javascript" src="timeline/lib/jsapi.js"></script>
+		<script type="text/javascript" src="timeline/lib/timeline-lib.js"></script>
+		<link rel="stylesheet" type="text/css" href="timeline/lib/timeline.css">
+		<script type="text/javascript" src="timeline/timeline.js"></script>
 
 		<!-- Main dell'applicazione e relativo foglio di stile -->
-		<script type="text/javascript" src="init.js"></script>
 		<link type="text/css" rel="stylesheet" href="style.css" />
+		
+		
 
 		<title>D3 Clouds and Maps + JQuery Maps + Leaflet</title>
 		<script type="text/javascript">
@@ -62,11 +69,11 @@
 	</head>
 
 	<body>
-
+		
 		<div id="clouds">
 			&nbsp;
 		</div>
-		<div id="legend" style="float: right; border: 1px solid #E2E4FF; position: absolute; right: 50px">
+		<div id="legend">
 			<h2 style="margin: 10px">Legenda</h2>
 			<ul id="legenda" style="list-style:disc; font-size: 12pt;">
 				<li class="legend-chi">
@@ -78,15 +85,21 @@
 				<li class="legend-cosa">
 					cosa
 				</li>
+				<li class="legend-quando">
+					quando
+				</li>
 			</ul>
 		</div>
-
+		
+		<div id="info"></div>
 		<div id="draggable-container" class="draggable-container">
 			&nbsp;
 		</div>
 		<div id="views-container" class="views-container">
 			&nbsp;
 		</div>
+		
+		<script type="text/javascript" src="init.js"></script>
 	</body>
 
 </html>

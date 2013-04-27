@@ -128,6 +128,16 @@ g.button {
  } */
 
 /* legenda colori */
+div#legend {
+	border: 1px solid #E2E4FF;
+	float: right;
+	padding: 0 5px;
+	position: absolute;
+	right: 95px;
+	top: 25px;
+	width: 166px;
+}
+
 g.cloud path.chi {
 	stroke: #5A99C9;
 }
@@ -151,3 +161,12 @@ g.cloud path.cosa {
 li.legend-cosa {
 	color: #FF7F0E;
 }
+
+g.cloud path.quando {
+	stroke: #DAA520;
+}
+
+li.legend-quando {
+	color: #DAA520;
+}
+

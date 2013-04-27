@@ -1,6 +1,6 @@
-function Tree(destinationDivId, idMap, data) {
+function Tree(destinationDivId, idField, data) {
 	
-	
+	var idMap = destinationDivId + '-tree';
 	this.nodes = new Array();
 	this.root = jsonToTreeJson(data);
 	var width= 800;

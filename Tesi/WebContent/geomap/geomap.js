@@ -7,18 +7,18 @@
 * @param {String} idMap id dell'elemento DOM mappa
 * 
 */
-function GeoMap(destinationDivId, idMap, data, optional) {
+function GeoMap(destinationDivId, idField, data, optional) {
 
 	this.destinationDivId = destinationDivId;
+	idMap = destinationDivId + "-geomap";
 	this.data = data;
 	this.selected = [];
 
 	this.center = [0, 0];
-	this.idField = "id";
+	this.idField = idField;
 	this.nameField = "name";
 	if (optional != null) {
 		this.center = optional.center ? optional.center : this.center;
-		this.idField = optional.id ? optional.id : this.idField;
 		this.nameField = optional.name ? optional.name : this.nameField;
 	}
 

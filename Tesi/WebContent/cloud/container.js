@@ -1,24 +1,37 @@
 var containerId = 0;
-function createContainer(containerOp) {
+function createContainer(containerOptions) {
 
 	var id = containerId++;
 	var prefix = 'view-container-';
 	var divId = prefix + id;
-	var bodyDivId = "view-container-body-" + id;
+	var bodyDivId = "view_container_body_" + id;
 
 	var nextId = prefix + parseInt(id + 1);
 	var data;
 	var map;
 
 	// creazione della barra dei bottoni
-	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="view-container-body-' + id + '" class="view-container-body">&nbsp;</div></div>');
+	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="' + bodyDivId + '" class="view-container-body">&nbsp;</div></div>');
 
 	var form = $("#" + divId + " form");
 
 	var fieldset = createFieldset(id, form, ["tutti", "solo selezionati"]);
+	$("input", fieldset).on('click', function(e, forceVal) {
+		oldVal = val;
+
+		// per forzare l'aggiornamento quando si cambia la vista'
+		val = forceVal ? forceVal : $(this).val();
+
+		if (val == 'tutti') {
+			all = true;
+		} else
+			all = false;
+
+		$("#" + divId).trigger('stateChanged', [ forceVal ? true : false, oldVal != val ? true : false, forceVal ? true : false]);
+	});
 
 	// creazione menu del viewer con opzioni
-	containerOptions = containerOp;
+	//containerOptions = containerOp;
 	var selectMenu = createSelectMenu(id, form, containerOptions);
 
 	// inizializzazioni
@@ -63,6 +76,7 @@ function createContainer(containerOp) {
 	// azione relatia al click del mouse su un elemento della mappa
 	$("#" + bodyDivId).on("mapClicked", function(t, idValue, isSelected) {
 
+		console.log("mapClicked", idValue, isSelected);
 		// recuper il campo id per la selezione attuale'
 
 		if (isSelected) {
@@ -235,26 +249,33 @@ function createContainer(containerOp) {
 
 		if (elementsUnique == null)
 			alert("elementsUnique è null");
-			
+
 		var viewOptions = data.views[viewOption];
 
 		$("#" + bodyDivId).html("");
 		switch(type) {
 			case "table":
-				map = new Table(bodyDivId, "table-" + id, elementsUnique, {
-					id : viewOptions.id,
+				map = new Table(bodyDivId, viewOptions.id, elementsUnique, {
 					image : viewOptions.image
 				});
 				break;
 			case "geomap":
-				map = new GeoMap(bodyDivId, "geomap-" + id, elementsUnique, {
-					id : viewOptions.id,
+				map = new GeoMap(bodyDivId, viewOptions.id, elementsUnique, {
 					name : viewOptions.name
 				});
 				break;
+			case "timeline":
+
+				map = new Timeline(bodyDivId, viewOptions.id, elementsUnique, {
+					name : viewOptions.name,
+					width : "99%",
+					height : "420px"
+				});
+				//map.draw(elementsUnique);
+
+				break;
 			case "tree":
-				map = new Tree(bodyDivId, "tree-" + id, elementsUnique, {
-					id : viewOptions.id,
+				map = new Tree(bodyDivId, viewOptions.id, elementsUnique, {
 					name : "nomeEvento"
 				});
 				break;
@@ -274,18 +295,8 @@ function createContainer(containerOp) {
 			var inputId = 'radio-choice-' + i + '-fieldset-' + id;
 			fieldset.append('<input type="radio" name="' + inputId + '" id="' + inputId + '" value="' + options[i] + '" />');
 			fieldset.append('<label for="' + inputId + '">' + options[i] + '</label>');
-
-			$("#" + inputId).on('click', function(e, forceVal) {
-				oldVal = val;
-
-				// per forzare l'aggiornamento quando si cambia la vista'
-				val = forceVal ? forceVal : $(this).val();
-
-				if (val == 'tutti') {
-					all = true;
-				} else
-					all = false;
-
+			
+			$("#" + inputId).on('click', function(e) {
 				var label = $("#view-container-" + id + " label");
 				if (label.hasClass('ui-btn-active'))
 					label.removeClass("ui-btn-active");
@@ -293,8 +304,6 @@ function createContainer(containerOp) {
 					label.addClass('ui-btn-active');
 					$(this).attr("checked", true);
 				}
-
-				$("#" + divId).trigger('stateChanged', [ forceVal ? true : false, oldVal != val ? true : false, forceVal ? true : false]);
 			});
 		}
 
@@ -333,7 +342,7 @@ function createContainer(containerOp) {
 	}
 
 	function createButton(id, form, options) {
-		
+
 	}
 
 }

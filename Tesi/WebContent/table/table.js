@@ -1,14 +1,14 @@
-function Table(destinationDivId, idMap, data, optional) {
+function Table(destinationDivId, idField, data, optional) {
 
 	this.destinationDivId = destinationDivId;
-	this.idMap = idMap;
+	this.idMap = destinationDivId + '-table';
 
 	this.selected = [];
 
-	var idField = "id";
+	//var idField = "id";
 	var imageField = "image";
 	if (optional != null) {
-		idField = optional.id ? optional.id : idField;
+		//idField = optional.id ? optional.id : idField;
 		imageField = optional.image ? optional.image : imageField;
 	}
 

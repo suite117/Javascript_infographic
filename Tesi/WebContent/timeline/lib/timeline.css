@@ -33,13 +33,17 @@ div.timeline-axis-text-major {
 div.timeline-event {
     color: #1A1A1A;
     border-color: #97B0F8;
-    background-color: #D5DDF6;
+    background-color: #E2E4FF;
     display: inline-block;
 }
 
-div.timeline-event-selected {
-    border-color: #FFC200;
-    background-color: #FFF785;
+/* div.timeline-event-selected, */
+div.timeline-selected, 
+div.timeline-event div.selected {
+    border-color: #5A99C9;
+    background-color: #5A99C9;
+    color: #FFFFFF;
+    text-shadow: 0 1px 0 #3373A5;
     z-index: 999;
 }
 

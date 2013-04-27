@@ -10,7 +10,7 @@ function getJSON(url) {
 	var data;
 	$.ajax({
 		async : false, //thats the trick
-		url : url,
+		url : baseUrl + url,
 		dataType : 'json',
 		success : function(response) {
 			data = response;
