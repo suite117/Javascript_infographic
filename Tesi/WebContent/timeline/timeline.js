@@ -14,7 +14,7 @@ function Timeline(destinationDivId, idField, data, optional) {
 		this.end = optional[this.end] ? optional[this.end] : this.end;
 		this.name = optional[this.name] ? optional[this.name] : this.name;
 		this.width = optional[this.width] ? optional[this.width] : '100%';
-		this.height = optional[this.height] ? optional[this.height] : '100%';
+		this.height = optional[this.height] ? optional[this.height] : '300px';
 	}
 
 	this.columns = [['datetime', this.start], ['datetime', this.end], ['string', 'content']];
@@ -72,7 +72,8 @@ Timeline.prototype.draw = function(data, selected) {
 			//height: "auto",
 			editable : false, // enable dragging and editing items
 			//axisOnTop: true,
-			style : "box"
+			style : "box",
+			locale : "it"
 		};
 
 		// Instantiate our timeline object.
