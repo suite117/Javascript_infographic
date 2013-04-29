@@ -1,4 +1,3 @@
-google.load("visualization", "1");
 function Timeline(destinationDivId, idField, data, optional) {
 
 	this.destinationDivId = destinationDivId;
@@ -246,6 +245,8 @@ Timeline.prototype.draw = function(data, selected) {
 	}
 
 	// Set callback to run when API is loaded
+	google.load("visualization", "1");
+
 	google.setOnLoadCallback(drawVisualization);
 	drawVisualization();
 	//alert(destinationDivId);

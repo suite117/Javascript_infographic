@@ -30,9 +30,13 @@ function createContainer(containerOptions) {
 		$("#" + divId).trigger('stateChanged', [ forceVal ? true : false, oldVal != val ? true : false, forceVal ? true : false]);
 	});
 
+	
+
 	// creazione menu del viewer con opzioni
 	//containerOptions = containerOp;
 	var selectMenu = createSelectMenu(id, form, containerOptions);
+	
+	//createDatePicker(id, form, ["tutti", "solo selezionati"]);
 
 	// inizializzazioni
 	var viewOption = containerOptions[0];
@@ -168,11 +172,9 @@ function createContainer(containerOptions) {
 	});
 
 	function updateNextContainer(map, data, selectedIds, nextId, sourceChanged, mapClicked) {
-		if (sourceChanged || mapClicked) {
 
-			var idField = getIdField();
-			$("#" + nextId).trigger("sourceChanged", [data, idField, !all ? selectedIdList : idList]);
-		}
+		var idField = getIdField();
+		$("#" + nextId).trigger("sourceChanged", [data, idField, !all ? selectedIdList : idList]);
 	}
 
 
@@ -295,7 +297,7 @@ function createContainer(containerOptions) {
 			var inputId = 'radio-choice-' + i + '-fieldset-' + id;
 			fieldset.append('<input type="radio" name="' + inputId + '" id="' + inputId + '" value="' + options[i] + '" />');
 			fieldset.append('<label for="' + inputId + '">' + options[i] + '</label>');
-			
+
 			$("#" + inputId).on('click', function(e) {
 				var label = $("#view-container-" + id + " label");
 				if (label.hasClass('ui-btn-active'))
@@ -343,6 +345,12 @@ function createContainer(containerOptions) {
 
 	function createButton(id, form, options) {
 
+	}
+
+	function createDatePicker(id, form, options) {
+		form.append('<div style="width: 200px;"><label for="datepicker-' + id + '">Some Date</label><input name="datepicker-' + id + '" id="datepicker-' + id + '" ></div>');
+
+		$("#datepicker-" + id).datepicker();
 	}
 
 }
