@@ -1,5 +1,105 @@
-// url base dell'applicazione
+// url base dell'applicazione usato dove è necessario
 var baseUrl = "/Javascript_infographic/Tesi/WebContent/";
+
+var uiMenuId = 0;
+function UIMenu($destinationDiv, data, options, level) {
+
+	level = level ? level : 0;
+	this.isHidden = false;
+	if (options != null) {
+		this.isHidden = options.show ? !options.show : this.isHidden;
+		console.log("this.isHidden", this.isHidden);
+	}
+
+	$destinationDiv.append('<ul id="ui-menu-' + uiMenuId + '"></ul>');
+	var $ul = $('ul#ui-menu-' + uiMenuId, $destinationDiv);
+	if (this.isHidden)
+		$ul.hide();
+
+	var backgroundImage;
+	uiMenuId++;
+
+	for (var i = 0; i < data.length; i++) {
+		var iconSpan = "";
+		if (data[i].icon) {
+			iconSpan = '<span class="ui-icon ui-icon-' + data[i].icon + '"></span>';
+			backgroundImage = $("span", $ul).css('background-image');
+		}
+
+		$ul.append('<li><a href="#">' + iconSpan + data[i].label + '</a></li>');
+		if (data[i].children != null) {
+
+			var $li = $("li:last-child", $ul);
+
+			//console.log("backgroundImage", backgroundImage);
+			inlineStyle = 'style="position: relative; right: 6px; top: -19px;"'
+			$li.append('<div ' + inlineStyle + ' class="ui-extra-icon ui-icon-triangle-1-e">&nbsp;</div>');
+			$("div", $li).css('background-image', backgroundImage);
+			UIMenu($li, data[i].children, options, level + 1);
+		}
+	}
+
+	// fix for submenu
+	if (level == 0) {
+		$ul.menu();
+		//$ul.menu("refresh");
+	}
+
+	return $ul;
+}
+
+UIMenu.prototype.get = function(first_argument) {
+  
+};
+
+
+function UISettingsMenu($div, menuItems, options) {
+
+	var divId = $div.attr("id");
+
+	var styleClass;
+	var imagePath;
+	console.log("options", options);
+
+	$div.append('<div id="' + divId + '-menu-container" ' + styleClass + '></div>');
+	divMenuContainer = $("#" + divId + '-menu-container');
+
+	divMenuContainer.append('<img style="width: 32px; height: 32px; float:right;" id="' + divId + '-img" ' + imagePath + '/>');
+	divMenuContainer.append('<span id="' + divId + '-menu"></span>');
+
+	var imagePath = 'base/images/settings.png';
+	if (options != null) {
+		if (options["css_class"])
+			divMenuContainer.addClass(options["css_class"]);
+			
+		if (options["image"])
+			imagePath = options["image"];
+
+	}
+
+	$("img", divMenuContainer).attr("src", baseUrl + imagePath);
+
+	var $menu = $("#" + divId + '-menu');
+	$menu.css('position', 'relative');
+	$menu.css('left', '137px');
+	$menu.css('top', '31px');
+
+	var menu = UIMenu($menu, menuItems);
+	menu.hide();
+	menu.isHidden = true;
+
+	$("#" + divId + '-img').on("click", function() {
+		if (menu.isHidden) {
+			menu.show();
+			menu.isHidden = false;
+		} else {
+			menu.hide();
+			menu.isHidden = true;
+		}
+	});
+
+	return menu;
+}
 
 function isFunction(functionToCheck) {
 	var getType = {};

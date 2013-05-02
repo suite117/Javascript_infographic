@@ -1,3 +1,46 @@
+/* JQuery UI Fix */
+
+.ui-extra-icon {
+
+	float: right;
+	width: 16px;
+	height: 16px;
+}
+
+.ui-menu {
+	width: 150px;
+}
+
+.settings {
+	float: right;
+	position: relative;
+	right: 14px;
+	top: -70px;
+}
+
+/* JQuery Mobile Fix */
+.ui-fullsize, .ui-fullsize .ui-btn-inner {
+	font-size: 12px !important;
+}
+
+form div.ui-select {
+	display: block;
+	left: 217px;
+	position: relative;
+	top: -38px;
+	width: 30%;
+	z-index: 100;
+}
+
+form div.ui-slider:after {
+	clear: none;
+}
+
+div .ui-icon, div .ui-icon-searchfield:after {
+	background-color: transparent;
+}
+
+/* MAIN */
 body {
 	font-size: 12px;
 	font-family: Helvetica, Arial, sans-serif;

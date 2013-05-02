@@ -5,13 +5,16 @@ function createContainer(containerOptions) {
 	var prefix = 'view-container-';
 	var divId = prefix + id;
 	var bodyDivId = "view_container_body_" + id;
+	var formId = divId + '-form';
 
 	var nextId = prefix + parseInt(id + 1);
 	var data;
 	var map;
 
 	// creazione della barra dei bottoni
-	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form></form></div></div><div id="' + bodyDivId + '" class="view-container-body">&nbsp;</div></div>');
+
+	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form id="' + formId + '"></form></div></div><div id="' + bodyDivId + '" class="view-container-body">&nbsp;</div></div>');
+	//$("#" + divId).resizable();
 
 	var form = $("#" + divId + " form");
 
@@ -30,13 +33,19 @@ function createContainer(containerOptions) {
 		$("#" + divId).trigger('stateChanged', [ forceVal ? true : false, oldVal != val ? true : false, forceVal ? true : false]);
 	});
 
-	
-
 	// creazione menu del viewer con opzioni
 	//containerOptions = containerOp;
 	var selectMenu = createSelectMenu(id, form, containerOptions);
-	
+
+	var menuItems = getJSON("base/menuItems.json");
+	//UIMenu(form, menuItems);
 	//createDatePicker(id, form, ["tutti", "solo selezionati"]);
+	UISettingsMenu(form, menuItems, {
+		css_class : 'settings',
+		image : 'base/images/settings.png'
+	});
+	//var gear = '<div class="ui-extra-icon ui-icon-triangle-1-e">ciao;</div>';
+	//form.append(gear);
 
 	// inizializzazioni
 	var viewOption = containerOptions[0];
@@ -149,15 +158,15 @@ function createContainer(containerOptions) {
 		elementsUnique = elementsUnique.project(columns);
 
 		// creazione nuovo oggetto per avere i campi per il viewer selezionato
-		var d = {};
-		d.id = id;
-		d.name = viewOption + "-" + id;
-		d.elements = elementsUnique;
-		d.views = {};
-		d.views[type] = data.views[type];
+		var dataOut = {};
+		dataOut.id = id;
+		dataOut.name = viewOption + "-" + id;
+		dataOut.elements = elementsUnique;
+		dataOut.views = {};
+		dataOut.views[type] = data.views[type];
 
-		if (id != 0)
-			createDraggableCloud("view-container-droppable-" + id, d);
+		if (id != 0)// esclude il primo dei tre container
+			createDraggableCloud("view-container-droppable-" + id, dataOut);
 
 		//console.log("elementsUnique", elementsUnique);
 
