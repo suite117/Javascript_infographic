@@ -1,6 +1,70 @@
 // url base dell'applicazione usato dove è necessario
 var baseUrl = "/Javascript_infographic/Tesi/WebContent/";
 
+var reader;
+//GLOBAL File Reader object for demo purpose only
+
+/**
+ * Check for the various File API support.
+ */
+function checkFileAPI() {
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+		reader = new FileReader();
+		return true;
+	} else {
+		alert('The File APIs are not fully supported by your browser. Fallback required.');
+		return false;
+	}
+}
+
+/* display content using a basic HTML replacement
+ */
+function displayContents(txt, destinationDivId) {
+	console.log("destinationDivId", destinationDivId);
+	console.log('txt', txt);
+
+	$("#" + destinationDivId).html(txt);
+	//display output in DOM
+}
+
+/**
+ * read text input
+ */
+function readText(filePath, destinationDivId) {
+
+	checkFileAPI();
+
+	var output = "";
+	//placeholder for text output
+	if (filePath.files && filePath.files[0]) {
+		reader.onload = function(e) {
+			output = e.target.result;
+			displayContents(output, destinationDivId);
+		};
+		//end onload()
+		reader.readAsText(filePath.files[0]);
+	}//end if html5 filelist support
+	else if (ActiveXObject && filePath) {//fallback to IE 6-8 support via ActiveX
+		try {
+			reader = new ActiveXObject("Scripting.FileSystemObject");
+			var file = reader.OpenTextFile(filePath, 1);
+			//ActiveX File Object
+			output = file.ReadAll();
+			//text contents of file
+			file.Close();
+			//close file "input stream"
+			displayContents(output, destinationDivId);
+		} catch (e) {
+			if (e.number == -2146827859) {
+				alert('Unable to access local files due to browser security settings. ' + 'To overcome this, go to Tools->Internet Options->Security->Custom Level. ' + 'Find the setting for "Initialize and script ActiveX controls not marked as safe" and change it to "Enable" or "Prompt"');
+			}
+		}
+	} else {//this is where you could fallback to Java Applet, Flash or similar
+		return false;
+	}
+	return true;
+}
+
 var uiMenuId = 0;
 function UIMenu($destinationDiv, data, options, level) {
 
@@ -8,7 +72,7 @@ function UIMenu($destinationDiv, data, options, level) {
 	this.isHidden = false;
 	if (options != null) {
 		this.isHidden = options.show ? !options.show : this.isHidden;
-		console.log("this.isHidden", this.isHidden);
+		//console.log("this.isHidden", this.isHidden);
 	}
 
 	$destinationDiv.append('<ul id="ui-menu-' + uiMenuId + '"></ul>');
@@ -25,12 +89,70 @@ function UIMenu($destinationDiv, data, options, level) {
 			iconSpan = '<span class="ui-icon ui-icon-' + data[i].icon + '"></span>';
 			backgroundImage = $("span", $ul).css('background-image');
 		}
-
 		$ul.append('<li><a href="#">' + iconSpan + data[i].label + '</a></li>');
+		var $li = $("li:last-child", $ul);
+
+		$a = $("a", $li);
+		$a.data("index", i);
+
+		if (data[i].click) {
+			$a.data("click", data[i].click);
+
+			$a.on('click', function(e) {
+				clickFunction = $(this).data("click");
+				//e.preventDefault();
+				clickFunction(this);
+				$ul.toggle();
+			});
+		}
+
+		if (data[i].disabled || !data[i].click) {
+			$li.addClass("ui-state-disabled");
+		}
+
+		switch(data[i].type) {
+			case 'open' :
+				$li.append('<form><input style="display:none" type="file" /></form>');
+				var $input = $("input", $li);
+				$input.on('change', function(e) {
+					var destinationDivId = $(this).data("destinationDivId");
+					readText(this, destinationDivId);
+				});
+
+				$a.on('open', function(e, destinationDivId) {
+
+					var $input = $("input", $(this).parent());
+					$input.data("destinationDivId", destinationDivId);
+					$input.trigger('click');
+				});
+				break;
+			case 'save':
+
+				$a.on('save', function(e, fileName, data) {
+
+					if (data == null)
+						return;
+
+					var json = JSON.stringify(data);
+					var blob = new Blob([json], {
+						type : "application/json"
+					});
+
+					var url = window.URL.createObjectURL(blob);
+					//window.location = url;
+
+					$(this).attr("download", fileName);
+					//$a.attr("target", "_blank");
+					$(this).attr("href", url);
+					console.log("json", json);
+
+					//window.open(url, '_blank', '');
+
+				});
+				break;
+		}
+
 		if (data[i].children != null) {
-
-			var $li = $("li:last-child", $ul);
-
 			//console.log("backgroundImage", backgroundImage);
 			inlineStyle = 'style="position: relative; right: 6px; top: -19px;"'
 			$li.append('<div ' + inlineStyle + ' class="ui-extra-icon ui-icon-triangle-1-e">&nbsp;</div>');
@@ -48,54 +170,49 @@ function UIMenu($destinationDiv, data, options, level) {
 	return $ul;
 }
 
-UIMenu.prototype.get = function(first_argument) {
-  
-};
-
-
-function UISettingsMenu($div, menuItems, options) {
+function UICompactMenu($div, menuItems, options) {
 
 	var divId = $div.attr("id");
 
-	var styleClass;
 	var imagePath;
-	console.log("options", options);
+	//console.log("options", options);
 
-	$div.append('<div id="' + divId + '-menu-container" ' + styleClass + '></div>');
+	$div.append('<div id="' + divId + '-menu-container"></div>');
 	divMenuContainer = $("#" + divId + '-menu-container');
+	divMenuContainer.css("width", "40px");
+	divMenuContainer.css("height", "40px");
 
-	divMenuContainer.append('<img style="width: 32px; height: 32px; float:right;" id="' + divId + '-img" ' + imagePath + '/>');
+	divMenuContainer.append('<img style="width: 32px; height: 32px;" id="' + divId + '-img" ' + imagePath + '/>');
 	divMenuContainer.append('<span id="' + divId + '-menu"></span>');
-
-	var imagePath = 'base/images/settings.png';
-	if (options != null) {
-		if (options["css_class"])
-			divMenuContainer.addClass(options["css_class"]);
-			
-		if (options["image"])
-			imagePath = options["image"];
-
-	}
-
-	$("img", divMenuContainer).attr("src", baseUrl + imagePath);
 
 	var $menu = $("#" + divId + '-menu');
 	$menu.css('position', 'relative');
-	$menu.css('left', '137px');
-	$menu.css('top', '31px');
+	$menu.css('left', '12px');
+	$menu.css('top', '5px');
+	$menu.css('z-index', 10000);
 
 	var menu = UIMenu($menu, menuItems);
-	menu.hide();
-	menu.isHidden = true;
+
+	var imagePath = baseUrl + 'base/images/settings.png';
+	var show = false;
+	if (options != null) {
+		if (options["css_class"])
+			divMenuContainer.addClass(options["css_class"]);
+
+		if (options["image"])
+			$("img", divMenuContainer).attr("src", options["image"]);
+
+		if (options["show"])
+			show = options["show"];
+	}
+
+	$("img", divMenuContainer).attr("src", imagePath);
+
+	if (!show)
+		menu.hide();
 
 	$("#" + divId + '-img').on("click", function() {
-		if (menu.isHidden) {
-			menu.show();
-			menu.isHidden = false;
-		} else {
-			menu.hide();
-			menu.isHidden = true;
-		}
+		menu.toggle();
 	});
 
 	return menu;

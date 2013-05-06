@@ -1,0 +1,37 @@
+[
+	{
+		"label": "Salva",
+		"icon": "disk",
+		"type" : "save"
+	}, {
+		"label": "Apri",
+		"icon": "folder-open",
+		"type": "open"
+	}, {
+		"label": "Zoom avanti",
+		"icon": "zoomin"
+	}, {
+		"label": "Zoom indietro",
+		"icon": "zoomout"
+	}, {
+		"label": "Playback",
+		"children": [
+			{
+				"label": "Prev",
+				"icon": "seek-start"
+			}, {
+				"label": "Stop",
+				"icon": "stop"
+			}, {
+				"label": "Play",
+				"icon": "play"
+			}, {
+				"label": "Next",
+				"icon": "seek-next"
+			}
+		]
+	}, {
+		"label": "Stampa",
+		"icon": "print"
+	}
+]

@@ -9,6 +9,7 @@ function createContainer(containerOptions) {
 
 	var nextId = prefix + parseInt(id + 1);
 	var data;
+	var dataOut;
 	var map;
 
 	// creazione della barra dei bottoni
@@ -34,15 +35,42 @@ function createContainer(containerOptions) {
 	});
 
 	// creazione menu del viewer con opzioni
-	//containerOptions = containerOp;
 	var selectMenu = createSelectMenu(id, form, containerOptions);
 
-	var menuItems = getJSON("base/menuItems.json");
-	//UIMenu(form, menuItems);
-	//createDatePicker(id, form, ["tutti", "solo selezionati"]);
-	UISettingsMenu(form, menuItems, {
+	var menuItems = [{
+		"label" : "Salva",
+		"icon" : "disk",
+		"data" : dataOut,
+		"type" : "save",
+		"click" : function(e) {
+			// save button
+			//$('#downloadify').trigger('save', dataOut);
+			console.log("e", e);
+			$(e).trigger('save', ['data.json', dataOut]);
+		}
+	}, {
+		"label" : "Apri",
+		"icon" : "folder-open",
+		"type" : "open",
+		"click" : function(e) {
+			// open  button
+			console.log('open', e);
+			$(e).trigger('open', $(e));
+		},
+		"onSuccess" : function(e, dataIn) {
+			console.log('success', dataIn);
+		}
+	}, {
+		"label" : "Zoom avanti",
+		"icon" : "zoomin"
+	}, {
+		"label" : "Zoom indietro",
+		"icon" : "zoomout"
+	}];
+
+	UICompactMenu(form, menuItems, {
 		css_class : 'settings',
-		image : 'base/images/settings.png'
+		image : 'base/images/settings.png',
 	});
 	//var gear = '<div class="ui-extra-icon ui-icon-triangle-1-e">ciao;</div>';
 	//form.append(gear);
@@ -89,7 +117,7 @@ function createContainer(containerOptions) {
 	// azione relatia al click del mouse su un elemento della mappa
 	$("#" + bodyDivId).on("mapClicked", function(t, idValue, isSelected) {
 
-		console.log("mapClicked", idValue, isSelected);
+		//console.log("mapClicked", idValue, isSelected);
 		// recuper il campo id per la selezione attuale'
 
 		if (isSelected) {
@@ -158,14 +186,16 @@ function createContainer(containerOptions) {
 		elementsUnique = elementsUnique.project(columns);
 
 		// creazione nuovo oggetto per avere i campi per il viewer selezionato
-		var dataOut = {};
+
+		dataOut = {};
 		dataOut.id = id;
 		dataOut.name = viewOption + "-" + id;
 		dataOut.elements = elementsUnique;
 		dataOut.views = {};
 		dataOut.views[type] = data.views[type];
 
-		if (id != 0)// esclude il primo dei tre container
+		// esclude il primo dei container
+		if (id != 0)
 			createDraggableCloud("view-container-droppable-" + id, dataOut);
 
 		//console.log("elementsUnique", elementsUnique);
