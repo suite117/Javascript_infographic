@@ -20,17 +20,16 @@ function checkFileAPI() {
 /* display content using a basic HTML replacement
  */
 function displayContents(txt, destinationDivId) {
-	console.log("destinationDivId", destinationDivId);
-	console.log('txt', txt);
-
-	$("#" + destinationDivId).html(txt);
-	//display output in DOM
+	//console.log("destinationDivId", destinationDivId);
+	
+	// send text to container
+	$("#" + destinationDivId).trigger('success', [txt]);
 }
 
 /**
  * read text input
  */
-function readText(filePath, destinationDivId) {
+function readText(filePath, destinationDivId, $a) {
 
 	checkFileAPI();
 
@@ -39,7 +38,7 @@ function readText(filePath, destinationDivId) {
 	if (filePath.files && filePath.files[0]) {
 		reader.onload = function(e) {
 			output = e.target.result;
-			displayContents(output, destinationDivId);
+			displayContents(output, destinationDivId, $a);
 		};
 		//end onload()
 		reader.readAsText(filePath.files[0]);
@@ -53,7 +52,7 @@ function readText(filePath, destinationDivId) {
 			//text contents of file
 			file.Close();
 			//close file "input stream"
-			displayContents(output, destinationDivId);
+			displayContents(output, destinationDivId, $a);
 		} catch (e) {
 			if (e.number == -2146827859) {
 				alert('Unable to access local files due to browser security settings. ' + 'To overcome this, go to Tools->Internet Options->Security->Custom Level. ' + 'Find the setting for "Initialize and script ActiveX controls not marked as safe" and change it to "Enable" or "Prompt"');
@@ -105,6 +104,9 @@ function UIMenu($destinationDiv, data, options, level) {
 				$ul.toggle();
 			});
 		}
+		if (data[i].success) {
+			$a.on('success', data[i].success);
+		}
 
 		if (data[i].disabled || !data[i].click) {
 			$li.addClass("ui-state-disabled");
@@ -116,13 +118,16 @@ function UIMenu($destinationDiv, data, options, level) {
 				var $input = $("input", $li);
 				$input.on('change', function(e) {
 					var destinationDivId = $(this).data("destinationDivId");
-					readText(this, destinationDivId);
+					var $a = $(this).data("a");
+
+					readText(this, destinationDivId, $a);
 				});
 
 				$a.on('open', function(e, destinationDivId) {
 
 					var $input = $("input", $(this).parent());
 					$input.data("destinationDivId", destinationDivId);
+					$input.data("a", $a.attr("id"));
 					$input.trigger('click');
 				});
 				break;
@@ -144,7 +149,7 @@ function UIMenu($destinationDiv, data, options, level) {
 					$(this).attr("download", fileName);
 					//$a.attr("target", "_blank");
 					$(this).attr("href", url);
-					console.log("json", json);
+					//console.log("json", json);
 
 					//window.open(url, '_blank', '');
 

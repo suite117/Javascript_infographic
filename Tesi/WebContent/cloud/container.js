@@ -44,8 +44,8 @@ function createContainer(containerOptions) {
 		"type" : "save",
 		"click" : function(e) {
 			// save button
-			//$('#downloadify').trigger('save', dataOut);
-			console.log("e", e);
+			//console.log("e", e);
+			console.log("dataOut", dataOut);
 			$(e).trigger('save', ['data.json', dataOut]);
 		}
 	}, {
@@ -55,10 +55,7 @@ function createContainer(containerOptions) {
 		"click" : function(e) {
 			// open  button
 			console.log('open', e);
-			$(e).trigger('open', $(e));
-		},
-		"onSuccess" : function(e, dataIn) {
-			console.log('success', dataIn);
+			$(e).trigger('open', divId);
 		}
 	}, {
 		"label" : "Zoom avanti",
@@ -67,6 +64,15 @@ function createContainer(containerOptions) {
 		"label" : "Zoom indietro",
 		"icon" : "zoomout"
 	}];
+
+	$("#" + divId).on('success', function(e, dataIn) {
+		data = jQuery.parseJSON(dataIn);
+		dataView = clone(data);
+		console.log('success', data);
+
+		//		$("#" + divId).trigger('sourceChanged', [data, data.views[viewOption][type], []]);
+		$("#" + divId).trigger('stateChanged', [true, false, true]);
+	});
 
 	UICompactMenu(form, menuItems, {
 		css_class : 'settings',
@@ -86,10 +92,28 @@ function createContainer(containerOptions) {
 	var dataView = [];
 
 	function getIdField() {
-		if (data == null)
-			return "id";
-		else
-			return data.views[viewOption].id ? data.views[viewOption].id : data.views[viewOption].columns[0];
+		if (data == null || !testView())
+			return null;
+		else {// ritorna il campo id se definito nella view altrimenti usa il prmo campo di columns
+			//try {
+			console.log("getIdfiled() - data", data);
+
+			return data["views"][viewOption].id ? data["views"][viewOption].id : data["views"][viewOption].columns[0];
+			/*	}
+			 catch(err) {
+			 for(var viewOption in data["views"]) {
+			 data["views"]
+			 }
+			 } */
+		}
+	}
+
+	function testView() {
+		if (data["views"][viewOption] == null || data["views"] == null) {
+			$("#" + bodyDivId).html("I dati non consentono questa visualizzazione");
+			return false;
+		}
+		return true;
 	}
 
 
@@ -97,12 +121,10 @@ function createContainer(containerOptions) {
 
 		viewOption = $(this).val();
 
-		if (data.views[viewOption] == null || data.views == null) {
-			$("#" + bodyDivId).html("I dati non consentono questa visualizzazione");
+		if (!testView())
 			return;
-		}
 
-		type = data.views[viewOption].type;
+		type = data["views"][viewOption].type;
 		selectedIdList = [];
 		idField = getIdField();
 
@@ -156,8 +178,13 @@ function createContainer(containerOptions) {
 
 		// recupero il campo id della proiezione attuale
 		var idField = getIdField();
+		if (!testView())
+			return;
 		// rimuove i duplicati
+		console.log("dataView", dataView);
 		var elementsUnique = dataView.elements.removeDuplicates(idField);
+
+		console.log("elementsUnique", elementsUnique);
 
 		idList = [];
 		for (var ii = 0; ii < elementsUnique.length; ii++) {
@@ -182,7 +209,7 @@ function createContainer(containerOptions) {
 
 		// proiezione dei campi rispetto alle colonne specificate nella view selezionata
 		// recupero le colonne della proiezione
-		var columns = data.views[viewOption].columns;
+		var columns = data["views"][viewOption].columns;
 		elementsUnique = elementsUnique.project(columns);
 
 		// creazione nuovo oggetto per avere i campi per il viewer selezionato
@@ -191,8 +218,11 @@ function createContainer(containerOptions) {
 		dataOut.id = id;
 		dataOut.name = viewOption + "-" + id;
 		dataOut.elements = elementsUnique;
-		dataOut.views = {};
-		dataOut.views[type] = data.views[type];
+		dataOut["views"] = {};
+		console.log("type", type);
+		console.log("data", data);
+		console.log("data['views'][type]", data["views"][viewOption].type);
+		dataOut["views"][viewOption] = data["views"][viewOption];
 
 		// esclude il primo dei container
 		if (id != 0)
@@ -223,6 +253,7 @@ function createContainer(containerOptions) {
 		if (dataSource != null) {
 			data = dataSource;
 			dataView = clone(data);
+			console.log("dataView", dataView);
 		}
 
 		// inizializzazione base di dati per la view attuale
@@ -291,7 +322,7 @@ function createContainer(containerOptions) {
 		if (elementsUnique == null)
 			alert("elementsUnique è null");
 
-		var viewOptions = data.views[viewOption];
+		var viewOptions = data["views"][viewOption];
 
 		$("#" + bodyDivId).html("");
 		switch(type) {
