@@ -1,29 +1,42 @@
 // creazione del contenitore dei viewer
+// 'maxContainerIds' variabile globale che tiene conto dell'id (intero attuale massimo)
+maxContainerIds = 0;
 function createContainer(destinationDivId, containerOptions) {
-	var containerId = 0;
 	for (var i = 0; i < 3; i++) {
-		createViewer(destinationDivId, containerOptions, i);
+		Viewer(destinationDivId, containerOptions, i, i - 1, i + 1);
+		maxContainerIds++;
 	}
+	
 }
 
-function createViewer(destinationDivId, containerOptions, id) {
+function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 
-	var prefix = destinationDivId + '-viewer-';
+	// prefisso globale del viewer
+	var prefix = destinationDivId + '_viewer_';
+	// id del div principale del viewer
 	var divId = prefix + id;
 	var bodyDivId = prefix + "viewer_body_" + id;
-	var formId = divId + '-form';
+	// id DOM del form contenente i pulsanti
+	var formId = divId + '_form';
 
-	var nextId = prefix + parseInt(id + 1);
+	// id DOM del container precedente e successivo
+	var prevDivId = prefix + prevId;
+	var nextDivId = prefix + nextId;
+
+	// base di dati - query complessa
 	var data;
+	// elementi in uscita alla vista attuale
 	var dataOut;
+	// variabile relativa al wrapper della mappa
 	var map;
 
 	// creazione della barra dei bottoni
-
 	$('#' + destinationDivId).append('<div id="' + divId + '" class="viewer">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form id="' + formId + '"></form></div></div><div id="' + bodyDivId + '" class="viewer-body">&nbsp;</div></div>');
 	//$("#" + divId).resizable();
 
-	var form = $("#" + divId + " form");
+	// conservo id DOM del container precedente
+	$("#" + divId).data("prev", prevDivId);
+	// conservo id DOM del prossimo container
 
 	var fieldset = createFieldset(id, formId, ["tutti", "solo selezionati"]);
 	$("input", fieldset).on('click', function(e, forceVal) {
@@ -44,14 +57,55 @@ function createViewer(destinationDivId, containerOptions, id) {
 	var selectMenu = createSelectMenu(id, formId, containerOptions);
 
 	var menuItems = [{
+		"label" : "Elimina viewer",
+		"icon" : "close",
+		"click" : function(e) {
+			if (id != 0) {
+
+				var prevDivId = $("#" + divId).data("prev");
+				var nextDivId = $("#" + divId).data("next");
+
+				// assegno il viewer successivo all'attuale al precedente viewer della catena
+				$("#" + prevDivId).data("next", $("#" + divId).data("next"));
+				// duale
+				$("#" + nextDivId).data("prev", $("#" + divId).data("prev"));
+
+				// rimuove il viewer attuale
+				console.log(divId);
+				$("#" + divId).remove();
+				// e la nuvola associata
+				$("#" + prefix + "droppable-" + id).remove();
+
+				//scateno il cambiamento nella catena dal viewer precedente in poi del viewer eliminato
+				// e quindi anche dell'ex successivo
+				$("#" + prevDivId).trigger('stateChanged', [true, false, true]);
+			}
+		}
+	}, {
+		"label" : "Aggiungi viewer a cascata",
+		"icon" : "plus",
+		"click" : function(e) {
+			
+			// aggiunge viewer a cascata
+			// assegno il nuovo id al viewer da creare
+			var newId =	maxContainerIds;
+			maxContainerIds++;
+			
+			// assegno come sorgente l'attuale cioè 'id'
+			console.log('newId',newId);
+			Viewer(destinationDivId, containerOptions, newId, id, newId + 1);
+			// e scateno l'evento nel container precedente
+			var prevDivId = $("#" + divId).data("prev");
+			$("#" + prevDivId).trigger('stateChanged', [true, false, true]);
+			
+		}
+	}, {
 		"label" : "Salva",
 		"icon" : "disk",
 		"data" : dataOut,
 		"type" : "save",
 		"click" : function(e) {
 			// save button
-			//console.log("e", e);
-			//console.log("dataOut", dataOut);
 			$(e).trigger('save', ['data.json', dataOut]);
 		}
 	}, {
@@ -60,32 +114,22 @@ function createViewer(destinationDivId, containerOptions, id) {
 		"type" : "open",
 		"click" : function(e) {
 			// open  button
-			//console.log('open', e);
 			$(e).trigger('open', divId);
 		}
-	}, {
-		"label" : "Zoom avanti",
-		"icon" : "zoomin"
-	}, {
-		"label" : "Zoom indietro",
-		"icon" : "zoomout"
 	}];
 
 	$("#" + divId).on('success', function(e, dataIn) {
 		data = jQuery.parseJSON(dataIn);
 		dataView = clone(data);
-		//console.log('success', data);
 
-		//		$("#" + divId).trigger('sourceChanged', [data, data.views[viewOption][type], []]);
 		$("#" + divId).trigger('stateChanged', [true, false, true]);
 	});
 
+	var form = $("#" + divId + " form");
 	UICompactMenu(form, menuItems, {
 		css_class : 'settings',
 		image : 'base/images/settings.png',
 	});
-	//var gear = '<div class="ui-extra-icon ui-icon-triangle-1-e">ciao;</div>';
-	//form.append(gear);
 
 	// inizializzazioni
 	var viewOption = containerOptions[0];
@@ -101,16 +145,7 @@ function createViewer(destinationDivId, containerOptions, id) {
 		if (data == null || !testView())
 			return null;
 		else {// ritorna il campo id se definito nella view altrimenti usa il prmo campo di columns
-			//try {
-			//console.log("getIdfiled() - data", data);
-
 			return data["views"][viewOption].id ? data["views"][viewOption].id : data["views"][viewOption].columns[0];
-			/*	}
-			 catch(err) {
-			 for(var viewOption in data["views"]) {
-			 data["views"]
-			 }
-			 } */
 		}
 	}
 
@@ -136,11 +171,14 @@ function createViewer(destinationDivId, containerOptions, id) {
 
 		// scatena l'evento tutti per riaggiornare il viewer e gli altri a cascata
 		$("#" + formId + '-radio-choice-' + 0 + '-fieldset-' + id).trigger("click", ["tutti"]);
-		//$("#" + divId).trigger('stateChanged', [false, false, true]);
 	});
 
-	// container listener
+	// salvataggio dati con JQUERY
 	$("#" + divId).data("id", id);
+	$("#" + divId).data("next", nextDivId);
+	$("#" + divId).data("prev", prevDivId);
+	console.log("nextDivId", nextDivId);
+	console.log("prevDivId", prevDivId);
 
 	// azione relatia al click del mouse su un elemento della mappa
 	$("#" + bodyDivId).on("mapClicked", function(t, idValue, isSelected) {
@@ -241,15 +279,18 @@ function createViewer(destinationDivId, containerOptions, id) {
 		else if (!mapClicked)
 			map.draw(elementsUnique, selectedIdList);
 
-		if (viewChanged || sourceChanged || mapClicked)
-			updateNextContainer(map, data, selectedIdList, nextId, sourceChanged, mapClicked);
+		if (viewChanged || sourceChanged || mapClicked) {
+			// recupero il div del viewer successivo
+			var nextDivId = $("#" + divId).data("next");
+			updateNextContainer(map, data, selectedIdList, nextDivId, sourceChanged, mapClicked);
+		}
 
 	});
 
-	function updateNextContainer(map, data, selectedIds, nextId, sourceChanged, mapClicked) {
+	function updateNextContainer(map, data, selectedIds, nextDivId, sourceChanged, mapClicked) {
 
 		var idField = getIdField();
-		$("#" + nextId).trigger("sourceChanged", [data, idField, !all ? selectedIdList : idList]);
+		$("#" + nextDivId).trigger("sourceChanged", [data, idField, !all ? selectedIdList : idList]);
 	}
 
 
