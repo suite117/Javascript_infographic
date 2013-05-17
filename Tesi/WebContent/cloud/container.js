@@ -10,7 +10,7 @@ function createViewer(destinationDivId, containerOptions, id) {
 
 	var prefix = destinationDivId + '-viewer-';
 	var divId = prefix + id;
-	var bodyDivId = prefix + "_viewer_body_" + id;
+	var bodyDivId = prefix + "viewer_body_" + id;
 	var formId = divId + '-form';
 
 	var nextId = prefix + parseInt(id + 1);
@@ -232,7 +232,7 @@ function createViewer(destinationDivId, containerOptions, id) {
 
 		// esclude il primo dei container
 		if (id != 0)
-			createDraggableCloud("viewer-droppable-" + id, dataOut);
+			createDraggableCloud(prefix + "droppable-" + id, dataOut);
 
 		//console.log("elementsUnique", elementsUnique);
 
