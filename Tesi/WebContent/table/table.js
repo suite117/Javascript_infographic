@@ -148,7 +148,7 @@ function toList(data) {
 			rows[i] = new Array();
 			for (var key in data[i]) {
 				if (!isFunction(data[i][key])) {
-					rows[i].push(data[i][key]);
+					rows[i].push(data[i][key] ? data[i][key] : "");
 				}
 			}
 		}

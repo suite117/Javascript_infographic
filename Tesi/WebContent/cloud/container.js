@@ -1,10 +1,16 @@
-var containerId = 0;
-function createContainer(containerOptions) {
+// creazione del contenitore dei viewer
+function createContainer(destinationDivId, containerOptions) {
+	var containerId = 0;
+	for (var i = 0; i < 3; i++) {
+		createViewer(destinationDivId, containerOptions, i);
+	}
+}
 
-	var id = containerId++;
-	var prefix = 'view-container-';
+function createViewer(destinationDivId, containerOptions, id) {
+
+	var prefix = destinationDivId + '-viewer-';
 	var divId = prefix + id;
-	var bodyDivId = "view_container_body_" + id;
+	var bodyDivId = prefix + "_viewer_body_" + id;
 	var formId = divId + '-form';
 
 	var nextId = prefix + parseInt(id + 1);
@@ -14,12 +20,12 @@ function createContainer(containerOptions) {
 
 	// creazione della barra dei bottoni
 
-	$("#views-container").append('<div id="' + divId + '" class="view-container">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form id="' + formId + '"></form></div></div><div id="' + bodyDivId + '" class="view-container-body">&nbsp;</div></div>');
+	$('#' + destinationDivId).append('<div id="' + divId + '" class="viewer">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form id="' + formId + '"></form></div></div><div id="' + bodyDivId + '" class="viewer-body">&nbsp;</div></div>');
 	//$("#" + divId).resizable();
 
 	var form = $("#" + divId + " form");
 
-	var fieldset = createFieldset(id, form, ["tutti", "solo selezionati"]);
+	var fieldset = createFieldset(id, formId, ["tutti", "solo selezionati"]);
 	$("input", fieldset).on('click', function(e, forceVal) {
 		oldVal = val;
 
@@ -35,7 +41,7 @@ function createContainer(containerOptions) {
 	});
 
 	// creazione menu del viewer con opzioni
-	var selectMenu = createSelectMenu(id, form, containerOptions);
+	var selectMenu = createSelectMenu(id, formId, containerOptions);
 
 	var menuItems = [{
 		"label" : "Salva",
@@ -45,7 +51,7 @@ function createContainer(containerOptions) {
 		"click" : function(e) {
 			// save button
 			//console.log("e", e);
-			console.log("dataOut", dataOut);
+			//console.log("dataOut", dataOut);
 			$(e).trigger('save', ['data.json', dataOut]);
 		}
 	}, {
@@ -54,7 +60,7 @@ function createContainer(containerOptions) {
 		"type" : "open",
 		"click" : function(e) {
 			// open  button
-			console.log('open', e);
+			//console.log('open', e);
 			$(e).trigger('open', divId);
 		}
 	}, {
@@ -68,7 +74,7 @@ function createContainer(containerOptions) {
 	$("#" + divId).on('success', function(e, dataIn) {
 		data = jQuery.parseJSON(dataIn);
 		dataView = clone(data);
-		console.log('success', data);
+		//console.log('success', data);
 
 		//		$("#" + divId).trigger('sourceChanged', [data, data.views[viewOption][type], []]);
 		$("#" + divId).trigger('stateChanged', [true, false, true]);
@@ -96,7 +102,7 @@ function createContainer(containerOptions) {
 			return null;
 		else {// ritorna il campo id se definito nella view altrimenti usa il prmo campo di columns
 			//try {
-			console.log("getIdfiled() - data", data);
+			//console.log("getIdfiled() - data", data);
 
 			return data["views"][viewOption].id ? data["views"][viewOption].id : data["views"][viewOption].columns[0];
 			/*	}
@@ -129,7 +135,7 @@ function createContainer(containerOptions) {
 		idField = getIdField();
 
 		// scatena l'evento tutti per riaggiornare il viewer e gli altri a cascata
-		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).trigger("click", ["tutti"]);
+		$("#" + formId + '-radio-choice-' + 0 + '-fieldset-' + id).trigger("click", ["tutti"]);
 		//$("#" + divId).trigger('stateChanged', [false, false, true]);
 	});
 
@@ -181,10 +187,10 @@ function createContainer(containerOptions) {
 		if (!testView())
 			return;
 		// rimuove i duplicati
-		console.log("dataView", dataView);
+		//console.log("dataView", dataView);
 		var elementsUnique = dataView.elements.removeDuplicates(idField);
 
-		console.log("elementsUnique", elementsUnique);
+		//console.log("elementsUnique", elementsUnique);
 
 		idList = [];
 		for (var ii = 0; ii < elementsUnique.length; ii++) {
@@ -219,14 +225,14 @@ function createContainer(containerOptions) {
 		dataOut.name = viewOption + "-" + id;
 		dataOut.elements = elementsUnique;
 		dataOut["views"] = {};
-		console.log("type", type);
-		console.log("data", data);
-		console.log("data['views'][type]", data["views"][viewOption].type);
+		//console.log("type", type);
+		//console.log("data", data);
+		//console.log("data['views'][type]", data["views"][viewOption].type);
 		dataOut["views"][viewOption] = data["views"][viewOption];
 
 		// esclude il primo dei container
 		if (id != 0)
-			createDraggableCloud("view-container-droppable-" + id, dataOut);
+			createDraggableCloud("viewer-droppable-" + id, dataOut);
 
 		//console.log("elementsUnique", elementsUnique);
 
@@ -253,7 +259,7 @@ function createContainer(containerOptions) {
 		if (dataSource != null) {
 			data = dataSource;
 			dataView = clone(data);
-			console.log("dataView", dataView);
+			//console.log("dataView", dataView);
 		}
 
 		// inizializzazione base di dati per la view attuale
@@ -357,19 +363,20 @@ function createContainer(containerOptions) {
 
 	var oldVal;
 	var val;
-	function createFieldset(id, form, options) {
-		form.append('<fieldset id="fieldset-' + id + '" data-role="controlgroup" data-type="horizontal"></fieldset>');
+	function createFieldset(id, formId, options) {
+		var form = $("#" + formId);
+		form.append('<fieldset id="' + formId + '-fieldset-' + id + '" data-role="controlgroup" data-type="horizontal"></fieldset>');
 
-		var fieldset = $("#fieldset-" + id);
+		var fieldset = $("#" + formId + "-fieldset-" + id);
 		var sourceChanged;
 
 		for (var i = 0; i < options.length; i++) {
-			var inputId = 'radio-choice-' + i + '-fieldset-' + id;
+			var inputId = formId + '-radio-choice-' + i + '-fieldset-' + id;
 			fieldset.append('<input type="radio" name="' + inputId + '" id="' + inputId + '" value="' + options[i] + '" />');
 			fieldset.append('<label for="' + inputId + '">' + options[i] + '</label>');
 
 			$("#" + inputId).on('click', function(e) {
-				var label = $("#view-container-" + id + " label");
+				var label = $("label", form);
 				if (label.hasClass('ui-btn-active'))
 					label.removeClass("ui-btn-active");
 				else {
@@ -381,16 +388,17 @@ function createContainer(containerOptions) {
 
 		form.trigger("create");
 		//fieldset.controlgroup("refresh");
-		$("#" + 'radio-choice-' + 0 + '-fieldset-' + id).attr("checked", true).checkboxradio("refresh");
+		$("#" + formId + '-radio-choice-' + 0 + '-fieldset-' + id).attr("checked", true).checkboxradio("refresh");
 
 		return fieldset;
 
 	}
 
-	function createSelectMenu(id, form, options) {
-		form.append('<select name="menu" id="select-menu-' + id + '" data-mini="true"></select>');
+	function createSelectMenu(id, formId, options) {
+		var form = $("#" + formId);
+		form.append('<select name="menu" id="' + formId + '-select-menu-' + id + '" data-mini="true"></select>');
 
-		var select = $("#select-menu-" + id);
+		var select = $("#" + formId + "-select-menu-" + id);
 		for (var i = 0; i < options.length; i++) {
 			select.append('<option value="' + options[i] + '">' + options[i] + '</option>');
 		}

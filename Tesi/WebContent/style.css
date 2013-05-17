@@ -51,11 +51,11 @@ body {
 }
 
 /* container */
-#views-container {
+.views-container {
 	width: 100%;
 }
 
-#views-container:after {
+.views-container:after {
 	/* Prevent wrapper from shrinking height,
 	 see http://www.positioniseverything.net/easyclearing.html */
 	content: ".";
@@ -65,12 +65,13 @@ body {
 	visibility: hidden;
 }
 
-.view-container {
+.viewer {
 	float: left;
 	width: 33%;
 	height: 500px;
+	margin-bottom: 170px;
 }
-.view-container .droppable {
+.viewer .droppable {
 	border: 2px solid #5A99C9;
 	border-radius: 70px 70px 0 0;
 	height: 100px;
@@ -79,11 +80,11 @@ body {
 	top: 1px;
 	width: 130px;
 }
-.view-container .over {
+.viewer .over {
 	background-color: orange;
 }
 
-.view-container .view-buttons {
+.viewer .view-buttons {
 	border: 2px solid #5A99C9;
 	height: 46px;
 	padding: 1px 10px;
@@ -93,7 +94,7 @@ body {
 	width: 12em
 }
 
-.view-container .view-container-body {
+.viewer .viewer-body {
 	height: 100%;
 	border: 2px solid #5A99C9;
 	overflow: auto;

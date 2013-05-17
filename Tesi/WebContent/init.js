@@ -8,9 +8,8 @@ var dominio = [];
 
 // creazione di 3 container
 var containerOptions = ["chi", "cosa", "dove", "quando"];
-createContainer(containerOptions);
-createContainer(containerOptions);
-createContainer(containerOptions);
+createContainer('views-container', containerOptions);
+createContainer('views-container2', containerOptions);
 
 // recupero dal database le persone che hanno partecipato a degli eventi
 dominio["personepeventi"] = {
