@@ -1,0 +1,21 @@
+{
+	"chi": {
+		"type": "table",
+		"id": "id",
+		"image": "immagine"
+	},
+	"cosa": {
+		"type": "table",
+		"id": "idPersona"
+	},
+	"dove": {
+		"type": "geomap",
+		"id": "idEvento",
+		"name": "nomeEvento"
+	},
+	"quando": {
+		"type": "timeline",
+		"id": "idEvento",
+		"name": "nomeEvento"
+	}
+}

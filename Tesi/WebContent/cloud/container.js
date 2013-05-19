@@ -1,15 +1,15 @@
 // creazione del contenitore dei viewer
 // 'maxContainerIds' variabile globale che tiene conto dell'id (intero attuale massimo)
 maxContainerIds = 0;
-function createContainer(destinationDivId, containerOptions) {
+function createContainer(destinationDivId, containerOptions, defaultOption) {
 	for (var i = 0; i < 3; i++) {
-		Viewer(destinationDivId, containerOptions, i, i - 1, i + 1);
+		Viewer(destinationDivId, containerOptions, defaultOption, i, i - 1, i + 1);
 		maxContainerIds++;
 	}
-	
+
 }
 
-function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
+function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId, nextId) {
 
 	// prefisso globale del viewer
 	var prefix = destinationDivId + '_viewer_';
@@ -19,26 +19,36 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 	// id DOM del form contenente i pulsanti
 	var formId = divId + '_form';
 
-	// id DOM del container precedente e successivo
+	// id DOM del viewer precedente e successivo
 	var prevDivId = prefix + prevId;
 	var nextDivId = prefix + nextId;
 
 	// base di dati - query complessa
 	var data;
+	// variabile contenente l'oggetto caricato dal file "data/[domin_name].dom.json"
+	var domain;
+	// variabile contenente l'oggetto caricato dal file "data/[domin_name].vod.json"
+	var domainDescription;
 	// elementi in uscita alla vista attuale
 	var dataOut;
 	// variabile relativa al wrapper della mappa
 	var map;
 
 	// creazione della barra dei bottoni
-	$('#' + destinationDivId).append('<div id="' + divId + '" class="viewer">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form id="' + formId + '"></form></div></div><div id="' + bodyDivId + '" class="viewer-body">&nbsp;</div></div>');
+	var divContent = '<div id="' + divId + '" class="viewer">' + '<div class="view-header"><div id="' + prefix + 'droppable-' + id + '" class="droppable">&nbsp;</div><div class="view-buttons"><form id="' + formId + '"></form></div></div><div id="' + bodyDivId + '" class="viewer-body">&nbsp;</div></div>';
+	if (id == 0)
+		$('#' + destinationDivId).append(divContent);
+	else
+		$("#" + prevDivId).after(divContent);
+
 	//$("#" + divId).resizable();
 
-	// conservo id DOM del container precedente
+	// conservo id DOM del viewer precedente
 	$("#" + divId).data("prev", prevDivId);
-	// conservo id DOM del prossimo container
 
 	var fieldset = createFieldset(id, formId, ["tutti", "solo selezionati"]);
+	var oldVal;
+	var val;
 	$("input", fieldset).on('click', function(e, forceVal) {
 		oldVal = val;
 
@@ -54,7 +64,7 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 	});
 
 	// creazione menu del viewer con opzioni
-	var selectMenu = createSelectMenu(id, formId, containerOptions);
+	var selectMenu = createSelectMenu(id, formId, viewerOptions, defaultOption);
 
 	var menuItems = [{
 		"label" : "Elimina viewer",
@@ -71,7 +81,7 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 				$("#" + nextDivId).data("prev", $("#" + divId).data("prev"));
 
 				// rimuove il viewer attuale
-				console.log(divId);
+				//console.log(divId);
 				$("#" + divId).remove();
 				// e la nuvola associata
 				$("#" + prefix + "droppable-" + id).remove();
@@ -85,19 +95,28 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 		"label" : "Aggiungi viewer a cascata",
 		"icon" : "plus",
 		"click" : function(e) {
-			
+
 			// aggiunge viewer a cascata
 			// assegno il nuovo id al viewer da creare
-			var newId =	maxContainerIds;
-			maxContainerIds++;
-			
-			// assegno come sorgente l'attuale cioè 'id'
-			console.log('newId',newId);
-			Viewer(destinationDivId, containerOptions, newId, id, newId + 1);
-			// e scateno l'evento nel container precedente
-			var prevDivId = $("#" + divId).data("prev");
-			$("#" + prevDivId).trigger('stateChanged', [true, false, true]);
-			
+			var newId = ++maxContainerIds;
+
+			var oldNextDivId = $("#" + divId).data("next");
+
+			// assegno come sorgente l'attuale cioè viewer con id = 'id'	
+			Viewer(destinationDivId, viewerOptions, viewOption, newId, id, $("#" + oldNextDivId).data("id"));
+
+			var newNextDivId = prefix + newId;
+			// aggancio il nuovo viewer all'attuale
+			$("#" + divId).data("next", newNextDivId);
+			// assegno il nuovo viewer come sorgente del viewer percedente nella successione
+			$("#" + oldNextDivId).data("prev", newNextDivId);
+
+			//console.log('nextDivId', nextDivId);
+			//console.log('newNextDivId', newNextDivId);
+
+			// e scateno l'evento nel viewer precedente
+			updateNextViewer(data, newNextDivId);
+
 		}
 	}, {
 		"label" : "Salva",
@@ -132,8 +151,8 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 	});
 
 	// inizializzazioni
-	var viewOption = containerOptions[0];
-	var type = "table";
+	var viewOption = defaultOption ? defaultOption : viewerOptions[0];
+	var type;
 	var all = true;
 	var active = [];
 	var selectedIdList = [];
@@ -145,12 +164,12 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 		if (data == null || !testView())
 			return null;
 		else {// ritorna il campo id se definito nella view altrimenti usa il prmo campo di columns
-			return data["views"][viewOption].id ? data["views"][viewOption].id : data["views"][viewOption].columns[0];
+			return domainDescription[viewOption].id ? domainDescription[viewOption].id : domain[viewOption].columns[0];
 		}
 	}
 
 	function testView() {
-		if (data["views"][viewOption] == null || data["views"] == null) {
+		if (domainDescription == null || domainDescription[viewOption] == null) {
 			$("#" + bodyDivId).html("I dati non consentono questa visualizzazione");
 			return false;
 		}
@@ -165,7 +184,7 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 		if (!testView())
 			return;
 
-		type = data["views"][viewOption].type;
+		type = domainDescription[viewOption].type;
 		selectedIdList = [];
 		idField = getIdField();
 
@@ -177,14 +196,12 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 	$("#" + divId).data("id", id);
 	$("#" + divId).data("next", nextDivId);
 	$("#" + divId).data("prev", prevDivId);
-	console.log("nextDivId", nextDivId);
-	console.log("prevDivId", prevDivId);
 
 	// azione relatia al click del mouse su un elemento della mappa
 	$("#" + bodyDivId).on("mapClicked", function(t, idValue, isSelected) {
 
 		//console.log("mapClicked", idValue, isSelected);
-		// recuper il campo id per la selezione attuale'
+		// recupero il campo id per la selezione attuale'
 
 		if (isSelected) {
 
@@ -253,7 +270,9 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 
 		// proiezione dei campi rispetto alle colonne specificate nella view selezionata
 		// recupero le colonne della proiezione
-		var columns = data["views"][viewOption].columns;
+		//var columns = data["views"][viewOption].columns;
+		var columns = domain[viewOption]["columns"];
+		//console.log(columns);
 		elementsUnique = elementsUnique.project(columns);
 
 		// creazione nuovo oggetto per avere i campi per il viewer selezionato
@@ -262,41 +281,44 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 		dataOut.id = id;
 		dataOut.name = viewOption + "-" + id;
 		dataOut.elements = elementsUnique;
-		dataOut["views"] = {};
-		//console.log("type", type);
-		//console.log("data", data);
-		//console.log("data['views'][type]", data["views"][viewOption].type);
-		dataOut["views"][viewOption] = data["views"][viewOption];
+		//dataOut["views"] = {};
+		//dataOut["views"][viewOption] = data["views"][viewOption];
 
-		// esclude il primo dei container
+		// esclude il primo dei viewer
 		if (id != 0)
 			createDraggableCloud(prefix + "droppable-" + id, dataOut);
 
 		//console.log("elementsUnique", elementsUnique);
 
 		if (map == null || viewChanged)
-			initMap(elementsUnique);
+			initMap(domainDescription, elementsUnique);
 		else if (!mapClicked)
 			map.draw(elementsUnique, selectedIdList);
 
 		if (viewChanged || sourceChanged || mapClicked) {
 			// recupero il div del viewer successivo
 			var nextDivId = $("#" + divId).data("next");
-			updateNextContainer(map, data, selectedIdList, nextDivId, sourceChanged, mapClicked);
+			updateNextViewer(data, nextDivId);
 		}
 
 	});
 
-	function updateNextContainer(map, data, selectedIds, nextDivId, sourceChanged, mapClicked) {
+	function updateNextViewer(data, nextDivId) {
 
 		var idField = getIdField();
-		$("#" + nextDivId).trigger("sourceChanged", [data, idField, !all ? selectedIdList : idList]);
+		$("#" + nextDivId).trigger("sourceChanged", [domain, domainDescription, data, idField, !all ? selectedIdList : idList]);
 	}
 
 
-	$("#" + divId).on("sourceChanged", function(t, dataSource, idFieldSource, selectedSource) {
+	$("#" + divId).on("sourceChanged", function(t, domainSource, domainDescrSource, dataSource, idFieldSource, selectedSource) {
 
-		// inizializzazione data del container (base di dati)
+		// inizializzazione data del viewer (base di dati)
+		if (domainSource != null) {
+			domain = domainSource;
+			domainDescription = domainDescrSource;
+			type = domainDescription[viewOption].type;
+		}
+
 		if (dataSource != null) {
 			data = dataSource;
 			dataView = clone(data);
@@ -315,12 +337,12 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 			}
 		}
 
-		// aggiorno il contenuto richiamo il container successivo a cascata
+		// aggiorno il contenuto richiamo il viewer successivo a cascata
 		$("#" + divId).trigger('stateChanged', [true, false, false]);
 
 	});
 
-	// aggiunge l'evento drop all'etichetta del container
+	// aggiunge l'evento drop all'etichetta del viewer
 	$("#" + divId + " .droppable").droppable({
 		tolerance : 'touch',
 		over : function() {
@@ -329,13 +351,13 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 		out : function() {
 			$(this).removeClass('over').addClass('out');
 		},
-		// evento nuvola sull'etichetta del container
+		// evento nuvola sull'etichetta del viewer
 		drop : function() {
 
 			if (id != 0)
 				return;
 
-			// this = etichetta droppable del container sottostante
+			// this = etichetta droppable del viewer sottostante
 			var offset = $(this).offset();
 			var x = offset.left;
 			var y = offset.top;
@@ -353,6 +375,9 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 				if (dis < 80) {
 					// conservo l'insieme della nuvola
 					data = d;
+					domain = getJSON("data/" + data["domain"] + ".dom.json");
+					domainDescription = getJSON("data/" + data["domain"] + ".vod.json");
+					type = domainDescription[viewOption].type;
 					dataView = clone(data);
 					selectedIdList = [];
 					$("#" + divId).trigger('stateChanged', [true, false, false]);
@@ -364,12 +389,12 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 		}
 	});
 
-	function initMap(elementsUnique) {
+	function initMap(domainDescription, elementsUnique) {
 
 		if (elementsUnique == null)
 			alert("elementsUnique è null");
 
-		var viewOptions = data["views"][viewOption];
+		var viewOptions = domainDescription[viewOption];
 
 		$("#" + bodyDivId).html("");
 		switch(type) {
@@ -402,8 +427,7 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 
 	}
 
-	var oldVal;
-	var val;
+	
 	function createFieldset(id, formId, options) {
 		var form = $("#" + formId);
 		form.append('<fieldset id="' + formId + '-fieldset-' + id + '" data-role="controlgroup" data-type="horizontal"></fieldset>');
@@ -435,13 +459,14 @@ function Viewer(destinationDivId, containerOptions, id, prevId, nextId) {
 
 	}
 
-	function createSelectMenu(id, formId, options) {
+	function createSelectMenu(id, formId, options, defaultOption) {
 		var form = $("#" + formId);
 		form.append('<select name="menu" id="' + formId + '-select-menu-' + id + '" data-mini="true"></select>');
 
 		var select = $("#" + formId + "-select-menu-" + id);
 		for (var i = 0; i < options.length; i++) {
-			select.append('<option value="' + options[i] + '">' + options[i] + '</option>');
+			var selected = options[i] == defaultOption ? "selected" : "";
+			select.append('<option ' + selected + ' value="' + options[i] + '">' + options[i] + '</option>');
 		}
 
 		select.selectmenu();
