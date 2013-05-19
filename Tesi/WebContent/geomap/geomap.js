@@ -59,7 +59,8 @@ function GeoMap(destinationDivId, idField, data, optional) {
 	}
 
 	// Pie chart
-	var pie = L.pie(this.center, list, {
+	var pieCoord = [this.data[0] ? this.data[0].lat:0, this.data[0] ? this.data[0].lon: 0];
+	var pie = L.pie(pieCoord, list, {
 		radius : 200
 	}, {
 		pathOptions : {

@@ -18,6 +18,10 @@
 	top: -70px;
 }
 
+div.ui-controlgroup-horizontal .ui-controlgroup-controls:after {
+	clear: none;
+}
+
 /* JQuery Mobile Fix */
 .ui-fullsize, .ui-fullsize .ui-btn-inner {
 	font-size: 12px !important;
@@ -42,7 +46,7 @@ div .ui-icon, div .ui-icon-searchfield:after {
 
 /* MAIN */
 body {
-	font-size: 12px;
+	font-size: 10px;
 	font-family: Helvetica, Arial, sans-serif;
 }
 
@@ -51,11 +55,13 @@ body {
 }
 
 /* container */
-.views-container {
-	width: 100%;
+.views_container {
+	border: 1px solid #E2E4FF;
+	padding: 5px;
+	width: 99%;
 }
 
-.views-container:after {
+.views_container:after {
 	/* Prevent wrapper from shrinking height,
 	 see http://www.positioniseverything.net/easyclearing.html */
 	content: ".";

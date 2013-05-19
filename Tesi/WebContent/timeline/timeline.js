@@ -7,15 +7,15 @@ function Timeline(destinationDivId, idField, data, optional) {
 	this.start = 'start';
 	this.end = 'end';
 	this.name = 'name';
-	this.width = "width";
-	this.height = "height";
+	this.width = '100%';
+	this.height =  '320px';
 
 	if (optional != null) {
 		this.start = optional[this.start] ? optional[this.start] : this.start;
 		this.end = optional[this.end] ? optional[this.end] : this.end;
 		this.name = optional[this.name] ? optional[this.name] : this.name;
-		this.width = optional[this.width] ? optional[this.width] : '100%';
-		this.height = optional[this.height] ? optional[this.height] : '300px';
+		this.width = optional["width"] ? optional["width"] : this.width;
+		this.height = optional["height"] ? optional["height"] : this.height;
 	}
 
 	this.columns = [['datetime', this.start], ['datetime', this.end], ['string', 'content']];

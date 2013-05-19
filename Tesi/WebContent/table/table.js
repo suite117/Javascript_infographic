@@ -153,6 +153,8 @@ function toList(data) {
 			}
 		}
 	}
+	
+	console.log(headers);
 
 	return [headers, rows];
 

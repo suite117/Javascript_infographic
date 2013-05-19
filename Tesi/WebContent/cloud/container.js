@@ -1,12 +1,13 @@
 // creazione del contenitore dei viewer
 // 'maxContainerIds' variabile globale che tiene conto dell'id (intero attuale massimo)
 maxContainerIds = 0;
-function createContainer(destinationDivId, containerOptions, defaultOption) {
-	for (var i = 0; i < 3; i++) {
+function createContainer(destinationDivId, containerOptions, defaultOption, viewerNumber) {
+	for (var i = 0; i < viewerNumber; i++) {
 		Viewer(destinationDivId, containerOptions, defaultOption, i, i - 1, i + 1);
 		maxContainerIds++;
 	}
-
+	// abilito il trascinamento del container dei viewer
+	$("#" + destinationDivId).draggable();
 }
 
 function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId, nextId) {
@@ -102,7 +103,7 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId, next
 
 			var oldNextDivId = $("#" + divId).data("next");
 
-			// assegno come sorgente l'attuale cioè viewer con id = 'id'	
+			// assegno come sorgente l'attuale cioè viewer con id = 'id'
 			Viewer(destinationDivId, viewerOptions, viewOption, newId, id, $("#" + oldNextDivId).data("id"));
 
 			var newNextDivId = prefix + newId;
@@ -281,6 +282,7 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId, next
 		dataOut.id = id;
 		dataOut.name = viewOption + "-" + id;
 		dataOut.elements = elementsUnique;
+		dataOut.domain = data.domain;
 		//dataOut["views"] = {};
 		//dataOut["views"][viewOption] = data["views"][viewOption];
 
@@ -346,13 +348,13 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId, next
 	$("#" + divId + " .droppable").droppable({
 		tolerance : 'touch',
 		over : function() {
-			$(this).removeClass('out').addClass('over');
+			//$(this).removeClass('out').addClass('over');
 		},
 		out : function() {
-			$(this).removeClass('over').addClass('out');
+			//$(this).removeClass('over').addClass('out');
 		},
 		// evento nuvola sull'etichetta del viewer
-		drop : function() {
+		drop : function(event, ui) {
 
 			if (id != 0)
 				return;
@@ -362,30 +364,47 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId, next
 			var x = offset.left;
 			var y = offset.top;
 
-			for (var k = 0; k < draggers.length; k++) {
+			var $draggableCloud = $(ui.draggable);
 
-				// recupero le coordinate dei cloud spostabili
-				var d = $(draggers[k]).data().d;
+			//for (var k = 0; k < draggers.length; k++) {
 
-				var x1 = d.x;
-				var y1 = d.y;
+			// recupero le coordinate dei cloud spostabili
+			//			var d = $(draggers[k]).data().d;
+			var d = $draggableCloud.data("d");
+			
+			if (d == null)
+				return;
 
-				var dis = distance([x, y], [x1, y1]);
+			var x1 = d.x;
+			var y1 = d.y;
 
-				if (dis < 80) {
-					// conservo l'insieme della nuvola
-					data = d;
-					domain = getJSON("data/" + data["domain"] + ".dom.json");
-					domainDescription = getJSON("data/" + data["domain"] + ".vod.json");
-					type = domainDescription[viewOption].type;
-					dataView = clone(data);
-					selectedIdList = [];
-					$("#" + divId).trigger('stateChanged', [true, false, false]);
-					break;
+			var dis = distance([x, y], [x1, y1]);
+
+			if (dis < 80) {
+				
+				// verifico che la nuvola non sia già agganciata
+				if ($draggableCloud.parent().attr("id") != $(this).attr("id")) {
+					$(this).append($draggableCloud);
+					$draggableCloud.css("left", "9px").css("top", "6px");
 				}
-			}
-			$(this).removeClass('over').addClass('drop');
 
+				$(this).removeClass('out').addClass('over');
+
+				// conservo l'insieme della nuvola
+				data = d;
+				domain = getJSON("data/" + data["domain"] + ".dom.json");
+				domainDescription = getJSON("data/" + data["domain"] + ".vod.json");
+				type = domainDescription[viewOption].type;
+				dataView = clone(data);
+				selectedIdList = [];
+				$("#" + divId).trigger('stateChanged', [true, false, false]);
+				//break;
+			} else
+				$(this).removeClass('over').addClass('out');
+
+			//}
+			//$(this).removeClass('over').addClass('drop');
+			console.log($(ui.draggable).data());
 		}
 	});
 
@@ -427,7 +446,6 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId, next
 
 	}
 
-	
 	function createFieldset(id, formId, options) {
 		var form = $("#" + formId);
 		form.append('<fieldset id="' + formId + '-fieldset-' + id + '" data-role="controlgroup" data-type="horizontal"></fieldset>');
