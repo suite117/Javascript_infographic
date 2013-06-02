@@ -1,0 +1,23 @@
+{
+	"persone": {
+		"type": "table",
+		"id": "id",
+		"image": "immagine",
+		"bubble-label" : "nome",
+		"bubble-value" : "id"
+	},
+	"luoghi": {
+		"type": "geomap",
+		"id": "idEvento",
+		"name": "nomeEvento",
+		"bubble-label" : "nomeEvento",
+		"bubble-value" : "idEvento"
+	},
+	"tempi": {
+		"type": "timeline",
+		"id": "idTempo",
+		"name": "nome",
+		"bubble-label" : "nome",
+		"bubble-value" : "nome"
+	}
+}

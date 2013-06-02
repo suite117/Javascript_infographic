@@ -1,37 +1,41 @@
 // MAIN of cloud.html
+// $(document).ready(function() {
 // for JQuery Mobile instead of $(document).ready
 $(document).bind('pageinit', function() {
-	// $(document).ready(function() {
-
-	// creazione dominio come insieme di nuvole (insiemi)
-	var dominio = [];
+	
 
 	// creazione di 3 container
-	var containerOptions = [ "chi", "dove", "quando" ];
-	createContainer('values_generator', containerOptions, "chi", 1, {
+	var generatorOptions = [ "persone", "luoghi", "tempi" ];
+	createContainer('values_generator', generatorOptions, "persone", 1, {
 		isGenerator : true,
+		domain : "general",
 		"data-input" : {
-			"chi" : {
-				domain : "crimini",
-				elements : getJSON("/JSONServlet/RequestObject?element=chi")
+			"persone" : {
+				domain : "general",
+				elements : getJSON("/JSONServlet/RequestObject?element=persone")
 			},
-			"dove" : {
-				domain : "crimini",
-				elements : getJSON("/JSONServlet/RequestObject?element=dove")
+			"luoghi" : {
+				domain : "general",
+				elements : getJSON("/JSONServlet/RequestObject?element=luoghi")
 			},
-			"quando" : {
-				domain : "crimini",
-				elements : getJSON("/JSONServlet/RequestObject?element=quando")
+			"tempi" : {
+				domain : "general",
+				elements : getJSON("/JSONServlet/RequestObject?element=tempi")
 			}
 		}
 	});
 
-	createCloudGenerator('values_generator', containerOptions, 'crimini');
+	
+	
+	var containerOptions = [ "chi", "dove", "quando" ];
 	createContainer('views_container', containerOptions, "chi", 4);
 	createContainer('views_container2', containerOptions, "dove", 3);
 
 	// recupero dal database le persone che hanno partecipato a degli eventi
 	/*
+	 * // creazione dominio come insieme di nuvole (insiemi) var dominio = [];
+	 * 
+	 * 
 	 * dominio["personepeventi"] = { name : "Persone partecipanti a degli
 	 * eventi", elements : getJSON("data/pp.json"), // lettura campi da json
 	 * generato in maniera random domain : "crimini" };

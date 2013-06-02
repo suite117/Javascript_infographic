@@ -1,0 +1,11 @@
+{
+	"persone": {
+		"columns": ["immagine", "id", "nome", "idEvento"]
+	},
+	"luoghi": {
+		"columns": ["idEvento", "lat", "lon", "nomeEvento"]
+	},
+	"tempi": {
+		"columns": ["idTempo", "nome", "start", "end"]
+	}
+}

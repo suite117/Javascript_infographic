@@ -1,6 +1,5 @@
 package DAO;
 
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -93,4 +92,46 @@ public class DBUtils {
 		}
 		return out;
 	}
+
+	public static String integerListToDateString(List<Integer> dateList) {
+		String out = "";
+
+		if (dateList != null) {
+			for (int i = 0; i < dateList.size() - 1; i++) {
+				if (dateList.get(i) <= 9)
+					out += "0" + dateList.get(i) + "-";
+				else
+					out += dateList.get(i) + "-";
+			}
+			if (dateList.get(dateList.size() - 1) <= 9)
+				out += "0" + dateList.get(dateList.size() - 1);
+			else
+				out += dateList.get(dateList.size() - 1);
+		}
+		return out;
+	}
+
+	public static List<String> dateStringToStringList(String date) {
+		List<String> out = new ArrayList<String>();
+
+		if (date != null) {
+			String[] dateArr = date.split("-");
+			for (String dateEl : dateArr)
+				out.add(dateEl);
+		}
+		return out;
+	}
+
+	public static String stringListToDateString(List<String> dateList) {
+		String out = "";
+
+		if (dateList != null) {
+			for (int i = 0; i < dateList.size() - 1; i++)
+				out += dateList.get(i) + "-";
+
+			out += dateList.get(dateList.size() - 1);
+		}
+		return out;
+	}
+
 }

@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.PP;
 
 import DAO.DBUtils;
+import GSON.Cloud;
 import GSON.ObjectElement;
 import GSON.QueryElements;
 import com.google.gson.Gson;
@@ -30,6 +31,9 @@ import com.google.gson.Gson;
  */
 @WebServlet("/RequestJoinObject")
 public class RequestJoinObject extends HttpServlet {
+	
+	int maxCloudsIds = 0;
+	
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -72,15 +76,16 @@ public class RequestJoinObject extends HttpServlet {
 		Gson gson = new Gson();
 
 		QueryElements qe = gson.fromJson(key, QueryElements.class);
+		
 		Map<String, String> domainElementsPlusTable = new HashMap<String, String>();
-		domainElementsPlusTable.put("Chi", "persona.id");
-		domainElementsPlusTable.put("Dove", "evento.id");
-		domainElementsPlusTable.put("Quando", "evento.id");
+		domainElementsPlusTable.put("Persone", "persona.id");
+		domainElementsPlusTable.put("Luoghi", "idevento");
+		domainElementsPlusTable.put("Tempi", "iniziotempo");
 
 		String whereCondition = "";
 
 		for (Entry<String, String> entry : domainElementsPlusTable.entrySet()) {
-			//System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+			System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 
 			List<ObjectElement> domainElementsList = null;
 
@@ -168,8 +173,14 @@ public class RequestJoinObject extends HttpServlet {
 			DBUtils.closeConnection();
 		}
 
-		System.out.println("n° elementi " + ii);
-		String out = gson.toJson(personePartecipanti);
+		System.out.println("nÂ° elementi " + ii);
+		
+		Cloud c = new Cloud();
+		c.setId(maxCloudsIds++);
+		c.setName("Elemento dal db " + c.getId());
+		c.setElements(personePartecipanti);
+		c.setDomain("crimini");
+		String out = gson.toJson(c);
 		System.out.println("out Join " + out);
 		// creazione json di risposta
 		response.setContentType("application/json");

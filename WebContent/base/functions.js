@@ -19,6 +19,15 @@ function concatena(arguments) {
 	return outText;
 }
 
+function listTodate(arguments) {
+	var outText = "";
+	for (var i = 0; i < arguments.length; i++) {
+		outText += arguments[i] + "-";
+	}
+	
+	return outText;
+}
+
 function toList(arguments) {
 	return arguments;
 }

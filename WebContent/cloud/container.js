@@ -11,8 +11,11 @@ function createContainer(destinationDivId, containerOptions, defaultOption,
 	}
 	// abilito il trascinamento del container dei viewer
 	// $("#" + destinationDivId).draggable();
-	if (optional && optional.isGenerator)
+	if (optional && optional.isGenerator) {
 		$("#" + destinationDivId).append('<div id="bubble_values"></div>');
+		createCloudGenerator(destinationDivId, containerOptions,
+				optional.domain);
+	}
 }
 
 function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
@@ -164,8 +167,7 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 
 					var oldNextDivId = $("#" + divId).data("next");
 
-					// assegno come sorgente l'attuale cioè viewer con id =
-					// 'id'
+					// assegno come sorgente l'attuale cioè viewer con id = 'id'
 					Viewer(destinationDivId, viewerOptions, viewOption, newId,
 							id, $("#" + oldNextDivId).data("id"));
 
@@ -218,7 +220,7 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 	}
 
 	function getIdField() {
-		if (data == null || !testView())
+		if (data == null)
 			return null;
 		else {// ritorna il campo id se definito nella view altrimenti usa il
 			// prmo campo di columns
@@ -228,7 +230,9 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 	}
 
 	function testView() {
-		if (domainDescription == null || domainDescription[viewOption] == null) {
+
+		if (domainDescription == null || domainDescription[viewOption] == null
+				|| data.elements[0][getIdField()] == null) {
 			$("#" + bodyDivId).html(
 					"I dati non consentono questa visualizzazione");
 			return false;
@@ -239,18 +243,19 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 	selectMenu.on('change', function(e) {
 
 		viewOption = $(this).val();
-
-		if (!testView())
-			return;
-
 		type = domainDescription[viewOption].type;
 		selectedIdList = [];
 		idField = getIdField();
 
-		if (isGenerator) {
+		if (isGenerator)
 			data = dataInput[viewOption];
+
+		if (!testView())
+			return;
+
+		if (isGenerator)
 			initViewer(data);
-		} else
+		else
 			// scatena l'evento tutti per riaggiornare il viewer e gli altri a
 			// cascata
 			$("#" + formId + '-radio-choice-' + 0 + '-fieldset-' + id).trigger(
@@ -271,25 +276,41 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 						// console.log("mapClicked", idValue, isSelected);
 						// idValue = il campo id per la selezione attuale
 						// isSelected = true se l'elemento è selezionato
-						// console.log("idValue", idValue);
-						// console.log("data", data);
 
 						if (isGenerator) {
-							var bubbleField = domainDescription[viewOption]["bubble-label"];
-							var idField = domainDescription[viewOption]["id"];
-							// console.log('bubbleField', bubbleField);
+							var bubbleLabelField = domainDescription[viewOption]["bubble-label"];
+							var bubbleValueField = domainDescription[viewOption]["bubble-value"];
+							var idField = getIdField();
+							// console.log('bubbleLabelField',
+							// bubbleLabelField);
 							var obj = dataView.elements.findById(idField,
 									idValue);
-							var txt = obj[bubbleField];
-							var bubbleId = 'bubble_value_'
-									+ txt.replace(/ /g, "_");
+
+							var txt = obj[bubbleLabelField];
+							console.log(obj, idField, txt, bubbleLabelField);
+							var bubbleId;
+
+							if (obj[bubbleValueField] instanceof Array)
+								idValue = obj[bubbleValueField].toString()
+										.replace(/,/g, "-");
+							else
+								idValue = obj[bubbleValueField];
+
+							bubbleId = 'bubble-value-' + idValue;
 
 							if (isSelected) {
 								var bubbleContent = '<div id="' + bubbleId
 										+ '" class="bubble_value">' + txt
 										+ '</div>';
 								$("#bubble_values").append(bubbleContent);
-								$("#" + bubbleId).data("idValue", idValue)
+
+								if (domainDescription[viewOption].type == "timeline")
+									$("#" + bubbleId).data("idValue",
+											"'" + idValue + "'");
+								else
+									$("#" + bubbleId).data("idValue", idValue);
+
+								$("#" + bubbleId)
 										.data("viewOption", viewOption)
 										.draggable();
 							} else {
@@ -361,14 +382,12 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 						if (isPresent)
 							selected_new.push(selectedIdList[i]);
 					}
-
 					selectedIdList = selected_new;
 				}
 
 				// proiezione dei campi rispetto alle colonne specificate nella
 				// view selezionata
 				// recupero le colonne della proiezione
-				// var columns = data["views"][viewOption].columns;
 				var columnsAll = domain[viewOption]["columns"];
 				// console.log(columnsAll);
 				// test per verificare se i campi di columns sono presenti negli
@@ -571,8 +590,6 @@ function createCloudGenerator(destinationDivId, containerOptions, domainName) {
 	var viewOption;
 	var outCloudId = 0;
 
-	console.log("domainName", domainName);
-
 	$("#" + destinationDivId)
 			.append(
 					'<table id="'
@@ -635,22 +652,11 @@ function createCloudGenerator(destinationDivId, containerOptions, domainName) {
 			error : function() {
 				alert("Error Occured");
 			},
-			success : function(elements) {
-				$("#" + destinationDivId).trigger('save', [ elements ]);
+			success : function(d) {
+				console.log("server respond: ", d);
+				createDraggableCloud('draggable-container', d, "");
 			}
 		});
-	});
-
-	$("#" + destinationDivId).on('save', function(t, elements) {
-
-		dataOut = {};
-		dataOut.id = outCloudId++;
-		dataOut.name = "Elementi dal db " + dataOut.id;
-		dataOut.elements = elements;
-		domain = getJSON("data/" + domainName + ".dom.json");
-		dataOut.domain = domainName;
-		console.log(dataOut.elements);
-		createDraggableCloud('draggable-container', dataOut, "");
 	});
 
 	$(".table-clear", $("#" + tableId)).click(

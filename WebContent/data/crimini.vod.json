@@ -2,18 +2,12 @@
 	"chi": {
 		"type": "table",
 		"id": "id",
-		"image": "immagine",
-		"bubble-label" : "nome"
-	},
-	"cosa": {
-		"type": "table",
-		"id": "idPersona"
+		"image": "immagine"
 	},
 	"dove": {
 		"type": "geomap",
 		"id": "idEvento",
-		"name": "nomeEvento",
-		"bubble-label" : "nomeEvento"
+		"name": "nomeEvento"
 	},
 	"quando": {
 		"type": "timeline",
