@@ -1,0 +1,23 @@
+{
+	"chi": {
+		"type": "table",
+		"id": "id",
+		"image": "immagine",
+		"bubble-label" : "nome"
+	},
+	"cosa": {
+		"type": "table",
+		"id": "idPersona"
+	},
+	"dove": {
+		"type": "geomap",
+		"id": "idEvento",
+		"name": "nomeEvento",
+		"bubble-label" : "nomeEvento"
+	},
+	"quando": {
+		"type": "timeline",
+		"id": "idEvento",
+		"name": "nomeEvento"
+	}
+}

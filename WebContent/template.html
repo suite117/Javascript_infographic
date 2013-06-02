@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<!-- Inclusioni di funzionalità base implementate utilizzate dai wrapper e dai viewer -->
+		<script type="text/javascript" src="../base/utils.js"></script>
+		<script type="text/javascript" src="../base/array.js"></script>
+
+		<!-- Inclusione libreria JQuery 1.9.1 -->
+		<!--// <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script> -->
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+
+		<!-- Inclusione libreria JQuery UI e del relativo template css -->
+		<link href="../lib/jquery/css/blue-theme/jquery-ui-1.10.2.custom.css" rel="stylesheet">
+		<script src="../lib/jquery/js/jquery-ui-1.10.2.custom.js"></script>
+
+		<!-- Inclusione della libreria JQuery mobile per i bottoni -->
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.css" />
+		<script src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
+		<link rel="stylesheet" href="../lib/jquery/themes/blue-theme.min.css" />
+
+		<!-- Inclusione libreria grafica D3 -->
+		<script type="text/javascript" src="../lib/d3/d3.v3.min.js"></script>
+
+		<!-- Inlcusione della mappa per gestire le nuvole -->
+		<script type="text/javascript" src="../cloud/cloud.js"></script>
+		<!-- Inlcusione della mappa per gestire i viewer -->
+		<script type="text/javascript" src="../cloud/container.js"></script>
+
+		<!-- Inclusione del plugin JQuery DataTables -->
+		<script type="text/javascript" src="../table/dataTables.js"></script>
+		<!-- inclusione del wrapper per la mappa che usa DataTables -->
+		<script type="text/javascript" src="../table/table.js"></script>
+		<link type="text/css" rel="stylesheet" href="../table/styles/table.css" />
+
+		<!-- Inclusione del wrapper per la mappa che usa il tree di D3 e relativo foglio di stile -->
+		<script type="text/javascript" src="../tree/tree.js"></script>
+		<link type="text/css" rel="stylesheet" href="../tree/style.css" />
+
+		<!-- Inclusione della libreria leaflet e relativo foglio di stile  per la gestione delle mappe geografiche -->
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
+		<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+
+		<!-- Mappe geografiche - Inclusioni ulteriori per la gestione delle torte -->
+		<script src="../geomap/piechart/Semicircle.js"></script>
+		<script src="../geomap/piechart/Pie.js"></script>
+
+		<!-- Inclusione del wrapper per la mappa gografica che usa Leaflet e relativo foglio di stile -->
+		<script type="text/javascript" src="../geomap/geomap.js"></script>
+		<link rel="stylesheet" href="../geomap/geomap.css" />
+
+		<!-- Timeline -->
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript" src="../timeline/lib/timeline-locales.js"></script>
+		<script type="text/javascript" src="../timeline/lib/timeline-lib.js"></script>
+		<link rel="stylesheet" type="text/css" href="../timeline/styles/timeline.css">
+		<script type="text/javascript" src="../timeline/timeline.js"></script>
+
+		<!-- Main dell'applicazione e relativo foglio di stile -->
+		<link type="text/css" rel="stylesheet" href="../style.css" />
+
+		<title>D3 Clouds and Maps + JQuery Maps + Leaflet</title>
+		<script type="text/javascript">
+			if ( typeof jQuery == 'undefined')
+				alert("jQuery Non Found!.");
+		</script>
+	</head>
+
+	<body>
+		<div id="debug"></div>
+		
+
+		<div id="info"></div>
+		<div id="draggable-container" class="draggable-container">
+			&nbsp;
+		</div>
+		<div id="views-container" class="views-container">
+			&nbsp;
+		</div>
+
+	</body>
+
+</html>

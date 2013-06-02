@@ -1,0 +1,302 @@
+/* JQuery UI Fix */
+
+.ui-extra-icon {
+
+	float: right;
+	width: 16px;
+	height: 16px;
+}
+
+.ui-menu {
+	width: 150px;
+}
+
+.settings {
+	float: right;
+	position: relative;
+	right: 14px;
+	top: -70px;
+}
+
+div.ui-controlgroup-horizontal .ui-controlgroup-controls:after {
+	clear: none;
+}
+
+/* JQuery Mobile Fix */
+.ui-fullsize, .ui-fullsize .ui-btn-inner {
+	font-size: 12px !important;
+}
+
+form div.ui-select {
+	display: block;
+	left: 217px;
+	position: relative;
+	top: -38px;
+	width: 30%;
+	z-index: 100;
+}
+
+form div.ui-slider:after {
+	clear: none;
+}
+
+div .ui-icon, div .ui-icon-searchfield:after {
+	background-color: transparent;
+}
+
+/* MAIN */
+body {
+	font-size: 11px;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+.ui-body-c, .ui-overlay-c {
+	background: white;
+}
+
+/* Generatore di valori */
+#values_generator div.ui-select {
+	display: block;
+	left: 15px;
+	position: relative;
+	top: 0;
+	width: 90%;
+	z-index: 100;
+}
+
+#values_generator .view-header {
+	height: 51px;
+}
+
+#bubble_values {
+	width: 240px;
+	float: left;
+	margin: 10px;
+}
+.bubble_value {
+	background-color: #8C9DAF;
+	border-radius: 5px 5px 5px 5px;
+	color: white;
+	padding: 10px;
+	text-align: center;
+	text-shadow: 1px 0 #8C9DAF;
+	margin: 0 5px 10px;
+	z-index: 100;
+	width: 90px;
+	float: left;
+}
+
+/* Cloud generator */
+.cloud-generator {
+	border-collapse: collapse;
+	left: 10px;
+	position: relative;
+}
+.cloud-generator td {
+	border: 1px solid black;
+	width: 140px;
+	padding: 5px;
+	height: 50px;
+}
+
+.cloud-generator .table-noborder {
+	border: medium none;
+	padding-right: 10px;
+	text-align: right;
+	width: 50px;
+}
+
+/* container */
+.views_container {
+	border: 2px solid #E2E4FF;
+	padding: 5px;
+	width: 99%;
+	border-radius: 10px;
+	margin-bottom: 10px;
+	clear: both;
+}
+
+.views_container:after {
+	/* Prevent wrapper from shrinking height,
+	 see http://www.positioniseverything.net/easyclearing.html */
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+/* Viewer */
+.viewer {
+	float: left;
+	width: 33%;
+	height: 500px;
+	margin-bottom: 170px;
+}
+
+.viewer .droppable {
+	border-color: #5A99C9;
+	border-image: none;
+	border-radius: 70px 70px 0 0;
+	border-style: solid solid none;
+	border-width: 2px 2px 1px;
+	height: 100px;
+	left: 36%;
+	position: relative;
+	top: 1px;
+	width: 130px;
+}
+
+.cloud-generator .over, .viewer .over {
+	background-color: orange;
+}
+
+.viewer .view-buttons {
+	border: 2px solid #5A99C9;
+	border-radius: 10px 10px 0 0;
+	height: 46px;
+	padding: 2px 0 0 10px;
+}
+
+.view-buttons .ui-slider-switch {
+	width: 12em
+}
+
+.viewer .view-header {
+	height: 150px;
+	width: 100%;
+}
+.viewer .viewer-body {
+	width: 99.1%;
+	height: 100%;
+	border: 2px solid #5A99C9;
+	overflow: auto;
+	border-radius: 0 0 10px 10px;
+}
+
+/* clouds  map */
+#clouds {
+	width: 500px;
+	float: left;
+	margin-left: 10px;
+	width: 880px;
+}
+
+#clouds svg {
+	border: 2px solid #E2E4FF;
+	border-radius: 10px 10px 10px 10px;
+}
+
+/* draggable clouds container */
+#draggable-container {
+    float: left;
+    height: 95px;
+    margin-left: 10px;
+    position: relative;
+    top: 56px;
+    width: 880px;
+}
+
+div.draggable {
+	float: left;
+	display: inline;
+	z-index: 10;
+}
+div.draggable svg {
+	height: 100px;
+	width: 120px;
+}
+
+g.button rect {
+	fill: steelblue;
+	stroke: black;
+}
+
+g text {
+	font-size: 36px;
+	font-family: Sans;
+	font-style: normal;
+	font-weight: normal;
+	letter-spacing: 0;
+}
+
+g.button text {
+	fill: #fff;
+	fill-opacity: 1;
+	stroke: none;
+}
+
+g.cloud path {
+	opacity: 1;
+	fill: #ffffff;
+	fill-opacity: 1;
+	stroke: #000000;
+	stroke-width: 5;
+	stroke-linecap: butt;
+	stroke-linejoin: round;
+	stroke-miterlimit: 4;
+	stroke-dasharray: none;
+	stroke-dashoffset: 0;
+	stroke-opacity: 1;
+}
+
+g.under path {
+	stroke: steelblue;
+}
+
+g.active path {
+	stroke: orange;
+}
+
+g.button {
+	visibility: hidden;
+}
+
+/* g.near g.button {
+
+ } */
+
+/* legenda colori */
+div#legend {
+	border: 2px solid #E2E4FF;
+	border-radius: 10px 10px 10px 10px;
+	float: right;
+	padding: 0 5px;
+	position: absolute;
+	right: 10px;
+	top: 14px;
+	width: 166px;
+}
+
+g.cloud path.chi {
+	stroke: #5A99C9;
+}
+
+li.legend-chi {
+	color: #5A99C9;
+}
+
+g.cloud path.dove {
+	stroke: #2BCB7E;
+}
+
+li.legend-dove {
+	color: #2BCB7E;
+}
+
+g.cloud path.cosa {
+	stroke: #FF7F0E;
+}
+
+li.legend-cosa {
+	color: #FF7F0E;
+}
+
+g.cloud path.quando {
+	stroke: #DAA520;
+}
+
+li.legend-quando {
+	color: #DAA520;
+}
+

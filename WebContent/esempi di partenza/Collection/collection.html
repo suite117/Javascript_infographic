@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Extending JavaScript Arrays And Keeping Native Features</title>
+
+<!-- Include the Collection class. -->
+<script type="text/javascript" src="collection.js"></script>
+<script type="text/javascript">
+	// Create a new collection with default values.
+	var friends = new Collection("Sarah");
+
+	// Use collection-based API to populate.
+	friends.addAll("Tricia", "Joanna");
+
+	// Use native array functionality to populate.
+	friends[3] = "Kit";
+	friends[4] = "Anna";
+
+	// Use native array functionality to remove.
+	friends.splice(0, 1);
+
+	// Log the current friends collection.
+	document.write(friends);
+	document.write("Length:", friends.length);
+</script>
+</head>
+<body>
+	<!-- Left intentionally blank. -->
+</body>
+</html>

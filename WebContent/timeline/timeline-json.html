@@ -1,0 +1,118 @@
+<html>
+	<head>
+		<title>Timeline JSON data</title>
+
+		<!-- Inclusioni di funzionalità base implementate utilizzate dai wrapper e dai viewer -->
+		<script type="text/javascript" src="../base/utils.js"></script>
+		<script type="text/javascript" src="../base/array.js"></script>
+
+		<!-- Inclusione libreria JQuery 1.9.1 -->
+		<!--// <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script> -->
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+
+		<!-- Timeline -->
+		<script type="text/javascript" src="lib/timeline-locales.js"></script>
+
+		<link rel="stylesheet" type="text/css" href="styles/timeline.css">
+		<script type="text/javascript" src="lib/timeline-min.js"></script>
+		<script type="text/javascript" src="timeline.js"></script>
+
+		<script type="text/javascript">
+			var events = getJSON("../data/pp.json");
+			var data = events.removeDuplicates("idEvento");
+			function newDate(date) {
+				console.log(date[0]);
+				var d = new Date(date[0]);
+				return d;
+			}
+
+			var mapping = {
+				"content" : "nomeEvento",
+				"start" : [newDate, "start"],
+				//"end" : [newDate, "end"]
+			};
+			
+			for (var i = 0; i < data.length; i++) {
+				data[i].start =convertListToDate(data[i].start); 
+				console.log(data[i].start);
+			}
+
+			//data = elementsUnique.map1(mapping);
+		</script>
+		
+
+		<script type="text/javascript">
+			var timeline;
+			var data;
+
+			// Called when the Visualization API is loaded.
+			function drawVisualization() {
+				// Create a JSON data table
+				data1 = [{
+					'start' : new Date(2010, 7, 23),
+					'content' : 'Conversation<br><img src="images/comments-icon.png" style="width:32px; height:32px;">'
+				}, {
+					'start' : new Date(2010, 7, 23, 23, 0, 0),
+					'content' : 'Mail from boss<br><img src="images/mail-icon.png" style="width:32px; height:32px;">'
+				}, {
+					'start' : new Date(2010, 7, 24, 16, 0, 0),
+					'content' : 'Report'
+				}, {
+					'start' : new Date(2010, 7, 26),
+					'end' : new Date(2010, 8, 2),
+					'content' : 'Traject A'
+				}, {
+					'start' : new Date(2010, 7, 28),
+					'content' : 'Memo<br><img src="images/notes-edit-icon.png" style="width:48px; height:48px;">'
+				}, {
+					'start' : new Date(2010, 7, 29),
+					'content' : 'Phone call<br><img src="images/Hardware-Mobile-Phone-icon.png" style="width:32px; height:32px;">'
+				}, {
+					'start' : new Date(2010, 7, 31),
+					'end' : new Date(2010, 8, 3),
+					'content' : 'Traject B'
+				}, {
+					'start' : new Date(2010, 8, 4, 12, 0, 0),
+					'content' : 'Report<br><img src="images/attachment-icon.png" style="width:32px; height:32px;">'
+				}];
+
+				// specify options
+				var options = {
+					'width' : '100%',
+					'height' : '300px',
+					'editable' : false, // enable dragging and editing events
+					'style' : 'box'
+				};
+
+				console.log(data);
+
+				// Instantiate our timeline object.
+				timeline = new links.Timeline(document.getElementById('mytimeline'));
+
+				function onRangeChanged(properties) {
+					document.getElementById('info').innerHTML += 'rangechanged ' + properties.start + ' - ' + properties.end + '<br>';
+				}
+
+				function onClick(properties) {
+					console.log('click ' + properties.start + ' - ' + properties.end);
+				}
+
+				// attach an event listener using the links events handler
+				links.events.addListener(timeline, 'rangechanged', onRangeChanged);
+				links.events.addListener(timeline, 'click', onClick);
+				// Draw our timeline with the created data and options
+				timeline.draw(data, options);
+			}
+		</script>
+	</head>
+
+	<body onload="drawVisualization();">
+		<h1>Timeline JSON data</h1>
+
+		<div id="mytimeline"></div>
+
+		<div id="info"></div>
+
+	</body>
+</html>

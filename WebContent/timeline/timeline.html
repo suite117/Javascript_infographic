@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Timeline demo</title>
+		<!-- Inclusioni di funzionalità base implementate utilizzate dai wrapper e dai viewer -->
+		<script type="text/javascript" src="../base/utils.js"></script>
+		<script type="text/javascript" src="../base/array.js"></script>
+		
+		<!-- Inclusione libreria JQuery 1.9.1 -->
+		<!--// <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script> -->
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+
+		<!-- Timeline -->
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript" src="lib/timeline-locales.js"></script>
+		<script type="text/javascript" src="lib/timeline-lib.js"></script>
+		<link rel="stylesheet" type="text/css" href="styles/timeline.css">
+		<script type="text/javascript" src="timeline.js"></script>
+
+		<script type="text/javascript">
+			var events = getJSON("../data/pp.json");
+			var elementsUnique = events.removeDuplicates("idEvento");
+			var t = new Timeline('view_container_0', 'idEvento', elementsUnique, {
+				name : "nomeEvento"
+			});
+
+			t = new Timeline('view_container_1', 'idEvento', elementsUnique, {
+				name : "nomeEvento"
+			});
+		</script>
+
+	</head>
+
+	<body>
+		
+			<div id="view_container_0"></div>
+			<div id="view_container_1"></div>
+		
+		<div id="info"></div>
+	</body>
+</html>

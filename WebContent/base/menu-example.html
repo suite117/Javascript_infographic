@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>jQuery UI Menu - Icons</title>
+		<!-- Inclusioni di funzionalità base implementate utilizzate dai wrapper e dai viewer -->
+		<script type="text/javascript" src="utils.js"></script>
+		<script type="text/javascript" src="array.js"></script>
+
+		<link rel="stylesheet" href="../style.css" />
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+
+		<link href="../lib/jquery/css/blue-theme/jquery-ui-1.10.2.custom.css" rel="stylesheet">
+		<script src="../lib/jquery/js/jquery-ui-1.10.2.custom.js"></script>
+
+		<script type="text/javascript">
+			// triangle : "circle-triangle-e"
+
+			var menuItems = getJSON(baseUrl + "base/menuItems.json");
+			$(document).ready(function() {
+				var dataOut = {
+					name : "ciao"
+				};
+
+				menuItems[0]["click"] = function(e) {
+					// save button
+					$(e).trigger('save', ['data.json', dataOut]);
+				};
+
+				menuItems[1]["click"] = function(e) {
+					// open  button
+					console.log('open', e);
+					$(e).trigger('open', "menuOut");
+				};
+
+				var $div = $('#menu-container');
+
+				UICompactMenu($div, menuItems, {
+					//css_class : 'settings1',
+					image : baseUrl + 'base/images/settings.png',
+					show : true
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="menu-container">
+			&nbsp;
+		</div>
+		<div id="container">
+			<h3>Contents of the Text file:</h3>
+			<div id="menuOut">
+				...
+			</div>
+		</div>
+	</body>
+</html>

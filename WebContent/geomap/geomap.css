@@ -1,0 +1,12 @@
+/* Pie */
+svg.leaflet-zoom-animated g text {
+	fill: black;
+	stroke: black;
+	font-size: 14px;
+	font-family: "Verdana";
+}
+
+svg.leaflet-zoom-animated path.leaflet-clickable {
+	stroke-width: 3;
+}
+
