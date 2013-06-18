@@ -9,6 +9,6 @@
 		"columns": ["idEvento", "lat", "lon", "nomeEvento"]
 	},
 	"quando": {
-		"columns": ["idEvento", "start", "end"]
+		"columns": ["idEvento", "start", "end", "nomeEvento"]
 	}
 }

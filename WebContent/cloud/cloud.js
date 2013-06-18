@@ -250,7 +250,7 @@ function createDraggableCloud(divId, d, viewOption) {
 	cursor : "move",
 	// drag start
 	start : function(event, ui) {
-	    $(this).css("position", "absolute").css("left", event.clientX).css("top", event.clientY);
+	    $(this).css("position", "relative").css("left", event.clientX).css("top", event.clientY);
 	},
 	// drag stop
 	stop : function(event, ui) {

@@ -416,7 +416,8 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 						// selezionata
 						// recupero le colonne della proiezione
 						var columnsAll = domain[viewOption]["columns"];
-						// console.log(columnsAll);
+						if (type == "timeline")
+							console.log(columnsAll);
 						// test per verificare se i campi di columns sono
 						// presenti negli oggetti
 						if (elementsUnique[0] != null) {
@@ -435,9 +436,9 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 						// aggiorno i valori per l'autocomplete
 						var autoCompleteOptions = domainDescription[viewOption]["autocomplete"];
 
-						if (!$autoCompleteTxt || viewChanged) // Creazione
-																// widget per
-																// l'autocompletamento
+						if (isGenerator && (!$autoCompleteTxt || viewChanged)) // Creazione
+							// widget per
+							// l'autocompletamento
 							$autoCompleteTxt = createAutoCompleteText(0,
 									formId, elementsUniqueProj,
 									autoCompleteOptions);
@@ -524,7 +525,9 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 	$("#" + divId + " .droppable").droppable({
 		tolerance : 'touch',
 		over : function() {
-			$(this).removeClass('out').addClass('over');
+			// console.log(id);
+			if (id != 0)
+				$(this).removeClass('out').addClass('over');
 		},
 		out : function(event, ui) {
 			$(this).removeClass('over').addClass('out');
@@ -602,6 +605,7 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 			});
 			break;
 		case "timeline":
+			console.log(elementsUnique, viewOptions.id, viewOptions.name);
 			map = new Timeline(bodyDivId, elementsUnique, viewOptions.id, {
 				name : viewOptions.name,
 				width : "99%",
@@ -816,8 +820,8 @@ function createAutoCompleteText(number, formId, data, autoCompleteOpt) {
 		minLength : 0,
 		source : function(request, response) {
 			var matches = $.map(data, function(item) {
-				console.log("request.term", request.term);
-				console.log("item", item);
+				// console.log("request.term", request.term);
+				// console.log("item", item);
 				if (item[autoCompleteOptions.label].toUpperCase().indexOf(
 						request.term.toUpperCase()) != -1) {
 					return item;

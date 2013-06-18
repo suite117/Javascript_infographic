@@ -17,6 +17,8 @@ function Timeline(destinationDivId, data, idField, optional) {
 		this.width = optional["width"] ? optional["width"] : this.width;
 		this.height = optional["height"] ? optional["height"] : this.height;
 	}
+	
+	console.log("this.name", this.name);
 
 	this.columns = [ [ 'datetime', this.start ], [ 'datetime', this.end ],
 			[ 'string', 'content' ] ];
