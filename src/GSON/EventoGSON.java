@@ -2,12 +2,10 @@ package GSON;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import model.Evento;
-import DAO.EventoDAO;
 
 import com.google.gson.Gson;
 
@@ -15,8 +13,8 @@ public class EventoGSON {
 
 	public static void main(String[] args) {
 
-		EventoDAO eventoDAO = new EventoDAO(Evento.class);
-		List<Evento> events = new ArrayList();
+		//EventoDAO eventoDAO = new EventoDAO(Evento.class);
+		List<Evento> events = new ArrayList<Evento>();
 
 		for (int i = 0; i < 100; i++) {
 			Evento event = new Evento();

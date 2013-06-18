@@ -1,6 +1,7 @@
+package servlet;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import model.Evento;
+import model.Citta;
 import model.Persona;
 import model.Tempo;
 
@@ -41,12 +42,16 @@ public class RequestObject extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// doPost(request, response);
 		String elementName = request.getParameter("element");
+		//Map<String, String> whereConditions = new HashMap<String,String>();
 
 		List<Persona> persone = new ArrayList<Persona>();
-		List<Evento> eventi = new ArrayList<Evento>();
+		List<Citta> cittaList = new ArrayList<Citta>();
 		List<Tempo> tempi = new ArrayList<Tempo>();
 
-		String tableName = null;
+		// in queste condizioni lo switch permette di restringere i casi e
+		// prevenire la sql injection
+		String tableName = "";
+		String whereCondition = "";
 		switch (elementName) {
 		case "persone":
 			tableName = "persona";
@@ -55,14 +60,14 @@ public class RequestObject extends HttpServlet {
 			tableName = "persona";
 			break;
 		case "luoghi":
-			tableName = "evento";
+			tableName = "citta";
+			whereCondition = "CAPOLUOGO_PROVINCIA=1";
 			break;
 		case "tempi":
-			// tableName = "evento";
 			for (int i = 1; i < 30; i++) {
 				Tempo tempo = new Tempo();
 				tempo.setIdTempo(i);
-				if (i<=9)
+				if (i <= 9)
 					tempo.setStart(DBUtils.dateStringToIntegerList("2013-01-0" + i));
 				else
 					tempo.setStart(DBUtils.dateStringToIntegerList("2013-01-" + i));
@@ -70,63 +75,57 @@ public class RequestObject extends HttpServlet {
 				tempi.add(tempo);
 			}
 			break;
+		default:
+			System.err.println("Richiesta elemento errato " + elementName);
+			return;
 		}
 
-		if (tableName != null)
-			try {
-				DBUtils.openConnection();
-				String querystring = "SELECT * FROM " + tableName;
+		try {
+			ResultSet rs = DBUtils.executeQuery(tableName, whereCondition);
 
-				// System.out.println("query: " + querystring);
+			while (rs.next()) {
+				switch (elementName) {
+				case "persone":
+					Persona persona = new Persona();
+					persona.setId(rs.getInt(1));
+					persona.setNome(rs.getString(2));
+					persona.setImmagine("table/images/user-icon.jpg");
+					persona.setDatanascita(DBUtils.dateStringToIntegerList(rs.getString(3)));
+					persone.add(persona);
+					break;
+				case "luoghi":
 
-				PreparedStatement ptmt = DBUtils.getConnection().prepareStatement(querystring);
-				ResultSet rs = ptmt.executeQuery();
-
-				while (rs.next()) {
-					switch (elementName) {
-					case "persone":
-						Persona persona = new Persona();
-						persona.setId(rs.getInt(1));
-						persona.setNome(rs.getString(2));
-						persona.setImmagine("table/images/user-icon.jpg");
-						persona.setDatanascita(DBUtils.dateStringToIntegerList(rs.getString(3)));
-						persone.add(persona);
-						break;
-					case "luoghi":
-						Evento evento = new Evento();
-						evento.setIdEvento(rs.getInt(1));
-						evento.setNomeEvento("evento " + evento.getIdEvento());
-						evento.setStart(DBUtils.dateStringToIntegerList(rs.getString(2)));
-						evento.setEnd(DBUtils.dateStringToIntegerList(rs.getString(3)));
-						evento.setLat(53.73 - 1.5 * Math.random());
-						evento.setLon(-0.30 - 1.5 * Math.random());
-						evento.setIdEventType((int) Math.round(Math.random() * 100));
-						eventi.add(evento);
-						break;
-					}
+					Citta citta = new Citta();
+					citta.setIdCitta(rs.getInt(1));
+					citta.setName(rs.getString(2));
+					citta.setLat(rs.getDouble(4));
+					citta.setLon(rs.getDouble(5));
+					cittaList.add(citta);
+					break;
 				}
-
-			} catch (SQLException e) {
-				System.err.println(e.getMessage());
-			} finally {
-				DBUtils.closeConnection();
 			}
+		} catch (SQLException e) {
+			// e.printStackTrace();
+		} finally {
+			DBUtils.closeConnection();
+		}
 
 		Gson gson = new Gson();
 		String outJSON = null;
+		
 		switch (elementName) {
 		case "persone":
 			outJSON = gson.toJson(persone);
 			break;
 		case "luoghi":
-			outJSON = gson.toJson(eventi);
+			// outJSON = gson.toJson(eventi);
+			outJSON = gson.toJson(cittaList);
 			break;
 		case "tempi":
 			outJSON = gson.toJson(tempi);
 		}
 
-		
-			System.out.println("out " + outJSON);
+		System.out.println("out " + outJSON);
 		// creazione json di risposta
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
@@ -134,5 +133,4 @@ public class RequestObject extends HttpServlet {
 		pw.write(outJSON);
 		pw.close();
 	}
-
 }

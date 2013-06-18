@@ -44,13 +44,13 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 	var nextDivId = prefix + nextId;
 
 	// base di dati - query complessa
-	var data;
+	var data = null;
 	// variabile contenente l'oggetto caricato dal file
 	// "data/[domainName].dom.json"
 	var domain;
 	// variabile contenente l'oggetto caricato dal file
 	// "data/[domainName].vod.json"
-	var domainDescription;
+	var domainDescription = null;
 	// elementi in uscita alla vista attuale
 	var dataOut;
 	// variabile relativa al wrapper della mappa
@@ -71,6 +71,9 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 	// base di dati per la proiezione corrente
 	var dataView = [];
 
+	// variabile che punta all'autocompletamento
+	var $autoCompleteTxt = null;
+
 	// creazione della barra dei bottoni
 	var divContent = '<div id="'
 			+ divId
@@ -83,15 +86,30 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 			+ formId + '"></form></div></div><div id="' + bodyDivId
 			+ '" class="viewer-body">&nbsp;</div></div>';
 
-	if (id == 0)
+	if (id == 0) {
 		$('#' + destinationDivId).append(divContent);
-	else
+	} else
 		$("#" + prevDivId).after(divContent);
 
+	// css fix for Chrome and IE
+	if (!isGenerator && navigator.userAgent.indexOf("Firefox") == -1) {
+		$("#" + bodyDivId).css("top", "-72px");
+	}
+
+	// Se è un generatore elimino il tondino per l'aggancio della nuvola
 	if (isGenerator)
 		$(".droppable", $('#' + destinationDivId)).css("display", "none");
 
-	// $("#" + divId).resizable();
+	$("#" + divId).resizable();
+	// fix - imposto timeout in ms per aggiornare la mappa quando si
+	// ridimensiona
+	var doit = null;
+	$("#" + divId).resize(function() {
+		clearTimeout(doit);
+		doit = setTimeout(function() {
+			$("#" + divId).trigger('stateChanged', [ true, false, true ]);
+		}, 500); // durata timeout
+	});
 
 	// conservo id DOM del viewer precedente
 	$("#" + divId).data("prev", prevDivId);
@@ -121,6 +139,7 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 									forceVal ? true : false ]);
 				});
 	}
+
 	// creazione menu del viewer con opzioni
 	var selectMenu = createSelectMenu(id, formId, viewerOptions, defaultOption);
 
@@ -231,7 +250,11 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 
 	function testView() {
 
-		if (domainDescription == null || domainDescription[viewOption] == null
+		if (data.elements == []) {
+			$("#" + bodyDivId).html("Insieme vuoto.");
+			return false;
+		} else if (domainDescription == null
+				|| domainDescription[viewOption] == null
 				|| data.elements[0][getIdField()] == null) {
 			$("#" + bodyDivId).html(
 					"I dati non consentono questa visualizzazione");
@@ -287,7 +310,7 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 									idValue);
 
 							var txt = obj[bubbleLabelField];
-							console.log(obj, idField, txt, bubbleLabelField);
+							// console.log(obj, idField, txt, bubbleLabelField);
 							var bubbleId;
 
 							if (obj[bubbleValueField] instanceof Array)
@@ -344,95 +367,110 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 
 					});
 
-	$("#" + divId).on(
-			"stateChanged",
-			function(t, sourceChanged, mapClicked, viewChanged) {
+	$("#" + divId)
+			.on(
+					"stateChanged",
+					function(t, sourceChanged, mapClicked, viewChanged) {
 
-				// console.log("input to stateChanged " + divId, data.elements);
+						// console.log("input to stateChanged " + divId,
+						// data.elements);
 
-				// recupero il campo id della proiezione attuale
-				var idField = getIdField();
-				if (!testView())
-					return;
-				// rimuove i duplicati
-				// console.log("dataView", dataView);
-				var elementsUnique;
-				if (isGenerator)
-					elementsUnique = dataView.elements;
-				else
-					elementsUnique = dataView.elements
-							.removeDuplicates(idField);
+						// recupero il campo id della proiezione attuale
+						var idField = getIdField();
+						if (!testView())
+							return;
 
-				// console.log("elementsUnique", elementsUnique);
+						// console.log("dataView", dataView);
+						var elementsUnique;
+						if (isGenerator)
+							elementsUnique = dataView.elements;
+						else
+							// rimozione duplicati
+							elementsUnique = dataView.elements
+									.removeDuplicates(idField);
 
-				idList = [];
-				for ( var ii = 0; ii < elementsUnique.length; ii++) {
-					idList.push(elementsUnique[ii][idField]);
-				}
+						// console.log("elementsUnique", elementsUnique);
 
-				if (!all) {
-					selected_new = [];
-					for ( var i = 0; i < selectedIdList.length; i++) {
-						isPresent = false;
-						for ( var j = 0; j < idList.length; j++)
-							if (selectedIdList[i] == idList[j]) {
-								isPresent = true;
-								break;
+						idList = [];
+						for ( var ii = 0; ii < elementsUnique.length; ii++) {
+							idList.push(elementsUnique[ii][idField]);
+						}
+
+						if (!all) {
+							selected_new = [];
+							for ( var i = 0; i < selectedIdList.length; i++) {
+								isPresent = false;
+								for ( var j = 0; j < idList.length; j++)
+									if (selectedIdList[i] == idList[j]) {
+										isPresent = true;
+										break;
+									}
+								if (isPresent)
+									selected_new.push(selectedIdList[i]);
 							}
-						if (isPresent)
-							selected_new.push(selectedIdList[i]);
-					}
-					selectedIdList = selected_new;
-				}
+							selectedIdList = selected_new;
+						}
 
-				// proiezione dei campi rispetto alle colonne specificate nella
-				// view selezionata
-				// recupero le colonne della proiezione
-				var columnsAll = domain[viewOption]["columns"];
-				// console.log(columnsAll);
-				// test per verificare se i campi di columns sono presenti negli
-				// oggetti
-				if (elementsUnique[0] != null) {
-					columns = [];
-					for ( var i = 0; i < columnsAll.length; i++) {
-						var column = columnsAll[i];
-						if (elementsUnique[0][column] != null)
-							columns.push(column);
-					}
-				} else
-					columns = columnsAll;
+						// proiezione dei campi rispetto alle colonne
+						// specificate nella view
+						// selezionata
+						// recupero le colonne della proiezione
+						var columnsAll = domain[viewOption]["columns"];
+						// console.log(columnsAll);
+						// test per verificare se i campi di columns sono
+						// presenti negli oggetti
+						if (elementsUnique[0] != null) {
+							columns = [];
+							for ( var i = 0; i < columnsAll.length; i++) {
+								var column = columnsAll[i];
+								if (elementsUnique[0][column] != null)
+									columns.push(column);
+							}
+						} else
+							columns = columnsAll;
 
-				elementsUnique = elementsUnique.project(columns);
+						var elementsUniqueProj = elementsUnique
+								.project(columns);
 
-				// creazione nuovo oggetto per avere i campi per il viewer
-				// selezionato
-				dataOut = {};
-				dataOut.id = id;
-				dataOut.name = viewOption + "-" + id;
-				dataOut.elements = elementsUnique;
-				dataOut.domain = data.domain;
-				// dataOut["views"] = {};
-				// dataOut["views"][viewOption] = data["views"][viewOption];
+						// aggiorno i valori per l'autocomplete
+						var autoCompleteOptions = domainDescription[viewOption]["autocomplete"];
 
-				// esclude il primo dei viewer
-				if (id != 0)
-					createDraggableCloud(prefix + "droppable-" + id, dataOut,
-							viewOption);
+						if (!$autoCompleteTxt || viewChanged) // Creazione
+																// widget per
+																// l'autocompletamento
+							$autoCompleteTxt = createAutoCompleteText(0,
+									formId, elementsUniqueProj,
+									autoCompleteOptions);
 
-				// console.log("elementsUnique", elementsUnique);
+						// creazione nuovo oggetto per avere i campi per del
+						// viewer selezionato
+						dataOut = {};
+						dataOut.id = id;
+						dataOut.name = viewOption + "-" + id;
+						dataOut.elements = elementsUniqueProj;
+						dataOut.domain = data.domain;
 
-				if (map == null || viewChanged)
-					initMap(domainDescription, elementsUnique);
-				else if (!mapClicked)
-					map.draw(elementsUnique, selectedIdList);
+						// esclude il primo dei viewer dalla generazione delle
+						// nuvole
+						if (id != 0)
+							createDraggableCloud(prefix + "droppable-" + id,
+									dataOut, viewOption);
 
-				if (viewChanged || sourceChanged || mapClicked) {
-					// recupero il div del viewer successivo
-					var nextDivId = $("#" + divId).data("next");
-					updateNextViewer(data, nextDivId);
-				}
+						// console.log("elementsUniqueProj",
+						// elementsUniqueProj);
 
-			});
+						if (map == null || viewChanged)
+							initMap(domainDescription, elementsUniqueProj);
+						else if (!mapClicked)
+							map.draw(elementsUniqueProj, selectedIdList);
+
+						if (viewChanged || sourceChanged || mapClicked) {
+							// recupero il div del viewer successivo
+							var nextDivId = $("#" + divId).data("next");
+							updateNextViewer(data, nextDivId);
+						}
+
+					});
 
 	function updateNextViewer(data, nextDivId) {
 
@@ -486,11 +524,11 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 	$("#" + divId + " .droppable").droppable({
 		tolerance : 'touch',
 		over : function() {
-			// $(this).removeClass('out').addClass('over');
+			$(this).removeClass('out').addClass('over');
 		},
 		out : function(event, ui) {
 			$(this).removeClass('over').addClass('out');
-			var $draggableCloud = $(ui.draggable);
+			// var $draggableCloud = $(ui.draggable);
 			// $draggableCloud.css("left", event.pageX);
 			// $draggableCloud.css("top", event.pageY);
 			// $("#draggable-container").append($draggableCloud);
@@ -511,15 +549,11 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 			// recupero le coordinate dei cloud spostabili
 			var d = $draggableCloud.data("d");
 
-			if (d == null)
-				return;
-
-			var x1 = d.x;
-			var y1 = d.y;
-
-			var dis = distance([ x, y ], [ x1, y1 ]);
-
-			if (dis < 80) {
+			// var x1 = d.x;
+			// var y1 = d.y;
+			// var dis = distance([ x, y ], [ x1, y1 ]);
+			// if (dis < 80) {
+			if (d != null) {
 
 				// verifico che la nuvola non sia già agganciata
 				if ($draggableCloud.parent().attr("id") != $(this).attr("id")) {
@@ -527,12 +561,11 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 					// $draggableCloud.css("left", "9px").css("top", "6px");
 				}
 
-				$(this).removeClass('out').addClass('over');
-
 				initViewer(d);
 				// break;
-			} else
-				$(this).removeClass('over').addClass('out');
+			}
+
+			$(this).removeClass('over').addClass('out');
 
 		}
 	});
@@ -545,6 +578,7 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 		type = domainDescription[viewOption].type;
 		dataView = clone(data);
 		selectedIdList = [];
+
 		$("#" + divId).trigger('stateChanged', [ true, false, true ]);
 	}
 
@@ -558,17 +592,17 @@ function Viewer(destinationDivId, viewerOptions, defaultOption, id, prevId,
 		$("#" + bodyDivId).html("");
 		switch (type) {
 		case "table":
-			map = new Table(bodyDivId, viewOptions.id, elementsUnique, {
+			map = new Table(bodyDivId, elementsUnique, viewOptions.id, {
 				image : viewOptions.image
 			});
 			break;
 		case "geomap":
-			map = new GeoMap(bodyDivId, viewOptions.id, elementsUnique, {
+			map = new GeoMap(bodyDivId, elementsUnique, viewOptions.id, {
 				name : viewOptions.name
 			});
 			break;
 		case "timeline":
-			map = new Timeline(bodyDivId, viewOptions.id, elementsUnique, {
+			map = new Timeline(bodyDivId, elementsUnique, viewOptions.id, {
 				name : viewOptions.name,
 				width : "99%",
 				height : "420px"
@@ -611,7 +645,7 @@ function createCloudGenerator(destinationDivId, containerOptions, domainName) {
 					'<tr><td class="table-noborder"></td><td colspan="2" class="table-noborder"><form></form></td></tr>');
 	$("form", $("#" + tableId))
 			.append(
-					'<button class="table-save">Salva</button><button class="table-clear">Annulla</button>');
+					'<button class="table-save">Crea Query</button><button class="table-clear">Cancella selezione</button>');
 	$("button", $("#" + tableId)).button().click(function(e) {
 		// per evitare l'invio del form
 		e.preventDefault();
@@ -633,15 +667,17 @@ function createCloudGenerator(destinationDivId, containerOptions, domainName) {
 				// console.log(index, value, viewOption);
 				$("div", $(this)).each(function(index, bubbleDiv) {
 					// console.log($(bubbleDiv).text());
-					requestObj[viewOption].push({
-						"id" : $(bubbleDiv).data("idValue"),
-						"included" : inclusion == "included" ? true : false
-					});
+					if ($(bubbleDiv).hasClass("bubble_value_selected")) {
+						requestObj[viewOption].push({
+							"id" : $(bubbleDiv).data("idValue"),
+							"included" : inclusion == "included" ? true : false
+						});
+					}
 				});
 			});
 		});
 
-		console.log("requestObj", requestObj);
+		console.log("client send: ", requestObj);
 
 		$.ajax({
 			url : '/JSONServlet/RequestJoinObject',
@@ -659,22 +695,31 @@ function createCloudGenerator(destinationDivId, containerOptions, domainName) {
 		});
 	});
 
-	$(".table-clear", $("#" + tableId)).click(
-			function(e) {
-				// cancello gli elementi della tabella
-				$(".table-content",
-						$(this).parent().parent().parent().parent().parent())
-						.html("");
-			});
+	$(".table-clear", $("#" + tableId)).click(function(e) {
+		// cancello gli elementi della tabella
+		// $(".table-content",
+		// $(this).parent().parent().parent().parent().parent()).html("");
+		$(".bubble_value_selected").remove();
+	});
 
 	$(".table-content", $("#" + destinationDivId)).droppable(
 			{
 				tolerance : 'touch',
-				over : function() {
-					$(this).addClass('over');
+				over : function(event, ui) {
+					var $draggableBubble = $(ui.draggable);
+					var bubbleOption = $draggableBubble.data("viewOption");
+					var viewOption = $(this).data("viewOption");
+
+					if (bubbleOption == viewOption)
+						$(this).addClass('over');
 				},
-				out : function() {
+				out : function(event, ui) {
+					var $draggableBubble = $(ui.draggable);
+					if ($draggableBubble.hasClass('bubble_value_selected'))
+						$($draggableBubble).addClass('bubble_value')
+								.removeClass('bubble_value_selected');
 					$(this).removeClass('over');
+					// $("#bubble_values").append($draggableBubble);
 				},
 				// evento nuvola sull'etichetta del viewer
 				drop : function(event, ui) {
@@ -683,15 +728,19 @@ function createCloudGenerator(destinationDivId, containerOptions, domainName) {
 					var viewOption = $(this).data("viewOption");
 
 					if (bubbleOption == viewOption) {
-						$draggableBubble.css("left", 0).css("top", 0).css(
-								"margin", "5px auto").css("width", "85%");
-						$draggableBubble.draggable('disable');
+						// $draggableBubble.draggable('disable');
+
+						$draggableBubble.css("left", 0).css("top", 0).addClass(
+								'bubble_value_selected').removeClass(
+								'bubble_value');
 						$(this).append($draggableBubble);
 					}
-					$(this).removeClass('over');
 				}
 			});
 
+	$("#" + destinationDivId)
+			.append(
+					'<div id="draggable-container" class="draggable-container">&nbsp;</div>');
 }
 
 function createFieldset(id, formId, options) {
@@ -700,7 +749,6 @@ function createFieldset(id, formId, options) {
 			+ '" data-role="controlgroup" data-type="horizontal"></fieldset>');
 
 	var fieldset = $("#" + formId + "-fieldset-" + id);
-	var sourceChanged;
 
 	for ( var i = 0; i < options.length; i++) {
 		var inputId = formId + '-radio-choice-' + i + '-fieldset-' + id;
@@ -746,6 +794,60 @@ function createSelectMenu(id, formId, options, defaultOption) {
 	return select;
 }
 
+function createAutoCompleteText(number, formId, data, autoCompleteOpt) {
+
+	var autoCompleteOptions = autoCompleteOpt;
+	var autoComplTxtId = formId + '-autocomplete-' + number;
+
+	// rimozione etichetta e input field
+	var $autoComplTxtDiv = $("#" + autoComplTxtId);
+	$autoComplTxtDiv.remove();
+
+	var form = $("#" + formId);
+	form.append('<div id="' + autoComplTxtId + '" <label for="'
+			+ autoComplTxtId + '">Cerca: </label>'
+			+ '<input type="text" /></div>');
+
+	// seleziono il campo input appena creato
+	var $autoComplInput = $("input", $("#" + autoComplTxtId));
+	console.log("autoComplInput", $autoComplInput.data());
+
+	$autoComplInput.autocomplete({
+		minLength : 0,
+		source : function(request, response) {
+			var matches = $.map(data, function(item) {
+				console.log("request.term", request.term);
+				console.log("item", item);
+				if (item[autoCompleteOptions.label].toUpperCase().indexOf(
+						request.term.toUpperCase()) != -1) {
+					return item;
+				}
+			});
+			response(matches);
+		},
+		focus : function() {
+			return false;
+		},
+
+		select : function(event, ui) {
+			// $(this).val(ui.item[autoCompleteOptions.label] + " / " +
+			// ui.item[autoCompleteOptions.value]);
+			// return false;
+		}
+	});
+
+	$autoComplInput.data("ui-autocomplete")._renderItem = function(ul, item) {
+		// var autoCompleteOptions =
+		// $autoComplTxtDiv.data("autoCompleteOptions");
+		return $("<li></li>").data("ui-autocomplete-item", item).append(
+				"<a><strong>" + item[autoCompleteOptions.label]
+						+ "</strong></a>").appendTo(ul);
+		// item[autoCompleteOptions.value]
+	};
+
+	return $autoComplTxtDiv;
+}
+
 function createSelectSlider(id, form, options) {
 	form.append('<select name="slider" id="flip-' + id
 			+ '" data-role="slider"></select>');
@@ -758,11 +860,7 @@ function createSelectSlider(id, form, options) {
 
 	select.slider();
 
-	return selext;
-}
-
-function createButton(id, form, options) {
-
+	return select;
 }
 
 function createDatePicker(id, form, options) {

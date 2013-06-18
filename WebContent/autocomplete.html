@@ -1,12 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<!-- Inclusioni di funzionalità base implementate utilizzate dai wrapper e dai viewer -->
+<meta charset="UTF-8" />
+<title>jQuery UI Real Autocomplete</title>
+
+<!-- jQuery UI  |  http://jquery.com/  http://jqueryui.com/  http://jqueryui.com/docs/Theming  -->
+<style type="text/css">
+body {
+	font: 62.5% Verdana, Arial, sans-serif
+}
+</style>
+<!-- Inclusioni di funzionalitÃ  base implementate utilizzate dai wrapper e dai viewer -->
 <script type="text/javascript" src="base/utils.js"></script>
 <script type="text/javascript" src="base/array.js"></script>
 
-<!-- Inclusione libreria JQuery 1.10.1 -->
-<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<!-- Inclusione libreria JQuery 1.9.1 -->
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <!-- // <script src="lib/jquery/jquery.min.js"></script>  -->
 
 <!-- Inclusione libreria JQuery UI e del relativo template css -->
@@ -58,42 +67,28 @@
 <!-- Main dell'applicazione e relativo foglio di stile -->
 <link type="text/css" rel="stylesheet" href="style.css" />
 
-<title>D3 Clouds and Maps + JQuery Maps + Leaflet</title>
 <script type="text/javascript">
-    if (typeof jQuery == 'undefined')
-	alert("jQuery Non Found!.");
+    var availableTags = [ "ActionScript", "AppleScript", "Asp", "BASIC", "C", "C++", "Clojure", "COBOL", "ColdFusion", "Erlang", "Fortran", "Groovy", "Haskell", "Java",
+	    "JavaScript", "Lisp", "Perl", "PHP", "Python", "Ruby", "Scala", "Scheme" ];
+
+    $(document).ready(function() {
+	$("#tags").autocomplete({
+	    source : function(request, response) {
+		var matches = $.map(availableTags, function(tag) {
+		    if (tag.toUpperCase().indexOf(request.term.toUpperCase()) === 0) {
+			return tag;
+		    }
+		});
+		response(matches);
+	    }
+	});
+    });
 </script>
 </head>
-
 <body>
-	<div id="clouds">&nbsp;</div>
-	<div id="values_generator">&nbsp;</div>
 
-	<div id="legend">
-		<h2 style="margin: 10px">Legenda</h2>
-		<ul style="list-style: disc; font-size: 12pt;">
-			<li class="legend-chi">chi</li>
-			<li class="legend-dove">dove</li>
-			<li class="legend-cosa">cosa</li>
-			<li class="legend-quando">quando</li>
-		</ul>
-	</div>
+	<label for="tags">Tags: </label>
+	<input id="tags">
 
-	<div id="info"></div>
-
-	<div id="views_container" class="views_container">&nbsp;</div>
-	<div id="views_container2" class="views_container">&nbsp;</div>
-
-	<!-- HIDDEN / POP-UP DIV -->
-	<div id="pop-up">
-		<h3>Scegli un' opzione</h3>
-		<button id="union">Unione</button>
-		<button id='diff'>Differenza</button>
-		<button id='intersect'>Intersezione</button>
-		"
-	</div>
-
-	<script type="text/javascript" src="init.js"></script>
 </body>
-
 </html>

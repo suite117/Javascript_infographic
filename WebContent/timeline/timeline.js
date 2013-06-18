@@ -1,6 +1,6 @@
 google.load("visualization", "1");
 
-function Timeline(destinationDivId, idField, data, optional) {
+function Timeline(destinationDivId, data, idField, optional) {
 
 	this.destinationDivId = destinationDivId;
 	this.idField = idField;

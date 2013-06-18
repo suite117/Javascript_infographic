@@ -4,20 +4,23 @@
 		"id": "id",
 		"image": "immagine",
 		"bubble-label" : "nome",
-		"bubble-value" : "id"
+		"bubble-value" : "id",
+		"autocomplete" : {"label" : "nome", "value" : "id"}
 	},
 	"luoghi": {
 		"type": "geomap",
-		"id": "idEvento",
-		"name": "nomeEvento",
-		"bubble-label" : "nomeEvento",
-		"bubble-value" : "idEvento"
+		"id": "idCitta",
+		"name": "name",
+		"bubble-label" : "name",
+		"bubble-value" : "idCitta",
+		"autocomplete" : {"label" : "name", "value" : "idCitta"}
 	},
 	"tempi": {
 		"type": "timeline",
 		"id": "idTempo",
 		"name": "nome",
 		"bubble-label" : "nome",
-		"bubble-value" : "nome"
+		"bubble-value" : "nome",
+		"autocomplete" : {"label" : "nome", "value" : "idTempo"}
 	}
 }

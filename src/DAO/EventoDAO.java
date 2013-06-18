@@ -47,17 +47,18 @@ public class EventoDAO extends DAO<Evento, Integer> {
 
 			String querystring = "UPDATE " + tableName + " SET "
 					+ "ID=?,INIZIOTEMPO=?,"
-					+ "FINETEMPO=?,COORDX=?,COORDY=?,IDTIPOEVENTO=? WHERE ID=?";
+					+ "FINETEMPO=?,COORDX=?,COORDY=?,IDTIPOEVENTO=?,IDCITTA=?,NOME_EVENTO=? WHERE ID=?";
 
 			ptmt = getConnection().prepareStatement(querystring);
 			ptmt.setInt(1, evento.getIdEvento());
-			//ptmt.setInt(2, evento.getStart());
-			//ptmt.setInt(3, evento.getEnd());
+			ptmt.setString(2, DBUtils.integerListToDateString(evento.getStart()));
+			ptmt.setString(3, DBUtils.integerListToDateString(evento.getEnd()));
 			ptmt.setDouble(4, evento.getLat());
 			ptmt.setDouble(5, evento.getLon());
 			ptmt.setInt(6, evento.getIdEventType());
-
-			ptmt.setInt(7, evento.getIdEvento());
+			ptmt.setInt(7, evento.getIdCitta());
+			ptmt.setString(8, evento.getNomeEvento());
+			ptmt.setInt(9, evento.getIdEvento());
 
 			ptmt.executeUpdate();
 
@@ -79,11 +80,13 @@ public class EventoDAO extends DAO<Evento, Integer> {
 
 			ptmt = getConnection().prepareStatement(querystring);
 			ptmt.setInt(1, evento.getIdEvento());
-			//ptmt.setInt(2, evento.getStartTime());
-			//ptmt.setInt(3, evento.getEndTime());
+			ptmt.setString(2, DBUtils.integerListToDateString(evento.getStart()));
+			ptmt.setString(3, DBUtils.integerListToDateString(evento.getEnd()));
 			ptmt.setDouble(4, evento.getLat());
 			ptmt.setDouble(5, evento.getLon());
 			ptmt.setInt(6, evento.getIdEventType());
+			//ptmt.setString(7, evento.getNomeEvento());
+			ptmt.setInt(7, evento.getIdCitta());
 			
 			ptmt.executeUpdate();
 
@@ -98,18 +101,35 @@ public class EventoDAO extends DAO<Evento, Integer> {
 
 	public static void main(String[] args) {
 
+		List<Evento> events = new ArrayList<Evento>();
 		EventoDAO eventoDAO = new EventoDAO(Evento.class);
-
-		Evento evento = new Evento();
-		evento.setIdEvento(2);
-		//evento.setStartTime(10);
-		//evento.setEndTime(30);
-		evento.setLat(10.20);
-		evento.setLon(30.1);
-		evento.setIdEventType(10);
+		
+		for (int i = 0; i < 20; i++) {
+			Evento event = new Evento();
+			event.setIdEvento(i);
+			List<Integer> date = new ArrayList<Integer>();
+			date.add(2013); //anno
+			date.add((i % 12 ) + 1); //mese
+			date.add((i % 30 ) + 1); //giorno
+			date.add((i % 24 ) + 1); //ora
+			event.setStart(date); //ora
+			//event.setEnd(i + 20);
+			event.setNomeEvento("evento " + i);
+			event.setLat(53.73 - 0.5 + Math.random() );
+			event.setLon(-0.30 - 0.5 + Math.random() );
+	
+			event.setIdEventType((int) Math.round(Math.random() * 100));
+			event.setIdCitta((int) Math.round(Math.random() * 1000));
+			events.add(event);
+			
+		}
 		
 		try {
-			eventoDAO.overwrite(evento);
+			for (int i = 0; i < events.size(); i++) {
+				System.out.println(events.get(i).getIdEvento());
+				eventoDAO.update(events.get(i));	
+			}
+			
 			System.out.print(eventoDAO.findAll());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

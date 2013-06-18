@@ -21,11 +21,11 @@
 		<script type="text/javascript">
 			var events = getJSON("../data/pp.json");
 			var elementsUnique = events.removeDuplicates("idEvento");
-			var t = new Timeline('view_container_0', 'idEvento', elementsUnique, {
+			var t = new Timeline('view_container_0', elementsUnique, 'idEvento', {
 				name : "nomeEvento"
 			});
 
-			t = new Timeline('view_container_1', 'idEvento', elementsUnique, {
+			t = new Timeline('view_container_1', elementsUnique, 'idEvento', {
 				name : "nomeEvento"
 			});
 		</script>

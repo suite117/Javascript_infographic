@@ -4,9 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Evento;
 import model.PP;
-import model.PersonaPartecipante;
 
 public class PPDAO extends DAO<PP, Integer> {
 

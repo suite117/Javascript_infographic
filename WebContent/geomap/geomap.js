@@ -10,7 +10,7 @@
  *            idMap id dell'elemento DOM mappa
  * 
  */
-function GeoMap(destinationDivId, idField, data, optional) {
+function GeoMap(destinationDivId, data, idField, optional) {
 
 	this.destinationDivId = destinationDivId;
 	idMap = destinationDivId + "-geomap";

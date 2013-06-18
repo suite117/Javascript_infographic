@@ -14,6 +14,7 @@ public class Evento implements Serializable {
 	private Double lon;
 	private Integer idEventType;
 	private String nomeEvento;
+	private Integer idCitta;
 
 	public Integer getIdEvento() {
 		return idEvento;
@@ -69,6 +70,14 @@ public class Evento implements Serializable {
 
 	public void setEnd(List<Integer> end) {
 		this.end = end;
+	}
+
+	public Integer getIdCitta() {
+		return idCitta;
+	}
+
+	public void setIdCitta(Integer idCitta) {
+		this.idCitta = idCitta;
 	}
 
 }

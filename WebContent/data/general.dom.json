@@ -3,7 +3,7 @@
 		"columns": ["immagine", "id", "nome", "idEvento"]
 	},
 	"luoghi": {
-		"columns": ["idEvento", "lat", "lon", "nomeEvento"]
+		"columns": ["idCitta", "lat", "lon", "name"]
 	},
 	"tempi": {
 		"columns": ["idTempo", "nome", "start", "end"]
