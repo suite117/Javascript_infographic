@@ -1,4 +1,4 @@
-Javascript_infographic
+Javascript Infographic v1.0
 ======================
 
 Faceted classification and Javascript GUI maps for graph, tree, list and set data types over JSON objects.
