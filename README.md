@@ -12,7 +12,7 @@ Free  Non-commercial license
 Commercial license
   * License for single user: 100.00 euro for 1 year
   * License for 10 users: 900.00 euro for 1 year
-  * License for single developer: 5.0000 euro
+  * License for single developer: 5.000 euro for 1 year
  
   This source file is distributed in the hope that it will be useful, but 
   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
