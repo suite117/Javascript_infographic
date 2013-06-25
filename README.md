@@ -4,7 +4,7 @@ Javascript Infographic v1.0
 Faceted classification and Javascript GUI maps for graph, tree, list and set data types over JSON objects.
 
 
-@copyright Copyright 2013 Alfonso Alongi, all rights reserved.
+@copyright Copyright 2013 Alfonso Alongian Biagio Sesta, all rights reserved.
  
 Free  Non-commercial license
   * You can use this software for free under the  Creative Commons Attribution-NonCommercial 3.0 License
